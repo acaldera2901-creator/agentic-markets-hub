@@ -11,11 +11,10 @@
   :root {
     --bg:#07090d; --bg-2:#0b0e14; --panel:#0e131c; --panel-2:#121826;
     --line:#1a2233; --line-2:#243049; --text:#e6edf7; --muted:#7d8aa3; --dim:#4a5774;
-    --cyan:#00e5ff; --cyan-2:#7df9ff; --amber:#ffb547; --green:#32e0a0;
-    --magenta:#ff5cf2; --violet:#9b8cff; --red:#ff5d6c;
+    --cyan:#00e5ff; --amber:#ffb547; --green:#32e0a0; --magenta:#ff5cf2; --violet:#9b8cff;
   }
-  * { box-sizing: border-box; }
-  html, body { margin:0; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; }
   body {
     min-height:100vh;
     background:
@@ -26,18 +25,16 @@
   body::before {
     content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
     background-image:
-      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
     background-size:56px 56px;
-    mask-image: radial-gradient(ellipse at 50% 30%, black 40%, transparent 80%);
+    mask-image:radial-gradient(ellipse at 50% 30%, black 40%, transparent 80%);
   }
 
   /* ── TOPBAR ── */
   .topbar {
-    position:sticky; top:0; z-index:30;
-    display:flex; align-items:center; gap:10px; padding:8px 16px;
-    background:rgba(7,9,13,.88); backdrop-filter:blur(10px);
-    border-bottom:1px solid var(--line);
+    position:sticky; top:0; z-index:30; display:flex; align-items:center; gap:10px; padding:8px 16px;
+    background:rgba(7,9,13,.88); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
   }
   .brand { display:flex; align-items:center; gap:8px; font-weight:700; font-size:13px; flex-shrink:0; }
   .brand-dot { width:9px; height:9px; border-radius:50%; background:var(--cyan); box-shadow:0 0 12px var(--cyan); }
@@ -55,33 +52,25 @@
   .canvas {
     position:relative; border:1px solid var(--line); border-radius:14px;
     background:linear-gradient(180deg, rgba(11,14,20,.9), rgba(8,10,16,.95));
-    overflow:visible;
   }
-  .canvas .grid-bg {
+  .grid-bg {
     position:absolute; inset:0; pointer-events:none; border-radius:14px;
     background-image:
-      linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
     background-size:40px 40px;
   }
-  svg.edges { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:2; }
+  svg.edges { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:2; overflow:visible; }
 
   /* ── DESK ZONE ── */
-  .desk-zone {
-    position:absolute; border-radius:10px; border:1px solid; pointer-events:none; z-index:1;
-    transition:all .2s;
-  }
+  .desk-zone { position:absolute; border-radius:10px; border:1px solid; pointer-events:none; z-index:1; }
   .desk-label {
     position:absolute; z-index:5; display:flex; align-items:center; gap:8px;
     font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:.2em; text-transform:uppercase;
   }
-  .dl-ico {
-    width:24px; height:24px; border-radius:6px; display:grid; place-items:center;
-    font-size:13px; border:1px solid;
-  }
+  .dl-ico { width:24px; height:24px; border-radius:6px; display:grid; place-items:center; font-size:13px; border:1px solid; }
   .desk-alloc {
-    position:absolute; z-index:5;
-    font-family:'JetBrains Mono',monospace; font-size:8px; font-weight:700;
+    position:absolute; z-index:5; font-family:'JetBrains Mono',monospace; font-size:8px; font-weight:700;
     padding:2px 8px; border-radius:6px; border:1px solid;
   }
 
@@ -89,100 +78,87 @@
   .capital-allocator {
     position:absolute; z-index:7;
     background:linear-gradient(135deg, rgba(14,22,40,.98), rgba(9,14,26,.98));
-    border:1px solid rgba(0,229,255,.35); border-radius:16px;
-    padding:14px 20px 16px;
-    box-shadow:
-      0 0 0 1px rgba(0,229,255,.12),
-      0 0 50px rgba(0,229,255,.14),
-      0 20px 50px rgba(0,0,0,.6);
+    border:1px solid rgba(0,229,255,.35); border-radius:16px; padding:14px 20px 16px;
+    box-shadow:0 0 0 1px rgba(0,229,255,.12), 0 0 50px rgba(0,229,255,.14), 0 20px 50px rgba(0,0,0,.6);
   }
   .ca-head { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
   .ca-ico {
     width:36px; height:36px; border-radius:10px; display:grid; place-items:center;
     font-size:20px; background:rgba(0,229,255,.1); border:1px solid rgba(0,229,255,.3); flex-shrink:0;
   }
-  .ca-tag { font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:.2em; color:rgba(0,229,255,.6); text-transform:uppercase; }
-  .ca-title { font-size:15px; font-weight:700; color:var(--text); letter-spacing:-.01em; }
-  .ca-desc { font-size:9px; color:var(--muted); font-family:'JetBrains Mono',monospace; line-height:1.5; margin-bottom:12px; }
+  .ca-tag  { font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:.2em; color:rgba(0,229,255,.65); text-transform:uppercase; }
+  .ca-title { font-size:15px; font-weight:700; letter-spacing:-.01em; }
+  .ca-desc  { font-size:9px; color:var(--muted); font-family:'JetBrains Mono',monospace; line-height:1.5; margin-bottom:12px; }
   .ca-allocs { display:flex; gap:8px; flex-wrap:wrap; }
   .ca-alloc {
-    display:inline-flex; align-items:center; gap:5px;
-    padding:3px 10px; border-radius:8px; border:1px solid;
+    display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:8px; border:1px solid;
     font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700;
   }
-  .ca-alloc.football { background:rgba(0,229,255,.08); border-color:rgba(0,229,255,.28); color:var(--cyan); }
-  .ca-alloc.meme     { background:rgba(255,92,242,.08); border-color:rgba(255,92,242,.28); color:var(--magenta); }
-  .ca-alloc.tennis   { background:rgba(255,181,71,.08); border-color:rgba(255,181,71,.28); color:var(--amber); }
-  .ca-pulse { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
-  .live   { background:var(--green); box-shadow:0 0 6px var(--green); animation:blip 1.4s ease-in-out infinite; }
-  .pend   { background:var(--amber); box-shadow:0 0 6px var(--amber); animation:blip 2s ease-in-out infinite; }
+  .ca-alloc.f { background:rgba(0,229,255,.08);  border-color:rgba(0,229,255,.28);  color:var(--cyan); }
+  .ca-alloc.m { background:rgba(255,92,242,.08); border-color:rgba(255,92,242,.28); color:var(--magenta); }
+  .ca-alloc.t { background:rgba(255,181,71,.08); border-color:rgba(255,181,71,.28); color:var(--amber); }
+  .cad { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+  .cad.live { background:var(--green);  box-shadow:0 0 6px var(--green);  animation:blip 1.4s ease-in-out infinite; }
+  .cad.pend { background:var(--amber);  box-shadow:0 0 6px var(--amber);  animation:blip 2s ease-in-out infinite; }
 
   /* ── NODES ── */
   .node {
     position:absolute; z-index:4; width:182px;
     background:linear-gradient(180deg, rgba(18,24,38,.95), rgba(12,16,26,.95));
     border:1px solid var(--line-2); border-radius:12px; padding:8px 10px 10px;
-    cursor:pointer;
-    transition:transform .18s, border-color .18s, box-shadow .18s, opacity .2s;
+    cursor:pointer; transition:transform .18s, border-color .18s, box-shadow .18s;
     box-shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 8px 24px rgba(0,0,0,.35);
   }
   .node:hover { transform:translateY(-2px); }
-  .node.faded { opacity:.14; filter:saturate(.3); pointer-events:none; }
   .node .head { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
-  .node .ico {
-    width:22px; height:22px; border-radius:6px; display:grid; place-items:center;
-    font-size:12px; border:1px solid var(--line-2);
-  }
-  .node .tag { font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:.18em; color:var(--dim); text-transform:uppercase; }
-  .node h4 { margin:0; font-size:11.5px; font-weight:600; letter-spacing:-.01em; line-height:1.25; }
-  .node p  { margin:4px 0 0; font-size:9px; color:var(--muted); line-height:1.4; font-family:'JetBrains Mono',monospace; }
-  .node .nfoot {
+  .node .ico  { width:22px; height:22px; border-radius:6px; display:grid; place-items:center; font-size:12px; border:1px solid var(--line-2); }
+  .node .ntag { font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:.18em; color:var(--dim); text-transform:uppercase; }
+  .node h4    { margin:0; font-size:11.5px; font-weight:600; letter-spacing:-.01em; line-height:1.25; }
+  .node p     { margin:4px 0 0; font-size:9px; color:var(--muted); line-height:1.4; font-family:'JetBrains Mono',monospace; }
+  .node .nft  {
     margin-top:6px; display:flex; justify-content:space-between; align-items:center;
     font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--dim);
     border-top:1px dashed var(--line); padding-top:5px;
   }
-  .node .npulse { width:5px; height:5px; border-radius:50%; display:inline-block; vertical-align:-1px; margin-right:3px; animation:blip 1.6s ease-in-out infinite; }
+  .np { width:5px; height:5px; border-radius:50%; display:inline-block; vertical-align:-1px; margin-right:3px; animation:blip 1.6s ease-in-out infinite; }
+  .np.g { background:var(--green); box-shadow:0 0 6px var(--green); }
 
   /* desk accent tints */
-  .d-football .node .ico  { color:var(--cyan);    background:rgba(0,229,255,.09);    border-color:rgba(0,229,255,.25); }
-  .d-football .node:hover { border-color:rgba(0,229,255,.5);    box-shadow:0 0 0 1px rgba(0,229,255,.2),    0 12px 28px rgba(0,229,255,.1); }
-  .d-meme     .node .ico  { color:var(--magenta); background:rgba(255,92,242,.09);   border-color:rgba(255,92,242,.25); }
-  .d-meme     .node:hover { border-color:rgba(255,92,242,.5);   box-shadow:0 0 0 1px rgba(255,92,242,.2),   0 12px 28px rgba(255,92,242,.1); }
-  .d-tennis   .node .ico  { color:var(--amber);   background:rgba(255,181,71,.09);   border-color:rgba(255,181,71,.25); }
-  .d-tennis   .node:hover { border-color:rgba(255,181,71,.5);   box-shadow:0 0 0 1px rgba(255,181,71,.2),   0 12px 28px rgba(255,181,71,.1); }
+  .d-f .node .ico  { color:var(--cyan);    background:rgba(0,229,255,.09);   border-color:rgba(0,229,255,.25); }
+  .d-f .node:hover { border-color:rgba(0,229,255,.5);   box-shadow:0 0 0 1px rgba(0,229,255,.2),0 12px 28px rgba(0,229,255,.1); }
+  .d-m .node .ico  { color:var(--magenta); background:rgba(255,92,242,.09);  border-color:rgba(255,92,242,.25); }
+  .d-m .node:hover { border-color:rgba(255,92,242,.5);  box-shadow:0 0 0 1px rgba(255,92,242,.2),0 12px 28px rgba(255,92,242,.1); }
+  .d-t .node .ico  { color:var(--amber);   background:rgba(255,181,71,.09);  border-color:rgba(255,181,71,.25); }
+  .d-t .node:hover { border-color:rgba(255,181,71,.5);  box-shadow:0 0 0 1px rgba(255,181,71,.2),0 12px 28px rgba(255,181,71,.1); }
 
   /* ── SVG EDGES ── */
-  .edge { stroke:var(--line-2); stroke-width:1.4; fill:none; opacity:.6; }
-  .hi-f  { stroke:var(--cyan);    stroke-width:2; fill:none; opacity:.9; filter:drop-shadow(0 0 5px rgba(0,229,255,.6)); }
-  .hi-m  { stroke:var(--magenta); stroke-width:2; fill:none; opacity:.9; filter:drop-shadow(0 0 5px rgba(255,92,242,.6)); }
-  .hi-t  { stroke:var(--amber);   stroke-width:2; fill:none; opacity:.9; filter:drop-shadow(0 0 5px rgba(255,181,71,.6)); }
-  .flow-f { stroke:var(--cyan);    stroke-width:2; fill:none; stroke-dasharray:2 8; animation:dash 1.2s linear infinite; filter:drop-shadow(0 0 4px rgba(0,229,255,.7)); }
-  .flow-m { stroke:var(--magenta); stroke-width:2; fill:none; stroke-dasharray:2 8; animation:dash 1.2s linear infinite; filter:drop-shadow(0 0 4px rgba(255,92,242,.7)); }
-  .ca-f { stroke:var(--cyan);    stroke-width:2;   fill:none; stroke-dasharray:3 5; opacity:.85; filter:drop-shadow(0 0 6px rgba(0,229,255,.5)); animation:dash 1.6s linear infinite; }
-  .ca-m { stroke:var(--magenta); stroke-width:2;   fill:none; stroke-dasharray:3 5; opacity:.85; filter:drop-shadow(0 0 6px rgba(255,92,242,.5)); animation:dash 1.6s linear infinite; }
-  .ca-t { stroke:var(--amber);   stroke-width:1.5; fill:none; stroke-dasharray:7 7; opacity:.4; }
+  .edge  { stroke:var(--line-2);   stroke-width:1.4; fill:none; opacity:.6; }
+  .hi-f  { stroke:var(--cyan);     stroke-width:2;   fill:none; opacity:.9; filter:drop-shadow(0 0 5px rgba(0,229,255,.55)); }
+  .hi-m  { stroke:var(--magenta);  stroke-width:2;   fill:none; opacity:.9; filter:drop-shadow(0 0 5px rgba(255,92,242,.55)); }
+  .hi-t  { stroke:var(--amber);    stroke-width:1.5; fill:none; opacity:.65; }
+  .fl-f  { stroke:var(--cyan);     stroke-width:2;   fill:none; stroke-dasharray:2 8; animation:dash 1.2s linear infinite; filter:drop-shadow(0 0 4px rgba(0,229,255,.7)); }
+  .fl-m  { stroke:var(--magenta);  stroke-width:2;   fill:none; stroke-dasharray:2 8; animation:dash 1.2s linear infinite; filter:drop-shadow(0 0 4px rgba(255,92,242,.7)); }
+  .ca-f  { stroke:var(--cyan);     stroke-width:2;   fill:none; stroke-dasharray:3 6; animation:dash 1.8s linear infinite; opacity:.8; filter:drop-shadow(0 0 6px rgba(0,229,255,.5)); }
+  .ca-m  { stroke:var(--magenta);  stroke-width:2;   fill:none; stroke-dasharray:3 6; animation:dash 1.8s linear infinite; opacity:.8; filter:drop-shadow(0 0 6px rgba(255,92,242,.5)); }
+  .ca-t  { stroke:var(--amber);    stroke-width:1.5; fill:none; stroke-dasharray:8 8; opacity:.35; }
   @keyframes dash { to { stroke-dashoffset:-40; } }
 
   /* ── LANE LABELS ── */
   .lane-lbl {
-    position:absolute; z-index:3; right:12px;
+    position:absolute; z-index:3; right:14px;
     font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:.16em;
-    color:var(--dim); text-transform:uppercase; text-align:right; pointer-events:none;
-    white-space:nowrap;
+    color:var(--dim); text-transform:uppercase; text-align:right; pointer-events:none; white-space:nowrap;
   }
 
   /* ── COMING SOON BADGE ── */
   .cs-badge {
-    position:absolute; z-index:8;
-    display:inline-flex; align-items:center; gap:5px;
-    padding:4px 11px; border-radius:8px;
-    background:rgba(255,181,71,.13); border:1px solid rgba(255,181,71,.45);
-    font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700;
-    color:var(--amber); letter-spacing:.14em; white-space:nowrap;
-    box-shadow:0 0 14px rgba(255,181,71,.2);
-    animation:cs-glow 2.5s ease-in-out infinite;
+    position:absolute; z-index:8; display:inline-flex; align-items:center; gap:5px;
+    padding:4px 12px; border-radius:8px; background:rgba(255,181,71,.13);
+    border:1px solid rgba(255,181,71,.45); font-family:'JetBrains Mono',monospace;
+    font-size:9px; font-weight:700; color:var(--amber); letter-spacing:.14em; white-space:nowrap;
+    box-shadow:0 0 14px rgba(255,181,71,.2); animation:csglow 2.5s ease-in-out infinite;
   }
-  @keyframes cs-glow { 50%{ box-shadow:0 0 22px rgba(255,181,71,.4); border-color:rgba(255,181,71,.7); } }
+  @keyframes csglow { 50%{ box-shadow:0 0 24px rgba(255,181,71,.45); border-color:rgba(255,181,71,.75); } }
 </style>
 </head>
 <body>
@@ -200,312 +176,228 @@
 <div class="canvas-wrap">
   <div class="canvas" id="canvas">
     <div class="grid-bg"></div>
-    <svg class="edges" id="edges" preserveAspectRatio="none"></svg>
+    <svg class="edges" id="svg" preserveAspectRatio="none"></svg>
   </div>
 </div>
 
 <script>
-/* ═══════════════════════════════════════════════════════
-   LAYOUT CONSTANTS
-═══════════════════════════════════════════════════════ */
-const CW = 1440, CH = 1310;
+/* ═══════════════════════════════════════════════
+   LAYOUT — all positions are STATIC / pre-computed
+   → no getBoundingClientRect needed
+═══════════════════════════════════════════════ */
+const CW = 1440, CH = 1320;
 
-// Column: nx = left-edge of 182px node, cx = center x, zx = zone left, zw = zone width
+// Column layout: cx = node horizontal center, nx = node left edge
 const COL = {
-  football: { nx:149,  cx:240,  zx:20,   zw:440, rgba:'0,229,255',   color:'var(--cyan)',    cls:'f', status:'live'    },
-  meme:     { nx:619,  cx:710,  zx:490,  zw:440, rgba:'255,92,242',  color:'var(--magenta)', cls:'m', status:'live'    },
-  tennis:   { nx:1089, cx:1180, zx:960,  zw:440, rgba:'255,181,71',  color:'var(--amber)',   cls:'t', status:'pending' },
+  f: { id:'football', cx:240,  nx:149,  zx:20,  zw:440, rgba:'0,229,255',  color:'var(--cyan)',    label:'Football AI', ico:'⬡', alloc:'60% capital', live:true  },
+  m: { id:'meme',     cx:710,  nx:619,  zx:490, zw:440, rgba:'255,92,242', color:'var(--magenta)', label:'Meme Coin',   ico:'🚀', alloc:'40% capital', live:true  },
+  t: { id:'tennis',   cx:1180, nx:1089, zx:960, zw:440, rgba:'255,181,71', color:'var(--amber)',   label:'Tennis AI',   ico:'🎾', alloc:'⏳ soon',     live:false },
 };
 
-// Y positions for the 8 pipeline stages
-const YS = [250, 375, 500, 625, 750, 875, 1000, 1125];
+// Node vertical positions — top edge of each node
+const NY = [240, 365, 490, 615, 740, 865, 990, 1115];
+const NH  = 88;  // node height (px) — approx based on content
 
 // Capital Allocator box
-const CA_X = 560, CA_Y = 44, CA_W = 320;
+const CA_X=560, CA_Y=40, CA_W=320, CA_H=132;
+const CA_CX = CA_X + CA_W/2; // = 720
+const CA_BY = CA_Y + CA_H;   // = 172  (bottom y)
 
-/* ═══════════════════════════════════════════════════════
-   DESK DATA
-═══════════════════════════════════════════════════════ */
-const DESKS = [
-  {
-    id:'football', label:'Football AI', ico:'⬡', alloc:'60%',
-    nodes:[
-      {ico:'🔷', tag:'SOURCES',  title:'Betfair + API Sources',    desc:'6 fonti · quote live + xG + fixture'},
-      {ico:'🔄', tag:'AGENT',    title:'DataCollectorAgent',        desc:'Ciclo 10m · fuzzy match · Redis'},
-      {ico:'📐', tag:'MODELS',   title:'Dixon-Coles · Pi · xG',     desc:'3 modelli + Conformal CI α=0.10'},
-      {ico:'🧠', tag:'AGENT',    title:'ModelAgent',                 desc:'Ensemble + probabilità CI'},
-      {ico:'📈', tag:'AGENT',    title:'AnalystAgent',               desc:'edge = p − 1/odds · soglia ≥ 2%'},
-      {ico:'🎯', tag:'AGENT',    title:'StrategistAgent',            desc:'Conviction 0–10 · Claude Sonnet'},
-      {ico:'🛡️', tag:'AGENT',   title:'RiskManagerAgent',           desc:'Kelly f=0.25 · max 3% bankroll'},
-      {ico:'💸', tag:'AGENT',    title:'TraderAgent',                desc:'Paper → LIVE · Betfair REST'},
-    ],
-  },
-  {
-    id:'meme', label:'Meme Coin', ico:'🚀', alloc:'40%',
-    nodes:[
-      {ico:'🔷', tag:'SOURCES',  title:'DexScreener + Binance',     desc:'Solana · 30s scan · order flow'},
-      {ico:'🔍', tag:'AGENT',    title:'Scout Agent',                desc:'30s full scan · 1s focused top 3'},
-      {ico:'🚦', tag:'AGENT',    title:'Filter Agent',               desc:'$12K–$180K liq · age · cooldown'},
-      {ico:'⚡', tag:'AGENT',    title:'Momentum Agent',             desc:'Score 0–100 · buy ratio · moonshot'},
-      {ico:'🎯', tag:'AGENT',    title:'Entry Agent',                desc:'EV gate ≥ 4 · 5%/10% size'},
-      {ico:'🛡️', tag:'AGENT',   title:'Risk Manager',               desc:'Max 3 posizioni · 10% cap'},
-      {ico:'📤', tag:'AGENT',    title:'Exit Agent',                 desc:'Stop loss · partial profit · trail'},
-      {ico:'📓', tag:'AGENT',    title:'Journal Agent',              desc:'Equity curve · Vercel Blob'},
-    ],
-  },
-  {
-    id:'tennis', label:'Tennis AI', ico:'🎾', alloc:'—',
-    nodes:[
-      {ico:'🎾', tag:'SOURCES',  title:'Betfair + Tennis APIs',     desc:'6 fonti · Elo + serve stats'},
-      {ico:'🔄', tag:'AGENT',    title:'DataCollectorAgent',         desc:'Ciclo 5m · fuzzy match · Redis'},
-      {ico:'📐', tag:'MODELS',   title:'Elo · Serve · Fatigue',      desc:'3 modelli + Conformal CI α=0.10'},
-      {ico:'🧠', tag:'AGENT',    title:'ModelAgent',                  desc:'Ensemble + probabilità CI'},
-      {ico:'📈', tag:'AGENT',    title:'AnalystAgent',                desc:'edge = p − 1/odds · soglia ≥ 2.5%'},
-      {ico:'🎯', tag:'AGENT',    title:'StrategistAgent',             desc:'Conviction 0–10 · Claude Sonnet'},
-      {ico:'🛡️', tag:'AGENT',   title:'RiskManagerAgent',            desc:'Kelly f=0.25 · max 3% bankroll'},
-      {ico:'💸', tag:'AGENT',    title:'TraderAgent',                 desc:'Paper → LIVE · Betfair REST'},
-    ],
-  },
+// Pipeline node data per desk
+const DESKS = {
+  f:[
+    {ico:'🔷',tag:'SOURCES', h:'Betfair + API Sources',    d:'6 fonti · quote live + xG + fixture'},
+    {ico:'🔄',tag:'AGENT',   h:'DataCollectorAgent',        d:'Ciclo 10m · fuzzy match · Redis'},
+    {ico:'📐',tag:'MODELS',  h:'Dixon-Coles · Pi · xG',     d:'3 modelli + Conformal CI α=0.10'},
+    {ico:'🧠',tag:'AGENT',   h:'ModelAgent',                 d:'Ensemble + probabilità CI'},
+    {ico:'📈',tag:'AGENT',   h:'AnalystAgent',               d:'edge = p − 1/odds · soglia ≥ 2%'},
+    {ico:'🎯',tag:'AGENT',   h:'StrategistAgent',            d:'Conviction 0–10 · Claude Sonnet'},
+    {ico:'🛡️',tag:'AGENT',  h:'RiskManagerAgent',           d:'Kelly f=0.25 · max 3% bankroll'},
+    {ico:'💸',tag:'AGENT',   h:'TraderAgent',                d:'Paper → LIVE · Betfair REST'},
+  ],
+  m:[
+    {ico:'🔷',tag:'SOURCES', h:'DexScreener + Binance',     d:'Solana · 30s scan · order flow'},
+    {ico:'🔍',tag:'AGENT',   h:'Scout Agent',                d:'30s full scan · 1s focused top 3'},
+    {ico:'🚦',tag:'AGENT',   h:'Filter Agent',               d:'$12K–$180K liq · age · cooldown'},
+    {ico:'⚡',tag:'AGENT',   h:'Momentum Agent',             d:'Score 0–100 · buy ratio · moonshot'},
+    {ico:'🎯',tag:'AGENT',   h:'Entry Agent',                d:'EV gate ≥ 4 · 5%/10% size'},
+    {ico:'🛡️',tag:'AGENT',  h:'Risk Manager',               d:'Max 3 posizioni · 10% cap'},
+    {ico:'📤',tag:'AGENT',   h:'Exit Agent',                 d:'Stop loss · partial profit · trail'},
+    {ico:'📓',tag:'AGENT',   h:'Journal Agent',              d:'Equity curve · Vercel Blob'},
+  ],
+  t:[
+    {ico:'🎾',tag:'SOURCES', h:'Betfair + Tennis APIs',      d:'6 fonti · Elo + serve stats'},
+    {ico:'🔄',tag:'AGENT',   h:'DataCollectorAgent',          d:'Ciclo 5m · fuzzy match · Redis'},
+    {ico:'📐',tag:'MODELS',  h:'Elo · Serve · Fatigue',       d:'3 modelli + Conformal CI α=0.10'},
+    {ico:'🧠',tag:'AGENT',   h:'ModelAgent',                   d:'Ensemble + probabilità CI'},
+    {ico:'📈',tag:'AGENT',   h:'AnalystAgent',                 d:'edge = p − 1/odds · soglia ≥ 2.5%'},
+    {ico:'🎯',tag:'AGENT',   h:'StrategistAgent',              d:'Conviction 0–10 · Claude Sonnet'},
+    {ico:'🛡️',tag:'AGENT',  h:'RiskManagerAgent',             d:'Kelly f=0.25 · max 3% bankroll'},
+    {ico:'💸',tag:'AGENT',   h:'TraderAgent',                  d:'Paper → LIVE · Betfair REST'},
+  ],
+};
+
+const LANE_LABELS = [
+  '01 · Data Sources',
+  '02 · Collection',
+  '03 · Models',
+  '04 · Ensemble',
+  '05 · Analysis',
+  '06 · Strategy',
+  '07 · Risk Mgmt',
+  '08 · Execution',
 ];
 
-/* ═══════════════════════════════════════════════════════
-   HELPERS
-═══════════════════════════════════════════════════════ */
+/* ════════════════ HELPERS ════════════════ */
 const canvas = document.getElementById('canvas');
-const svgEl  = document.getElementById('edges');
+const svg    = document.getElementById('svg');
 canvas.style.width  = CW + 'px';
 canvas.style.height = CH + 'px';
 
-function nodeCenter(uid) {
-  const el = canvas.querySelector(`[data-uid="${uid}"]`);
-  if (!el) return null;
-  const r = el.getBoundingClientRect(), c = canvas.getBoundingClientRect();
-  return { x: r.left-c.left + r.width/2, top: r.top-c.top, bot: r.top-c.top + r.height };
+function el(tag, cls, style) {
+  const e = document.createElement(tag);
+  if (cls)   e.className = cls;
+  if (style) Object.assign(e.style, style);
+  return e;
 }
-function caBottomCenter() {
-  const el = canvas.querySelector('.capital-allocator');
-  if (!el) return { x: CA_X + CA_W/2, y: CA_Y + 128 };
-  const r = el.getBoundingClientRect(), c = canvas.getBoundingClientRect();
-  return { x: r.left-c.left + r.width/2, y: r.top-c.top + r.height };
+function path(cls, d) {
+  const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+  p.setAttribute('class',cls); p.setAttribute('d',d); svg.appendChild(p);
 }
-function mkPath(cls, d) {
-  const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  p.setAttribute('class', cls); p.setAttribute('d', d); svgEl.appendChild(p);
+function bez(x1,y1,x2,y2) {                       // vertical bezier
+  const dy = Math.abs(y2-y1)*0.52;
+  return `M${x1} ${y1} C${x1} ${y1+dy},${x2} ${y2-dy},${x2} ${y2}`;
 }
-function bez(x1, y1, x2, y2) {
-  const dy = Math.abs(y2-y1) * 0.52;
-  return `M ${x1} ${y1} C ${x1} ${y1+dy}, ${x2} ${y2-dy}, ${x2} ${y2}`;
-}
-function bezLateral(x1, y1, x2, y2) {
-  const dx = Math.abs(x2-x1) * 0.4;
-  const dy = Math.abs(y2-y1) * 0.35;
-  return `M ${x1} ${y1} C ${x1+dx*(x2>x1?1:-1)} ${y1+dy}, ${x2} ${y2-dy}, ${x2} ${y2}`;
+function bezLat(x1,y1,x2,y2) {                    // lateral bezier (CA → desk)
+  const dx = Math.abs(x2-x1)*0.38;
+  const dy = Math.abs(y2-y1)*0.32;
+  const sx = x2>x1?1:-1;
+  return `M${x1} ${y1} C${x1+dx*sx} ${y1+dy},${x2} ${y2-dy},${x2} ${y2}`;
 }
 
-/* ═══════════════════════════════════════════════════════
-   RENDER ZONES
-═══════════════════════════════════════════════════════ */
+/* ════════════════ RENDER ════════════════ */
+
+// 1. Desk zone backgrounds + labels
 function renderZones() {
-  const zoneTop = 215, zoneH = 960;
-  Object.entries(COL).forEach(([id, c]) => {
-    const desk = DESKS.find(d => d.id === id);
-    const isPend = c.status === 'pending';
-
-    // Background zone
-    const zone = document.createElement('div');
-    zone.className = 'desk-zone';
-    Object.assign(zone.style, {
-      left: c.zx+'px', top: zoneTop+'px',
-      width: c.zw+'px', height: zoneH+'px',
-      borderColor: `rgba(${c.rgba}, ${isPend ? '.08' : '.13'})`,
-      background: `rgba(${c.rgba}, ${isPend ? '.015' : '.025'})`,
-      opacity: isPend ? '.7' : '1',
+  const zTop=218, zH=972;
+  Object.entries(COL).forEach(([k,c])=>{
+    // zone bg
+    const z = el('div','desk-zone',{
+      left:c.zx+'px', top:zTop+'px', width:c.zw+'px', height:zH+'px',
+      borderColor:`rgba(${c.rgba},${c.live?.14:.08})`,
+      background:`rgba(${c.rgba},${c.live?.028:.015})`,
     });
-    canvas.appendChild(zone);
+    canvas.appendChild(z);
 
-    // Desk label
-    const lbl = document.createElement('div');
-    lbl.className = 'desk-label';
-    Object.assign(lbl.style, { left:(c.zx+14)+'px', top:(zoneTop+8)+'px', color:c.color });
-    lbl.innerHTML = `<span class="dl-ico" style="background:rgba(${c.rgba},.1);border-color:rgba(${c.rgba},.3)">${desk.ico}</span>${desk.label}`;
+    // desk label (top-left of zone)
+    const lbl = el('div','desk-label',{left:(c.zx+14)+'px', top:(zTop+8)+'px', color:c.color});
+    lbl.innerHTML=`<span class="dl-ico" style="background:rgba(${c.rgba},.1);border-color:rgba(${c.rgba},.3)">${c.ico}</span>${c.label}`;
     canvas.appendChild(lbl);
 
-    // Allocation badge
-    const abadge = document.createElement('div');
-    abadge.className = 'desk-alloc';
-    Object.assign(abadge.style, {
-      left: (c.zx + c.zw - 10) + 'px',
-      top:  (zoneTop + 8) + 'px',
-      transform: 'translateX(-100%)',
-      color: c.color,
-      background: `rgba(${c.rgba},.07)`,
-      borderColor: `rgba(${c.rgba},.22)`,
+    // alloc badge (top-right of zone)
+    const ab = el('div','desk-alloc',{
+      left:(c.zx+c.zw-10)+'px', top:(zTop+8)+'px', transform:'translateX(-100%)',
+      color:c.color, background:`rgba(${c.rgba},.07)`, borderColor:`rgba(${c.rgba},.22)`,
     });
-    abadge.textContent = desk.alloc === '—' ? '⏳ soon' : desk.alloc+' capital';
-    canvas.appendChild(abadge);
+    ab.textContent = c.alloc;
+    canvas.appendChild(ab);
   });
 }
 
-/* ═══════════════════════════════════════════════════════
-   RENDER CAPITAL ALLOCATOR
-═══════════════════════════════════════════════════════ */
-function renderCapitalAllocator() {
-  const el = document.createElement('div');
-  el.className = 'capital-allocator';
-  Object.assign(el.style, { left:CA_X+'px', top:CA_Y+'px', width:CA_W+'px' });
-  el.innerHTML = `
+// 2. Capital Allocator node
+function renderCA() {
+  const d = el('div','capital-allocator',{ left:CA_X+'px', top:CA_Y+'px', width:CA_W+'px' });
+  d.innerHTML=`
     <div class="ca-head">
       <div class="ca-ico">💰</div>
-      <div>
-        <div class="ca-tag">AI Desk Manager</div>
-        <div class="ca-title">Capital Allocator</div>
-      </div>
+      <div><div class="ca-tag">AI Desk Manager</div><div class="ca-title">Capital Allocator</div></div>
     </div>
     <div class="ca-desc">Gestisce l'allocazione dinamica del capitale tra i desk operativi · in sviluppo</div>
     <div class="ca-allocs">
-      <div class="ca-alloc football"><span class="ca-pulse live"></span>⬡ Football &middot; 60%</div>
-      <div class="ca-alloc meme"><span class="ca-pulse live"></span>🚀 Meme Coin &middot; 40%</div>
-      <div class="ca-alloc tennis"><span class="ca-pulse pend"></span>🎾 Tennis &middot; presto</div>
+      <div class="ca-alloc f"><span class="cad live"></span>⬡ Football &middot; 60%</div>
+      <div class="ca-alloc m"><span class="cad live"></span>🚀 Meme Coin &middot; 40%</div>
+      <div class="ca-alloc t"><span class="cad pend"></span>🎾 Tennis &middot; presto</div>
     </div>`;
-  canvas.appendChild(el);
+  canvas.appendChild(d);
 }
 
-/* ═══════════════════════════════════════════════════════
-   RENDER NODES
-═══════════════════════════════════════════════════════ */
+// 3. Pipeline nodes
 function renderNodes() {
-  DESKS.forEach(desk => {
-    const col = COL[desk.id];
-    const isPend = col.status === 'pending';
-
-    const wrap = document.createElement('div');
-    wrap.className = `d-${desk.id}`;
-    wrap.style.cssText = 'position:absolute;inset:0;pointer-events:none;';
-
-    desk.nodes.forEach((n, i) => {
-      const el = document.createElement('div');
-      el.className = 'node';
-      el.dataset.uid = `${desk.id}_${i}`;
-      el.style.left = col.nx + 'px';
-      el.style.top  = YS[i] + 'px';
-      el.style.pointerEvents = 'all';
-      el.innerHTML = `
+  Object.entries(COL).forEach(([k,c])=>{
+    const wrap = el('div',`d-${k}`,{position:'absolute',inset:'0',pointerEvents:'none'});
+    DESKS[k].forEach((n,i)=>{
+      const nd = el('div','node',{left:c.nx+'px', top:NY[i]+'px', pointerEvents:'all'});
+      nd.innerHTML=`
         <div class="head">
-          <div class="ico">${n.ico||'·'}</div>
-          <div class="tag">${n.tag}</div>
+          <div class="ico">${n.ico}</div>
+          <div class="ntag">${n.tag}</div>
         </div>
-        <h4>${n.title}</h4>
-        <p>${n.desc}</p>
-        <div class="nfoot">
+        <h4>${n.h}</h4>
+        <p>${n.d}</p>
+        <div class="nft">
           <span>layer ${String(i+1).padStart(2,'0')}</span>
-          <span style="color:var(--green)"><span class="npulse" style="background:var(--green);box-shadow:0 0 6px var(--green)"></span>live</span>
+          <span style="color:var(--green)"><span class="np g"></span>live</span>
         </div>`;
-      wrap.appendChild(el);
+      wrap.appendChild(nd);
     });
     canvas.appendChild(wrap);
   });
 }
 
-/* ═══════════════════════════════════════════════════════
-   RENDER EDGES
-═══════════════════════════════════════════════════════ */
+// 4. SVG edges (all static coordinates — no getBoundingClientRect)
 function renderEdges() {
-  const cab = caBottomCenter();
+  Object.entries(COL).forEach(([k,c])=>{
+    const cx = c.cx;
 
-  DESKS.forEach(desk => {
-    const col  = COL[desk.id];
-    const live = col.status === 'live';
-    const ec   = live ? `hi-${col.cls}` : 'edge';
-    const fc   = `flow-${col.cls}`;
-
-    // Internal pipeline edges (node i → i+1)
-    for (let i = 0; i < desk.nodes.length - 1; i++) {
-      const a = nodeCenter(`${desk.id}_${i}`);
-      const b = nodeCenter(`${desk.id}_${i+1}`);
-      if (!a || !b) continue;
-      mkPath('edge', bez(a.x, a.bot, b.x, b.top));
-      if (live) mkPath(fc, bez(a.x, a.bot, b.x, b.top));
+    // Internal vertical edges (node bottom → next node top)
+    for(let i=0;i<DESKS[k].length-1;i++){
+      const ay = NY[i]+NH, by = NY[i+1];
+      path('edge', bez(cx,ay,cx,by));
+      if(c.live) path(`fl-${k}`, bez(cx,ay,cx,by));
     }
 
-    // Capital Allocator → desk top node
-    const first = nodeCenter(`${desk.id}_0`);
-    if (!first) return;
-
-    if (desk.id === 'tennis') {
-      // Coming soon: dashed, no flow animation
-      mkPath('ca-t', bezLateral(cab.x, cab.y, first.x, first.top));
+    // Capital Allocator → first node of this desk
+    const fy = NY[0];
+    if(k==='t'){
+      path('ca-t', bezLat(CA_CX, CA_BY, cx, fy));
     } else {
-      mkPath(`ca-${col.cls}`, bezLateral(cab.x, cab.y, first.x, first.top));
+      path(`ca-${k}`, bezLat(CA_CX, CA_BY, cx, fy));
     }
   });
 }
 
-/* ═══════════════════════════════════════════════════════
-   COMING SOON BADGE
-═══════════════════════════════════════════════════════ */
-function renderComingSoonBadge() {
-  const cab   = caBottomCenter();
-  const first = nodeCenter('tennis_0');
-  if (!first) return;
+// 5. "Coming Soon" badge on the Tennis line (at bezier midpoint)
+function renderComingSoon() {
+  // Midpoint of bezLat from (CA_CX, CA_BY) to (COL.t.cx, NY[0])
+  const x1=CA_CX, y1=CA_BY, x2=COL.t.cx, y2=NY[0];
+  const mx = (x1+x2)/2 + 24;
+  const my = (y1+y2)/2 - 6;
 
-  // Midpoint of the bezier arc
-  const mx = (cab.x + first.x) / 2 + 20;
-  const my = (cab.y + first.top) / 2 - 8;
-
-  const badge = document.createElement('div');
-  badge.className = 'cs-badge';
-  badge.innerHTML = '⏳ &nbsp;COMING SOON';
-  badge.style.left = (mx - 68) + 'px';
-  badge.style.top  = (my - 11) + 'px';
-  canvas.appendChild(badge);
+  const b = el('div','cs-badge',{ left:(mx-72)+'px', top:(my-12)+'px' });
+  b.innerHTML='⏳ &nbsp;COMING SOON';
+  canvas.appendChild(b);
 }
 
-/* ═══════════════════════════════════════════════════════
-   LANE LABELS (right edge)
-═══════════════════════════════════════════════════════ */
+// 6. Lane labels (right edge)
 function renderLaneLabels() {
-  const labels = [
-    '01 · Data Sources',
-    '02 · Collection',
-    '03 · Models',
-    '04 · Ensemble',
-    '05 · Analysis',
-    '06 · Strategy',
-    '07 · Risk Mgmt',
-    '08 · Execution',
-  ];
-  labels.forEach((lbl, i) => {
-    const el = document.createElement('div');
-    el.className = 'lane-lbl';
-    el.style.top  = (YS[i] + 32) + 'px';
-    el.style.right = '14px';
-    el.textContent = lbl;
-    canvas.appendChild(el);
+  LANE_LABELS.forEach((lbl,i)=>{
+    const e = el('div','lane-lbl',{ top:(NY[i]+NH/2-5)+'px', right:'14px' });
+    e.textContent = lbl;
+    canvas.appendChild(e);
   });
 }
 
-/* ═══════════════════════════════════════════════════════
-   CLOCK
-═══════════════════════════════════════════════════════ */
-function tick() {
-  document.getElementById('clock').textContent =
-    new Date().toISOString().slice(11,19) + ' UTC';
-}
+// 7. Clock
+function tick(){ document.getElementById('clock').textContent = new Date().toISOString().slice(11,19)+' UTC'; }
 
-/* ═══════════════════════════════════════════════════════
-   INIT
-═══════════════════════════════════════════════════════ */
-(function init() {
-  renderZones();
-  renderCapitalAllocator();
-  renderNodes();
-  document.fonts.ready.then(() => {
-    renderEdges();
-    renderComingSoonBadge();
-    renderLaneLabels();
-  });
-  tick(); setInterval(tick, 1000);
-})();
+/* ════════════════ INIT ════════════════ */
+renderZones();
+renderCA();
+renderNodes();
+renderEdges();      // static coords → runs synchronously, no timing issues
+renderComingSoon();
+renderLaneLabels();
+tick(); setInterval(tick,1000);
 </script>
 </body>
 </html>
