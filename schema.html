@@ -20,6 +20,10 @@
     --accent: var(--magenta);
     --accent-rgb: 255,92,242;
   }
+  body.is-tennis {
+    --accent: var(--amber);
+    --accent-rgb: 255,181,71;
+  }
   * { box-sizing: border-box; }
   html, body { margin:0; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; }
   .mono { font-family:'JetBrains Mono',monospace; }
@@ -73,6 +77,8 @@
   .sw-btn.football.active { color:var(--cyan); background:rgba(0,229,255,.08); border-color:rgba(0,229,255,.35); }
   .sw-btn.meme .sw-ico { background:rgba(255,92,242,.1); border:1px solid rgba(255,92,242,.25); }
   .sw-btn.meme.active { color:var(--magenta); background:rgba(255,92,242,.08); border-color:rgba(255,92,242,.35); }
+  .sw-btn.tennis .sw-ico { background:rgba(255,181,71,.1); border:1px solid rgba(255,181,71,.25); }
+  .sw-btn.tennis.active { color:var(--amber); background:rgba(255,181,71,.08); border-color:rgba(255,181,71,.35); }
 
   .grow { flex:1; min-width:0; }
   .pill {
@@ -269,6 +275,9 @@
     </button>
     <button class="sw-btn meme" data-schema="meme" onclick="switchSchema('meme')">
       <span class="sw-ico">🚀</span> Meme Coin
+    </button>
+    <button class="sw-btn tennis" data-schema="tennis" onclick="switchSchema('tennis')">
+      <span class="sw-ico">🎾</span> Tennis AI
     </button>
   </div>
 
@@ -546,6 +555,135 @@ const DATA_MEME = {
 };
 
 /* ══════════════════════════════════════════════════════
+   DATA — TENNIS
+══════════════════════════════════════════════════════ */
+const DATA_TENNIS = {
+  canvasW: 1200, canvasH: 1580,
+  title: 'Pipeline <span>ATP/WTA → Quote → Value Bet</span>',
+  sub: 'Flusso dati end-to-end · Betfair Exchange primary · Elo surface-adj. + Serve Model · Kelly sizing',
+  kpis: [{l:'Agenti',v:'8'},{l:'Tornei',v:'12'},{l:'Modelli',v:'3'},{l:'Mercati',v:'30+',up:true},{l:'Refresh',v:'5m',up:true}],
+  pillTxt: '8 agenti online', pillMode: 'paper · ATP/WTA',
+  buildTxt: 'build #1.0.0 · 2026-05-11',
+  overviewEyebrow: 'SYSTEM OVERVIEW', overviewTitle: 'Tennis AI v1.0',
+  overviewSub: '8 agenti · ATP + WTA · 12 tornei · paper trading',
+  legend: [
+    {l:'all',t:'ALL'},{l:'source',t:'SOURCES'},{l:'collect',t:'COLLECT'},
+    {l:'model',t:'MODELS'},{l:'ensemble',t:'ENSEMBLE'},{l:'value',t:'VALUE'},
+    {l:'parallel',t:'PARALLEL'},{l:'output',t:'OUTPUT'},
+  ],
+  nodes: [
+    {id:"S1",layer:"source",x:15,y:70,ico:"🎾",tag:"REST",title:"Tennis-Data API",
+     desc:"Fixture storici ATP + WTA.\nElo pre-calcolati per player.\nH2H, surface stats, ranking.",
+     schema:{endpoint:"tennis-data.co.uk/api",auth:"api-key",cache:"6h",covers:"ATP+WTA"},
+     metrics:{matches:"200K+",surfaces:"3",lag:"6h",err:"0.0%"},status:"ok"},
+    {id:"S2",layer:"source",x:215,y:70,ico:"🔷",tag:"REST",title:"Betfair Exchange",
+     desc:"Quote live best-back (PRIMARY)\nMatch Winner + Set Betting.\nIn-play markets disponibili.",
+     schema:{endpoint:"api.betfair.com/exchange/betting/rest/v1.0",auth:"session-token",refresh:"ogni ciclo",markets:"30+ live"},
+     metrics:{tornei:"12",mercati:"30+",latency:"~200ms",err:"0.0%"},status:"ok"},
+    {id:"S3",layer:"source",x:415,y:70,ico:"📊",tag:"REST",title:"Serve & Return Stats",
+     desc:"1st serve % · aces/game.\nBP conversion rate.\nReturn pts won per surface.",
+     schema:{endpoint:"open-tennis.com/api",auth:"api-key",cache:"1h",data:"serve+return+BP"},
+     metrics:{players:"4500+",stats:"25 vars",lag:"1h",err:"0%"},status:"ok"},
+    {id:"S4",layer:"source",x:615,y:70,ico:"🏟️",tag:"REST",title:"Tournament Context",
+     desc:"Torneo: superficie · round.\nDraw bracket · seeding.\nInfortuni ufficiali ATP/WTA.",
+     schema:{endpoint:"atp-tennis.api+wtatennis",auth:"api-key",cache:"30m"},
+     metrics:{tornei:"12",draw:"live",injuries:"daily",err:"0%"},status:"ok"},
+    {id:"S5",layer:"source",x:815,y:70,ico:"⚡",tag:"POLL",title:"Live Score Feed",
+     desc:"Score live per in-play.\nSet score, game corrente,\ntiebreak status · momentum.",
+     schema:{endpoint:"sofascore.com/api",method:"poll-5m",auth:"none"},
+     metrics:{latency:"<10s",matches:"live",err:"0.1%"},status:"ok"},
+    {id:"S6",layer:"source",x:1015,y:70,ico:"📈",tag:"REST",title:"Sharp Closing Lines",
+     desc:"Quote storiche · closing line.\nValue calibration long-term.\nSharp action detection.",
+     schema:{endpoint:"odds-api · fallback",auth:"api-key",trigger:"calibration run"},
+     metrics:{history:"3yr",markets:"match winner",err:"0.1%"},status:"ok"},
+
+    {id:"DC",layer:"collect",x:509,y:240,ico:"🔄",tag:"AGENT",title:"DataCollectorAgent",
+     desc:"Ciclo 5m (2m pre-match).\nBetfair → fallback Odds API.\nFuzzy match player cross-source:\nNFKD + SequenceMatcher ≥ 0.70\n→ Redis market:tennis",
+     schema:{schedule:"5min · 2min pre-match",fuzzy_algo:"NFKD + SequenceMatcher",threshold:"0.70",retries:3,redis_out:"market:tennis"},
+     metrics:{events:"+40/ciclo",tornei:"12",lag:"<30s",err:"0.1%"},status:"ok"},
+
+    {id:"M1",layer:"model",x:50,y:430,ico:"📐",tag:"ELO",title:"Elo Surface Model",
+     desc:"Elo generale + surface-specific\n(clay / grass / hard separati).\nDecay 0.99/match · K=32.\nRefit post ogni torneo.",
+     schema:{family:"Elo surface-adj.",K_factor:"32",decay:"0.99/match",surfaces:"clay · grass · hard"},
+     metrics:{players:"4500+",surfaces:"3",refresh:"post-match",err:"0%"},status:"ok"},
+    {id:"M2",layer:"model",x:509,y:430,ico:"🎾",tag:"SERVE",title:"Serve & Return Model",
+     desc:"Feature: 1st serve %, aces/game,\nBP conversion, return pts won.\nGradient Boost · last 100 match.",
+     schema:{algo:"GradientBoosting",features:"25 serve+return vars",train:"last 100 matches/player"},
+     metrics:{accuracy:"68%",features:"25",refresh:"weekly",err:"0%"},status:"ok"},
+    {id:"M3",layer:"model",x:940,y:430,ico:"⚡",tag:"FATIGUE",title:"Fatigue Adjustment",
+     desc:"Days rest · sets last 7 gg\ntravel distance · altitude.\nAdjust p ± 0.03 per fattore.",
+     schema:{factors:"rest·sets·travel·altitude",impact:"±0.03 p",update:"pre-match daily"},
+     metrics:{features:"8 vars",impact:"±0.03 p",err:"0%"},status:"ok"},
+
+    {id:"MA",layer:"ensemble",x:509,y:590,ico:"🧠",tag:"AGENT",title:"ModelAgent",
+     desc:"Combina Elo + Serve + Fatigue.\nConformal Prediction CI (α=0.10).\n90% coverage.\n→ Redis model:tennis_probs",
+     schema:{CI:"conformal α=0.10",output:"p_p1 · p_p2\nci_low · ci_high",refit:"weekly"},
+     metrics:{latency:"~1.0s",matches:"+40/ciclo",err:"0%"},status:"ok"},
+    {id:"P1",layer:"parallel",x:940,y:590,ico:"💓",tag:"MONITOR",title:"MonitorAgent",
+     desc:"Heartbeat ogni 30s.\nDrift PSI ogni 24h.\nIn-play suspension watcher.",
+     schema:{heartbeat:"30s",psi_check:"daily",inplay_watch:"ogni set"},
+     metrics:{uptime:"99.8%",checks:"2880/d",err:"0%"},status:"ok"},
+
+    {id:"AA",layer:"value",x:509,y:750,ico:"📈",tag:"AGENT",title:"AnalystAgent",
+     desc:"edge = p_modello − 1/odds_betfair\nSoglia adattiva:\n• Betfair/sharp: edge ≥ 2.5%\n• Soft: edge ≥ 5%",
+     schema:{edge_sharp:"≥ 2.5%",edge_soft:"≥ 5%",redis_in:"model:tennis_probs",redis_out:"analyst:tennis_opps"},
+     metrics:{flagged:"~15/d",skip:"~25/d",err:"0%"},status:"ok"},
+    {id:"P2",layer:"parallel",x:940,y:750,ico:"🔬",tag:"RESEARCH",title:"ResearchAgent",
+     desc:"Ollama llama3.2 · summaries\npre-match: notizie, condizioni,\nstato fisico, motivazione.",
+     schema:{model:"llama3.2:3b",trigger:"pre-match 24h",output:"match_research → Neon"},
+     metrics:{queries:"~20/d",confidence:"75%",err:"0%"},status:"ok"},
+
+    {id:"ST",layer:"ensemble",x:509,y:910,ico:"🎯",tag:"AGENT",title:"StrategistAgent",
+     desc:"Conviction score 0–10\n(Claude API + rule-based fallback).\nFiltra edge + surface fit + fatica.\nSkip se conviction < 6.",
+     schema:{model:"claude-sonnet-4-6",fallback:"rule-based",threshold:"6 / 10"},
+     metrics:{approved:"~65%",skip:"~35%",latency:"~800ms"},status:"ok"},
+
+    {id:"RM",layer:"value",x:509,y:1070,ico:"🛡️",tag:"AGENT",title:"RiskManagerAgent",
+     desc:"Kelly frazionato (f=0.25):\nstake = min(kelly×0.25×BK, 3%×BK)\nGate: completeness < 75% → DLQ\nBlocco mensile: drawdown > 12%",
+     schema:{kelly_fraction:"0.25",max_single:"3% bankroll",max_exposure:"8% bankroll",drawdown_block:"12%/mese"},
+     metrics:{stake_range:"3–12 €",exposure_max:"€ 40",bets_oggi:"5",block_rate:"~5%"},status:"ok"},
+
+    {id:"TR",layer:"output",x:509,y:1230,ico:"💸",tag:"AGENT",title:"TraderAgent",
+     desc:"PAPER: salva bet su Neon DB.\nLIVE: place_bet() Betfair REST.\nTelegram alert ogni bet\ncon edge > 3%.",
+     schema:{mode:"PAPER_TRADING=true",live_fn:"place_bet() → Betfair REST",alert:"edge > 3%"},
+     metrics:{bets_oggi:"5",mode:"● paper",p_l:"tracking",err:"0%"},status:"ok"},
+
+    {id:"O1",layer:"output",x:50,y:1400,ico:"🗄️",tag:"NEON DB",title:"PostgreSQL (Neon)",
+     desc:"match_predictions · bets\nagent_heartbeats · match_research\ndead_letter_preds",
+     schema:{host:"neon.tech · serverless cloud",tables:"7",size:"4 GB"},
+     metrics:{p_l:"tracked",heartbeats:"ogni 30s",err:"0%"},status:"ok"},
+    {id:"O2",layer:"output",x:509,y:1400,ico:"🖥️",tag:"VERCEL",title:"Dashboard (Vercel)",
+     desc:"Pipeline live · Previsioni\nP&L paper tracking.\nagentic-markets-hub.vercel.app",
+     schema:{host:"vercel.com",stack:"Next.js 14",url:"agentic-markets-hub.vercel.app"},
+     metrics:{uptime:"99.9%",always_on:"sì",err:"0%"},status:"ok"},
+    {id:"O3",layer:"output",x:940,y:1400,ico:"📱",tag:"TELEGRAM",title:"Telegram Alert",
+     desc:"Alert per ogni bet: match,\nselezione, edge %, stake €,\nodds Betfair live.",
+     schema:{trigger:"edge > 3%",format:"markdown"},
+     metrics:{bets_oggi:"5",trigger:"> 3% edge",err:"0%"},status:"ok"},
+  ],
+  edges: [
+    ["S1","DC"],["S2","DC"],["S3","DC"],["S4","DC"],["S5","DC"],["S6","DC"],
+    ["DC","M1"],["DC","M2"],["DC","M3"],
+    ["M1","MA"],["M2","MA"],["M3","MA"],
+    ["MA","AA"],["AA","ST"],["ST","RM"],["RM","TR"],
+    ["TR","O1"],["TR","O2"],["TR","O3"],
+    ["P1","O2"],["P2","O1"],
+  ],
+  hot: [["S2","DC"],["DC","M2"],["M2","MA"],["MA","AA"],["AA","ST"],["ST","RM"],["RM","TR"],["TR","O2"]],
+  lanes: [
+    {y:38,  label:"01 — Data Sources (6 fonti · ATP/WTA · Betfair · Serve Stats · Contesto)"},
+    {y:208, label:"02 — Data Collection · fuzzy matching player cross-source"},
+    {y:398, label:"03 — Modelli (Elo Surface-Adj. · Serve & Return · Fatigue)"},
+    {y:558, label:"04 — ModelAgent (ensemble + Conformal CI) ·· MonitorAgent"},
+    {y:718, label:"05 — Analyst (edge detection) ·· Research (AI summaries pre-match)"},
+    {y:878, label:"06 — Strategist (conviction AI · Claude · surface fit)"},
+    {y:1038,label:"07 — Risk Management (Kelly f=0.25 · 3% cap · drawdown 12%)"},
+    {y:1198,label:"08 — Execution (paper / live · Betfair REST)"},
+    {y:1368,label:"09 — Output & Delivery"},
+  ],
+};
+
+/* ══════════════════════════════════════════════════════
    STATE & ELEMENTS
 ══════════════════════════════════════════════════════ */
 let activeSchema = 'football';
@@ -564,12 +702,13 @@ function switchSchema(name) {
   // Body class for CSS accent
   document.body.classList.toggle('is-football', name === 'football');
   document.body.classList.toggle('is-meme', name === 'meme');
+  document.body.classList.toggle('is-tennis', name === 'tennis');
 
   // Switch buttons
   document.querySelectorAll('.sw-btn').forEach(b =>
     b.classList.toggle('active', b.dataset.schema === name));
 
-  const D = name === 'football' ? DATA_FOOTBALL : DATA_MEME;
+  const D = name === 'football' ? DATA_FOOTBALL : (name === 'meme' ? DATA_MEME : DATA_TENNIS);
 
   // Update pills
   document.getElementById('pill-txt').textContent = D.pillTxt;
@@ -722,7 +861,7 @@ function highlightNeighbors(id, on) {
     return;
   }
   if (!id) return;
-  const D = activeSchema==='football' ? DATA_FOOTBALL : DATA_MEME;
+  const D = activeSchema==='football' ? DATA_FOOTBALL : (activeSchema==='meme' ? DATA_MEME : DATA_TENNIS);
   const ups=new Set(), downs=new Set();
   D.edges.forEach(([a,b]) => { if(b===id) ups.add(a); if(a===id) downs.add(b); });
   document.querySelectorAll('.edge').forEach(e => {
@@ -777,7 +916,7 @@ function renderOverview(D) {
       </div>
       <h5>Hint</h5>
       <p style="margin:0;font-size:12px;color:var(--muted);line-height:1.55">Clicca un nodo per dettagli e payload. Hover per evidenziare connessioni. Clicca una lega per dettagli mercato.</p>`;
-  } else {
+  } else if (activeSchema === 'meme') {
     document.getElementById('p-body').innerHTML = `
       <h5>Hot path (DexScreener → paper trade)</h5>
       <div class="codeblock">DexScreener Profiles + Boosts
@@ -807,6 +946,38 @@ function renderOverview(D) {
       </div>
       <h5>Hint</h5>
       <p style="margin:0;font-size:12px;color:var(--muted);line-height:1.55">Clicca un nodo per dettagli e payload. Hover per evidenziare connessioni.</p>`;
+  } else {
+    document.getElementById('p-body').innerHTML = `
+      <h5>Hot path (Betfair → value bet)</h5>
+      <div class="codeblock">Betfair Exchange (PRIMARY)
+→ DataCollectorAgent (fuzzy match cross-source)
+→ Redis market:tennis
+→ ModelAgent
+   ├─ Elo Surface-Adj. (clay/grass/hard)
+   ├─ Serve & Return Model (GradBoost 25 var)
+   └─ Fatigue Adjustment (rest·sets·travel)
+   └─ Conformal CI α=0.10 (90% coverage)
+→ AnalystAgent (edge = p - 1/odds)
+→ StrategistAgent (conviction ≥ 6)
+→ RiskManagerAgent (Kelly f=0.25)
+→ TraderAgent (paper → Neon DB)</div>
+      <h5>Metriche sistema</h5>
+      <div class="kv">
+        <span>Bankroll</span><b>€ 500</b>
+        <span>Stake max</span><b>€ 12 (3%)</b>
+        <span>Edge min (sharp)</span><b>2.5%</b>
+        <span>Edge min (soft)</span><b>5%</b>
+        <span>Drawdown block</span><b style="color:var(--red)">12%/mese</b>
+        <span>Kelly fraction</span><b>0.25</b>
+      </div>
+      <h5>Superfici coperte</h5>
+      <div class="kv">
+        <span>Clay</span><b style="color:var(--amber)">Roland Garros · Monte Carlo</b>
+        <span>Grass</span><b style="color:var(--green)">Wimbledon · Queens</b>
+        <span>Hard</span><b style="color:var(--cyan)">AO · USO · Masters 1000</b>
+      </div>
+      <h5>Hint</h5>
+      <p style="margin:0;font-size:12px;color:var(--muted);line-height:1.55">Clicca un nodo per dettagli e payload. Hover per evidenziare connessioni.</p>`;
   }
 }
 
@@ -814,7 +985,7 @@ function renderOverview(D) {
    PANEL — NODE DETAIL
 ══════════════════════════════════════════════════════ */
 function renderNodePanel(id) {
-  const D = activeSchema==='football' ? DATA_FOOTBALL : DATA_MEME;
+  const D = activeSchema==='football' ? DATA_FOOTBALL : (activeSchema==='meme' ? DATA_MEME : DATA_TENNIS);
   const n = D.nodes.find(x => x.id===id);
   if (!n) return;
   document.getElementById('p-eyebrow').textContent = `LAYER · ${n.layer.toUpperCase()}`;
