@@ -254,6 +254,45 @@
   .ev-row .edgeval { color:var(--green); font-weight:600; }
   .ev-row .meta { color:var(--dim); font-size:9px; }
   .footer-bar { padding:8px 16px; border-top:1px solid var(--line); font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--dim); display:flex; justify-content:space-between; }
+
+  /* ── CAPITAL ALLOCATOR BAR ── */
+  .ca-bar {
+    position:sticky; top:52px; z-index:20;
+    display:flex; align-items:center; gap:12px; padding:0 16px;
+    height:44px;
+    background:rgba(7,9,13,.92); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .ca-label {
+    display:flex; align-items:center; gap:7px;
+    font-size:10px; font-weight:700; color:var(--muted);
+    font-family:'JetBrains Mono',monospace; letter-spacing:.08em;
+    text-transform:uppercase; flex-shrink:0;
+  }
+  .ca-label .ca-ico {
+    width:20px; height:20px; border-radius:5px; display:grid; place-items:center;
+    background:rgba(0,229,255,.08); border:1px solid rgba(0,229,255,.2); font-size:10px;
+  }
+  .ca-divider { width:1px; height:20px; background:var(--line); flex-shrink:0; }
+  .ca-allocs { display:flex; gap:6px; }
+  .ca-chip {
+    display:flex; align-items:center; gap:6px; padding:4px 10px; border-radius:8px;
+    font-size:10px; font-weight:600; border:1px solid var(--line);
+    background:rgba(14,19,28,.6); color:var(--muted);
+    transition:all .2s ease; cursor:default; white-space:nowrap;
+  }
+  .ca-chip .ca-dot {
+    width:5px; height:5px; border-radius:50%; flex-shrink:0;
+    background:var(--dim);
+  }
+  .ca-chip.active-f { color:var(--cyan);    background:rgba(0,229,255,.08);   border-color:rgba(0,229,255,.3);   }
+  .ca-chip.active-f .ca-dot { background:var(--cyan);    box-shadow:0 0 6px var(--cyan);    animation:blip 1.4s ease-in-out infinite; }
+  .ca-chip.active-m { color:var(--magenta); background:rgba(255,92,242,.08);  border-color:rgba(255,92,242,.3);  }
+  .ca-chip.active-m .ca-dot { background:var(--magenta); box-shadow:0 0 6px var(--magenta); animation:blip 1.4s ease-in-out infinite; }
+  .ca-chip.active-t { color:var(--amber);   background:rgba(255,181,71,.08);  border-color:rgba(255,181,71,.3);  }
+  .ca-chip.soon { opacity:.5; cursor:default; }
+  .ca-soon { font-size:8px; font-family:'JetBrains Mono',monospace; color:var(--amber); border:1px solid rgba(255,181,71,.3); border-radius:4px; padding:1px 5px; }
+
   @media (max-width:860px) {
     .stage { display:block; }
     .canvas-wrap { overflow-x:auto; padding:12px; }
@@ -285,6 +324,25 @@
   <span class="pill" id="pill-agents"><span class="dot"></span> <span id="pill-txt">8 agenti online</span></span>
   <span class="pill mono" id="pill-mode">10 bet oggi · paper</span>
   <div class="legend" id="legend"></div>
+</div>
+
+<div class="ca-bar">
+  <div class="ca-label">
+    <span class="ca-ico">⚖</span>
+    Capital Allocator
+  </div>
+  <div class="ca-divider"></div>
+  <div class="ca-allocs">
+    <div class="ca-chip active-f" id="ca-chip-f">
+      <span class="ca-dot"></span>⬡ Football AI · <b>60%</b>
+    </div>
+    <div class="ca-chip" id="ca-chip-m">
+      <span class="ca-dot"></span>🚀 Meme Coin · <b>40%</b>
+    </div>
+    <div class="ca-chip soon" id="ca-chip-t">
+      <span class="ca-dot"></span>🎾 Tennis AI · <span class="ca-soon">COMING SOON</span>
+    </div>
+  </div>
 </div>
 
 <div class="stage">
@@ -707,6 +765,11 @@ function switchSchema(name) {
   // Switch buttons
   document.querySelectorAll('.sw-btn').forEach(b =>
     b.classList.toggle('active', b.dataset.schema === name));
+
+  // Capital Allocator highlight
+  document.getElementById('ca-chip-f').className = 'ca-chip' + (name==='football' ? ' active-f' : '');
+  document.getElementById('ca-chip-m').className = 'ca-chip' + (name==='meme'     ? ' active-m' : '');
+  document.getElementById('ca-chip-t').className = 'ca-chip soon' + (name==='tennis' ? ' active-t' : '');
 
   const D = name === 'football' ? DATA_FOOTBALL : (name === 'meme' ? DATA_MEME : DATA_TENNIS);
 
