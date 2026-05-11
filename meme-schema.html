@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Meme Coin — Architecture v1.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#07090d; --bg-2:#0b0e14; --panel:#0e131c; --panel-2:#121826;
+    --line:#1a2233; --line-2:#243049; --text:#e6edf7; --muted:#7d8aa3; --dim:#4a5774;
+    --cyan:#00e5ff; --cyan-2:#7df9ff; --amber:#ffb547; --green:#32e0a0;
+    --magenta:#ff5cf2; --red:#ff5d6c; --violet:#9b8cff;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin:0; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; }
+  .mono { font-family:'JetBrains Mono',monospace; }
+  body {
+    min-height:100vh;
+    background: radial-gradient(1200px 700px at 80% -10%, rgba(255,92,242,.06), transparent 60%),
+                radial-gradient(900px 600px at -10% 110%, rgba(155,140,255,.06), transparent 60%),
+                var(--bg);
+    overflow-x: hidden;
+  }
+  body::before {
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size:56px 56px;
+    mask-image: radial-gradient(ellipse at 50% 30%, black 40%, transparent 80%);
+  }
+  .topbar {
+    position:sticky; top:0; z-index:30; display:flex; flex-wrap:wrap; align-items:center; gap:12px;
+    padding:10px 16px; background:rgba(7,9,13,.85); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand { display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px; }
+  .brand-dot { width:10px; height:10px; border-radius:50%; background:var(--magenta); box-shadow:0 0 14px var(--magenta); }
+  .brand small { color:var(--muted); font-weight:500; font-size:11px; margin-left:4px; }
+  .crumb { color:var(--dim); font-size:11px; letter-spacing:.14em; text-transform:uppercase; }
+  .crumb b { color:var(--text); font-weight:600; }
+  .grow { flex:1; }
+  .pill {
+    display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:999px;
+    background:var(--panel-2); border:1px solid var(--line); font-size:10px; color:var(--muted);
+    font-family:'JetBrains Mono',monospace;
+  }
+  .pill .dot { width:6px; height:6px; border-radius:50%; background:var(--magenta); box-shadow:0 0 8px var(--magenta); animation:blip 1.4s ease-in-out infinite; }
+  @keyframes blip { 50% { opacity:.35; } }
+  .legend { display:flex; flex-wrap:wrap; gap:6px; }
+  .legend button {
+    background:var(--panel-2); border:1px solid var(--line); color:var(--muted); padding:4px 8px;
+    border-radius:8px; font-size:10px; cursor:pointer; font-family:'JetBrains Mono',monospace;
+    transition:all .15s ease;
+  }
+  .legend button:hover { color:var(--text); border-color:var(--line-2); }
+  .legend button.active { background:rgba(255,92,242,.08); border-color:rgba(255,92,242,.4); color:var(--magenta); }
+  .stage {
+    position:relative; z-index:1; display:grid; grid-template-columns:1fr 380px;
+    min-height:calc(100vh - 56px);
+  }
+  .canvas-wrap { position:relative; padding:16px 16px 40px; overflow-x:auto; overflow-y:visible; }
+  .canvas-title {
+    display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:16px;
+    margin-bottom:14px;
+  }
+  .canvas-title h1 { margin:0; font-size:20px; }
+  .canvas-title h1 span { color:var(--magenta); }
+  .canvas-title p { margin:4px 0 0; color:var(--muted); font-size:12px; }
+  .meta-row { display:flex; flex-wrap:wrap; gap:8px; }
+  .kpi {
+    display:flex; flex-direction:column; gap:2px; padding:6px 10px; border:1px solid var(--line);
+    border-radius:10px; background:rgba(14,19,28,.6); min-width:80px;
+  }
+  .kpi label { font-size:9px; color:var(--dim); letter-spacing:.18em; text-transform:uppercase; }
+  .kpi b { font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text); }
+  .kpi b.up { color:var(--green); }
+  .canvas {
+    position:relative; width:1060px; height:1620px; border:1px solid var(--line); border-radius:14px;
+    background: radial-gradient(800px 400px at 20% 10%, rgba(255,92,242,.04), transparent 50%),
+                radial-gradient(700px 400px at 90% 90%, rgba(155,140,255,.05), transparent 50%),
+                linear-gradient(180deg, rgba(11,14,20,.9), rgba(8,10,16,.95));
+    overflow:visible;
+  }
+  .canvas .grid-bg {
+    position:absolute; inset:0; pointer-events:none;
+    background-image: linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+                      linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+    background-size:40px 40px;
+  }
+  svg.edges { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:2; }
+  .edge { stroke:var(--line-2); stroke-width:1.4; fill:none; opacity:.65; }
+  .edge.hi { stroke:var(--magenta); stroke-width:2; opacity:1; filter:drop-shadow(0 0 6px rgba(255,92,242,.6)); }
+  .edge.dim { opacity:.12; }
+  .flow {
+    stroke:var(--magenta); stroke-width:2; fill:none; stroke-dasharray:2 8;
+    animation:dash 1.2s linear infinite; filter:drop-shadow(0 0 4px rgba(255,92,242,.7));
+  }
+  @keyframes dash { to { stroke-dashoffset:-40; } }
+  .lane {
+    position:absolute; left:18px; font-family:'JetBrains Mono',monospace; font-size:10px;
+    letter-spacing:.22em; color:var(--dim); text-transform:uppercase; z-index:3; pointer-events:none;
+  }
+  .lane b { color:var(--magenta); margin-right:8px; }
+  .lane-line {
+    position:absolute; left:0; right:0; height:1px;
+    background:linear-gradient(90deg,transparent,var(--line-2) 8%,var(--line-2) 92%,transparent);
+    z-index:1;
+  }
+  .node {
+    position:absolute; z-index:4; width:182px;
+    background:linear-gradient(180deg, rgba(18,24,38,.95), rgba(12,16,26,.95));
+    border:1px solid var(--line-2); border-radius:12px; padding:8px 10px 10px;
+    cursor:pointer; transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease, opacity .2s ease;
+    box-shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 8px 24px rgba(0,0,0,.35);
+  }
+  .node:hover { transform:translateY(-2px); border-color:rgba(255,92,242,.5); box-shadow:0 0 0 1px rgba(255,92,242,.25),0 12px 28px rgba(255,92,242,.12); }
+  .node.active { border-color:var(--magenta); box-shadow:0 0 0 1px rgba(255,92,242,.6), 0 0 32px rgba(255,92,242,.25); }
+  .node.faded { opacity:.18; filter:saturate(.4); }
+  .node .head { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+  .node .ico {
+    width:22px; height:22px; border-radius:6px; display:grid; place-items:center;
+    background:rgba(255,92,242,.08); color:var(--magenta); font-size:12px;
+    border:1px solid rgba(255,92,242,.2);
+  }
+  .node .tag { font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:.18em; color:var(--dim); text-transform:uppercase; }
+  .node h4 { margin:0; font-size:12px; font-weight:600; letter-spacing:-.01em; line-height:1.25; }
+  .node p { margin:4px 0 0; font-size:9px; color:var(--muted); line-height:1.45; font-family:'JetBrains Mono',monospace; }
+  .node .footer {
+    margin-top:6px; display:flex; justify-content:space-between; align-items:center;
+    font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--dim);
+    border-top:1px dashed var(--line); padding-top:5px;
+  }
+  .node .footer .ok { color:var(--green); }
+  .node .footer .pending { color:var(--amber); }
+  .node .pulse { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation:blip 1.6s ease-in-out infinite; display:inline-block; vertical-align:-1px; margin-right:4px; }
+  .node .pulse.amber { background:var(--amber); box-shadow:0 0 8px var(--amber); }
+  /* Layer icon colors */
+  .layer-source .ico   { color:var(--cyan);    background:rgba(0,229,255,.09);    border-color:rgba(0,229,255,.25); }
+  .layer-collect .ico  { color:var(--cyan-2);  background:rgba(125,249,255,.08);  border-color:rgba(125,249,255,.25); }
+  .layer-filter .ico   { color:var(--amber);   background:rgba(255,181,71,.09);   border-color:rgba(255,181,71,.25); }
+  .layer-scoring .ico  { color:var(--cyan-2);  background:rgba(125,249,255,.08);  border-color:rgba(125,249,255,.25); }
+  .layer-parallel .ico { color:var(--violet);  background:rgba(155,140,255,.10);  border-color:rgba(155,140,255,.28); }
+  .layer-decision .ico { color:var(--magenta); background:rgba(255,92,242,.09);   border-color:rgba(255,92,242,.25); }
+  .layer-execute .ico  { color:var(--green);   background:rgba(50,224,160,.09);   border-color:rgba(50,224,160,.3); }
+  .layer-output .ico   { color:var(--cyan);    background:rgba(0,229,255,.09);    border-color:rgba(0,229,255,.25); }
+  /* Side panel */
+  .panel {
+    position:sticky; top:56px; align-self:start; height:calc(100vh - 56px);
+    border-left:1px solid var(--line); background:linear-gradient(180deg, var(--panel) 0%, var(--bg-2) 100%);
+    display:flex; flex-direction:column; overflow-y:auto;
+  }
+  .panel-head { padding:16px 18px 12px; border-bottom:1px solid var(--line); }
+  .panel-head .eyebrow { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.22em; color:var(--magenta); text-transform:uppercase; }
+  .panel-head h2 { margin:6px 0 4px; font-size:18px; letter-spacing:-.01em; }
+  .panel-head .sub { color:var(--muted); font-size:11px; font-family:'JetBrains Mono',monospace; }
+  .panel-body { padding:14px 18px; overflow:auto; flex:1; }
+  .panel-body h5 { margin:18px 0 8px; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--dim); font-family:'JetBrains Mono',monospace; }
+  .panel-body h5:first-child { margin-top:0; }
+  .kv { display:grid; grid-template-columns:1fr auto; gap:6px 12px; font-family:'JetBrains Mono',monospace; font-size:11px; }
+  .kv span { color:var(--muted); }
+  .kv b { color:var(--text); font-weight:600; }
+  .codeblock {
+    background:#05080d; border:1px solid var(--line); border-radius:8px; padding:8px 10px;
+    font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--cyan-2);
+    line-height:1.5; white-space:pre-wrap; word-break:break-word;
+  }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .chip {
+    font-family:'JetBrains Mono',monospace; font-size:9px; padding:3px 6px; border-radius:6px;
+    background:rgba(255,92,242,.06); color:var(--magenta); border:1px solid rgba(255,92,242,.2);
+  }
+  .chip.amber  { background:rgba(255,181,71,.07);  color:var(--amber);   border-color:rgba(255,181,71,.25); }
+  .chip.green  { background:rgba(50,224,160,.07);  color:var(--green);   border-color:rgba(50,224,160,.25); }
+  .chip.violet { background:rgba(155,140,255,.07); color:var(--violet);  border-color:rgba(155,140,255,.25); }
+  .chip.cyan   { background:rgba(0,229,255,.06);   color:var(--cyan);    border-color:rgba(0,229,255,.2); }
+  .chip.red    { background:rgba(255,93,108,.07);  color:var(--red);     border-color:rgba(255,93,108,.25); }
+  .neighbors { display:flex; flex-direction:column; gap:6px; }
+  .neighbors button {
+    text-align:left; background:rgba(14,19,28,.7); border:1px solid var(--line); color:var(--text);
+    padding:6px 8px; border-radius:8px; cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:10px;
+    display:flex; justify-content:space-between; align-items:center; transition:all .15s ease;
+  }
+  .neighbors button:hover { border-color:rgba(255,92,242,.4); background:rgba(255,92,242,.05); }
+  .neighbors button .arrow { color:var(--dim); }
+  .neighbors button.up .arrow { color:var(--magenta); }
+  .neighbors button.down .arrow { color:var(--violet); }
+  .footer-bar { padding:8px 16px; border-top:1px solid var(--line); font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--dim); display:flex; justify-content:space-between; }
+  @media (max-width:860px) {
+    .stage { display:block; }
+    .canvas-wrap { overflow-x:auto; padding:12px; }
+    .panel { position:relative; top:0; height:auto; border-left:none; border-top:1px solid var(--line); }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="brand-dot"></span>Agentic&nbsp;Markets <small>/ Meme Coin</small></div>
+  <div class="crumb">SYSTEM &nbsp;›&nbsp; <b>Architecture v1.0</b> &nbsp;›&nbsp; 2026-05-11</div>
+  <div class="grow"></div>
+  <span class="pill"><span class="dot"></span> 9 agenti online</span>
+  <span class="pill mono">paper · Solana</span>
+  <div class="legend" id="legend">
+    <button data-layer="all" class="active">ALL</button>
+    <button data-layer="source">SOURCES</button>
+    <button data-layer="collect">SCOUT</button>
+    <button data-layer="filter">FILTER</button>
+    <button data-layer="scoring">MOMENTUM</button>
+    <button data-layer="parallel">RESEARCH</button>
+    <button data-layer="decision">ENTRY/RISK</button>
+    <button data-layer="execute">EXECUTE</button>
+    <button data-layer="output">OUTPUT</button>
+  </div>
+</div>
+
+<div class="stage">
+  <div class="canvas-wrap">
+    <div class="canvas-title">
+      <div>
+        <h1>Pipeline <span>DexScreener → Signal → Paper Trade</span></h1>
+        <p>Flusso dati end-to-end · Solana chain · Momentum scoring · EV gate · Kelly sizing</p>
+      </div>
+      <div class="meta-row">
+        <div class="kpi"><label>Agenti</label><b class="mono">9</b></div>
+        <div class="kpi"><label>Chain</label><b class="mono">SOL</b></div>
+        <div class="kpi"><label>Campioni</label><b class="mono up">10K</b></div>
+        <div class="kpi"><label>Capital</label><b class="mono">$1K</b></div>
+        <div class="kpi"><label>Scan</label><b class="mono up">30s</b></div>
+      </div>
+    </div>
+
+    <div class="canvas" id="canvas">
+      <div class="grid-bg"></div>
+      <svg class="edges" id="edges" preserveAspectRatio="none"></svg>
+    </div>
+  </div>
+
+  <aside class="panel" id="panel">
+    <div class="panel-head">
+      <div class="eyebrow" id="p-eyebrow">SYSTEM OVERVIEW</div>
+      <h2 id="p-title">Meme Coin v1.0</h2>
+      <div class="sub" id="p-sub">9 agenti · Solana · DexScreener · 10K campioni · paper</div>
+    </div>
+    <div class="panel-body" id="p-body"></div>
+    <div class="footer-bar"><span>build #1.0.0 · 2026-05-11</span><span id="p-time">—</span></div>
+  </aside>
+</div>
+
+<script>
+const NODES = [
+  // ── FONTI DATI ──
+  {id:"S1",layer:"source",x:15,y:70,ico:"🔷",tag:"REST",title:"DexScreener Profiles",
+   desc:"Latest token profiles Solana.\nURL, icon, social links.\nBatch ogni 30s.",
+   schema:{endpoint:"api.dexscreener.com/token-profiles/latest/v1",auth:"none",chain:"solana",refresh:"30s"},
+   metrics:{tokens:"200+/scan",chain:"Solana",latency:"~300ms",err:"0.1%"},status:"ok"},
+
+  {id:"S2",layer:"source",x:215,y:70,ico:"🚀",tag:"REST",title:"DexScreener Boosts",
+   desc:"Latest + Top boosted token.\nBoost score = signal weight.\nFocused 1s order scan top 3.",
+   schema:{endpoint:"token-boosts/latest+top/v1",focused_scan:"1s pair loop",max_focused:"3"},
+   metrics:{boosts:"50+/scan",focused:"top 3",err:"0%"},status:"ok"},
+
+  {id:"S3",layer:"source",x:415,y:70,ico:"📈",tag:"WS",title:"Binance BTCUSDT",
+   desc:"Depth snapshot + trades stream.\nBook imbalance + CVD signal.\nPaper 24/7 indipendente.",
+   schema:{endpoint:"api.binance.com/api/v3",method:"depth+trades",interval:"60s",paper:"24/7"},
+   metrics:{scan:"ogni 60s",signal:"imbalance+CVD",err:"0%"},status:"ok"},
+
+  {id:"S4",layer:"source",x:615,y:70,ico:"🗄️",tag:"REDIS",title:"Upstash Redis",
+   desc:"Shared paper state.\nResearch dataset + stop cooldowns.\nSync pull ogni 30s.",
+   schema:{host:"Upstash.com serverless",sync:"30s pull",keys:"paper-state · research · stops"},
+   metrics:{latency:"<10ms",sync:"30s",err:"0%"},status:"ok"},
+
+  {id:"S5",layer:"source",x:815,y:70,ico:"🔬",tag:"API",title:"Bitquery External",
+   desc:"Solana Trading API esterna.\nLabeling esterno campioni.\nBatch target 10K samples.",
+   schema:{endpoint:"graphql.bitquery.io",auth:"api-key",target:"10000 labeled samples"},
+   metrics:{samples:"10K target",type:"external labels",err:"0%"},status:"ok"},
+
+  // ── SCOUT ──
+  {id:"SC",layer:"collect",x:414,y:240,ico:"🔍",tag:"AGENT",title:"Scout Agent",
+   desc:"Scansiona DexScreener ogni 30s.\nFocused order scan 1s top 3.\nCross-ref profiles + boosts.",
+   schema:{interval:"30s full · 1s focused",max_focused:"3",chain:"Solana",redis_out:"scout:candidates"},
+   metrics:{pairs:"+200/scan",focused:"top 3",latency:"<500ms",err:"0.1%"},status:"ok"},
+
+  // ── FILTER ──
+  {id:"FL",layer:"filter",x:414,y:400,ico:"🚦",tag:"AGENT",title:"Filter Agent",
+   desc:"Liquidità: $12K–$180K.\nAge + broken price check.\nPair stop cooldown 45m.\nSymbol cooldown 2h.",
+   schema:{minLiq:"$12K",maxLiq:"$180K",pair_cooldown:"45m",symbol_cooldown:"2h",redis_in:"scout:candidates"},
+   metrics:{pass_rate:"~30%",reject:"~70%",err:"0%"},status:"ok"},
+
+  // ── MOMENTUM ──
+  {id:"MO",layer:"scoring",x:50,y:570,ico:"⚡",tag:"AGENT",title:"Momentum Agent",
+   desc:"Score 0–100:\n• buy/sell ratio ≥ 1.6 (strong 2.4)\n• vol/liq 0.25–4.5\n• impulse 5m: 10–180%\n• moonshot bypass ≥ 82",
+   schema:{minBuyRatio:"1.6",strongBuyRatio:"2.4",volLiq:"0.25–4.5",impulse:"10–180%",bypass:"score≥82"},
+   metrics:{candidates:"~50/scan",avg_score:"38",high_conv:"~5%",err:"0%"},status:"ok"},
+
+  // ── RESEARCH ──
+  {id:"RA",layer:"parallel",x:760,y:570,ico:"📡",tag:"RESEARCH",title:"Research Agent",
+   desc:"Batch 30m rotanti.\nLabel: outcome 15m per token.\nEdge lab: 700x / 100x cohort.\nTarget 10K campioni.",
+   schema:{cycle:"30m rotating",target:"10000 samples",label:"15m outcome",output:"research:dataset → Sheets"},
+   metrics:{samples:"progressive",cohorts:"edge lab",confidence:"building",err:"0%"},status:"ok"},
+
+  // ── ENTRY ──
+  {id:"EA",layer:"decision",x:414,y:730,ico:"🎯",tag:"AGENT",title:"Entry Agent",
+   desc:"EV gate ≥ 4 per entry.\nSize: 5% normale · 10% moonshot.\nConfirm: score + momentum + EV.",
+   schema:{ev_gate:"4",normal_size:"5% capital",moonshot_size:"10% capital",redis_in:"momentum:scores",redis_out:"entry:orders"},
+   metrics:{entries:"~5/d",stake:"$50–100",mode:"● paper",err:"0%"},status:"ok"},
+
+  // ── RISK ──
+  {id:"RM",layer:"decision",x:414,y:890,ico:"🛡️",tag:"AGENT",title:"Risk Manager",
+   desc:"Max 3 posizioni aperte.\n10% max exposure per trade.\nSystem grade A–F watchdog.\nGross exposure cap.",
+   schema:{max_positions:"3",max_size:"10% capital",grade:"A–F real-time",gross_cap:"30% capital"},
+   metrics:{exposure_max:"30%",block_rate:"~8%",grade:"live",err:"0%"},status:"ok"},
+
+  // ── EXIT ──
+  {id:"EX",layer:"execute",x:50,y:1060,ico:"📤",tag:"AGENT",title:"Exit Agent",
+   desc:"Stop loss hard.\nPartial profit at target.\nTrailing exit + momentum exit.\nCooldown enforcement.",
+   schema:{stop:"hard stop",partial:"take profit at target",trail:"momentum-based",cooldown:"45m pair"},
+   metrics:{exits:"~5/d",win_rate:"tracking",mode:"paper",err:"0%"},status:"ok"},
+
+  // ── BTCUSDT ──
+  {id:"BT",layer:"parallel",x:760,y:1060,ico:"₿",tag:"BTCUSDT",title:"BTCUSDT Agent",
+   desc:"Paper 24/7 · Binance depth.\nBook imbalance + CVD signal.\nEquity curve separata $1K.",
+   schema:{mode:"PAPER_24/7",signal:"book imbalance · CVD",capital:"$1000 paper",redis_out:"btc:state"},
+   metrics:{trades:"live",equity:"$1000 start",mode:"● paper",err:"0%"},status:"ok"},
+
+  // ── JOURNAL ──
+  {id:"JA",layer:"output",x:414,y:1220,ico:"📓",tag:"AGENT",title:"Journal Agent",
+   desc:"Persiste ogni decisione.\nShared state → Vercel Blob.\nEquity curve + trade log completo.",
+   schema:{storage:"Upstash Redis · Vercel Blob",format:"JSON",sync:"ogni ciclo",redis_in:"all agents"},
+   metrics:{entries:"ogni trade",equity:"tracked",err:"0%"},status:"ok"},
+
+  // ── OUTPUTS ──
+  {id:"O1",layer:"output",x:15,y:1420,ico:"🗄️",tag:"REDIS",title:"Upstash / Blob",
+   desc:"Shared paper state.\nResearch dataset (10K).\nEquity curve storage.",
+   schema:{host:"Upstash.com + Vercel Blob",format:"JSON",grow:"ongoing"},
+   metrics:{state:"persisted",research:"10K target",err:"0%"},status:"ok"},
+
+  {id:"O2",layer:"output",x:285,y:1420,ico:"🖥️",tag:"VERCEL",title:"Dashboard (Vercel)",
+   desc:"Control Center live.\nSignal Radar + equity curve.\nmeme-coin-control-center.vercel.app",
+   schema:{host:"vercel.com",stack:"Vanilla JS",url:"creiamo-uno-schema.vercel.app"},
+   metrics:{uptime:"always-on",refresh:"30s",err:"0%"},status:"ok"},
+
+  {id:"O3",layer:"output",x:555,y:1420,ico:"📊",tag:"SHEETS",title:"Google Sheets CSV",
+   desc:"Research cycles · Observations.\nEdge summary export.\n/api/sheets workbook.",
+   schema:{sheets:"cycles · observations · edges",endpoint:"/api/sheets",format:"CSV"},
+   metrics:{rows:"growing",export:"on demand",err:"0%"},status:"ok"},
+
+  {id:"O4",layer:"output",x:825,y:1420,ico:"📱",tag:"PLANNED",title:"Telegram Alerts",
+   desc:"Alert su entry/exit. (pianificato)\nTrigger: EV gate superato.\nFormato markdown.",
+   schema:{status:"planned",trigger:"entry/exit signal",format:"markdown"},
+   metrics:{status:"pending",trigger:"—",err:"N/A"},status:"pending"},
+];
+
+const EDGES = [
+  ["S1","SC"],["S2","SC"],["S4","SC"],
+  ["S3","BT"],
+  ["S5","RA"],
+  ["SC","FL"],
+  ["FL","MO"],["FL","RA"],
+  ["MO","EA"],["RA","EA"],
+  ["EA","RM"],
+  ["RM","EX"],
+  ["EX","JA"],["BT","JA"],
+  ["JA","O1"],["JA","O2"],["JA","O3"],
+  ["RA","O3"],
+];
+
+const HOT = [
+  ["S1","SC"],["SC","FL"],["FL","MO"],["MO","EA"],["EA","RM"],["RM","EX"],["EX","JA"],["JA","O2"]
+];
+
+const LANES = [
+  {y:38,   label:"01 — Data Sources (DexScreener · Binance · Upstash · Bitquery)"},
+  {y:208,  label:"02 — Scout & Collection · 30s full scan · 1s focused order flow"},
+  {y:368,  label:"03 — Filter · $12K-$180K liquidità · age check · pair cooldown 45m"},
+  {y:538,  label:"04 — Momentum Scoring (0–100) ·· Parallel: Research Agent (10K samples)"},
+  {y:698,  label:"05 — Entry Agent · EV gate ≥ 4 · 5% normal · 10% moonshot bypass"},
+  {y:858,  label:"06 — Risk Manager · max 3 posizioni · 10% cap · system grade A–F"},
+  {y:1028, label:"07 — Exit · stop / partial / trail ·· Parallel: BTCUSDT 24/7"},
+  {y:1188, label:"08 — Journal Agent · persist decisions · equity curve"},
+  {y:1388, label:"09 — Output · Redis/Blob · Dashboard · Sheets · Telegram (planned)"},
+];
+
+const canvasDiv = document.getElementById('canvas');
+const svg = document.getElementById('edges');
+let activeId = null;
+
+function makeLanes() {
+  LANES.forEach(l => {
+    const lab = document.createElement('div');
+    lab.className='lane'; lab.style.top=(l.y-2)+'px';
+    lab.innerHTML=`<b>›</b>${l.label}`;
+    canvasDiv.appendChild(lab);
+    const line = document.createElement('div');
+    line.className='lane-line'; line.style.top=(l.y+12)+'px';
+    canvasDiv.appendChild(line);
+  });
+}
+
+function nodeEl(n) {
+  const el = document.createElement('div');
+  el.className = `node layer-${n.layer}`;
+  el.dataset.id = n.id; el.dataset.layer = n.layer;
+  el.style.left = n.x + 'px'; el.style.top = n.y + 'px';
+  const statusClass = n.status === 'ok' ? 'ok' : 'pending';
+  const pulseClass  = n.status === 'ok' ? '' : ' amber';
+  const statusText  = n.status === 'ok' ? 'live' : 'pending';
+  el.innerHTML = `
+    <div class="head">
+      <div class="ico">${n.ico||'•'}</div>
+      <div class="tag mono">${n.tag||''}</div>
+    </div>
+    <h4>${n.title}</h4>
+    <p>${(n.desc||'').replace(/\n/g,'<br>')}</p>
+    <div class="footer">
+      <span>${n.id}</span>
+      <span class="${statusClass}"><span class="pulse${pulseClass}"></span>${statusText}</span>
+    </div>`;
+  el.addEventListener('click',()=>selectNode(n.id));
+  el.addEventListener('mouseenter',()=>highlightNeighbors(n.id,true));
+  el.addEventListener('mouseleave',()=>{ if(!activeId) highlightNeighbors(null,false); });
+  return el;
+}
+
+function makeNodes() {
+  NODES.forEach(n => canvasDiv.appendChild(nodeEl(n)));
+}
+
+function getNodeCenter(id) {
+  const el = canvasDiv.querySelector(`.node[data-id="${id}"]`);
+  if (!el) return null;
+  const r = el.getBoundingClientRect(), c = canvasDiv.getBoundingClientRect();
+  return {
+    x: r.left - c.left + r.width / 2,
+    y: r.top - c.top + r.height / 2,
+    top: r.top - c.top,
+    bottom: r.top - c.top + r.height,
+    h: r.height, w: r.width
+  };
+}
+
+function curvePath(a, b) {
+  const x1=a.x, y1=a.bottom, x2=b.x, y2=b.top;
+  const dy = y2 - y1, cx = Math.abs(dy) * 0.5;
+  return `M ${x1} ${y1} C ${x1} ${y1+cx}, ${x2} ${y2-cx}, ${x2} ${y2}`;
+}
+
+function makeEdges() {
+  svg.innerHTML = '';
+  EDGES.forEach(([a,b]) => {
+    const A = getNodeCenter(a), B = getNodeCenter(b);
+    if (!A || !B) return;
+    const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d', curvePath(A,B));
+    p.setAttribute('class','edge');
+    p.dataset.from = a; p.dataset.to = b;
+    svg.appendChild(p);
+  });
+  HOT.forEach(([a,b]) => {
+    const A = getNodeCenter(a), B = getNodeCenter(b);
+    if (!A || !B) return;
+    const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d', curvePath(A,B));
+    p.setAttribute('class','flow');
+    svg.appendChild(p);
+  });
+}
+
+function highlightNeighbors(id, on) {
+  if (!id && !activeId) {
+    document.querySelectorAll('.edge').forEach(e => e.classList.remove('hi','dim'));
+    document.querySelectorAll('.node').forEach(n => n.classList.remove('faded'));
+    return;
+  }
+  if (!id) return;
+  const ups = new Set(), downs = new Set();
+  EDGES.forEach(([a,b]) => { if (b===id) ups.add(a); if (a===id) downs.add(b); });
+  document.querySelectorAll('.edge').forEach(e => {
+    const isMine = (e.dataset.from===id || e.dataset.to===id);
+    e.classList.toggle('hi', isMine);
+    e.classList.toggle('dim', !isMine);
+  });
+  document.querySelectorAll('.node').forEach(n => {
+    const keep = (n.dataset.id===id || ups.has(n.dataset.id) || downs.has(n.dataset.id));
+    n.classList.toggle('faded', !keep);
+  });
+}
+
+function samplePayload(n) {
+  switch(n.id) {
+    case 'S1': return `{ "chainId": "solana",
+  "tokenAddress": "AaB3...Xk9",
+  "url": "https://dexscreener.com/solana/...",
+  "icon": "https://dd.dexscreener.com/.../icon.png",
+  "description": "Next moonshot on SOL 🚀",
+  "links": [
+    {"label":"Twitter","url":"https://x.com/..."},
+    {"label":"Telegram","url":"https://t.me/..."}
+  ]
+}`;
+    case 'SC': return `{ "pair": "MEME/SOL",
+  "tokenAddress": "AaB3...Xk9",
+  "priceUsd": "0.0000234",
+  "liquidity": 45000,
+  "volume_5m": 12300,
+  "buys_5m": 142,
+  "sells_5m": 67,
+  "priceChange_5m": 18.4,
+  "age_min": 23,
+  "source": "dexscreener_boost"
+}`;
+    case 'FL': return `{ "pair": "MEME/SOL",
+  "pass": true,
+  "liquidity": 45000,
+  "age_min": 23,
+  "price_valid": true,
+  "pair_cooldown": false,
+  "symbol_cooldown": false,
+  "reason": "all checks passed"
+}`;
+    case 'MO': return `{ "pair": "MEME/SOL",
+  "score": 74,
+  "buy_ratio": 2.12,
+  "vol_liq_ratio": 0.27,
+  "impulse_5m_pct": 18.4,
+  "age_min": 23,
+  "moonshot_bypass": false,
+  "signal": "BULLISH",
+  "ev_estimate": 6.2
+}`;
+    case 'EA': return `{ "pair": "MEME/SOL",
+  "ev": 6.2,
+  "size_pct": 0.05,
+  "stake_usd": 50,
+  "entry_price": "0.0000234",
+  "mode": "PAPER",
+  "reason": "strong_momentum + EV_gate_passed"
+}`;
+    case 'RM': return `{ "open_positions": 2,
+  "gross_exposure_pct": 15.0,
+  "cash_buffer_usd": 850,
+  "system_grade": "B+",
+  "approved": true,
+  "blocked_reason": null
+}`;
+    case 'EX': return `{ "pair": "MEME/SOL",
+  "exit_type": "trailing",
+  "entry_price": "0.0000234",
+  "exit_price": "0.0000312",
+  "pnl_pct": 33.3,
+  "pnl_usd": 16.65,
+  "hold_min": 18,
+  "mode": "PAPER"
+}`;
+    case 'BT': return `{ "symbol": "BTCUSDT",
+  "price": 105240,
+  "book_imbalance": 0.62,
+  "cvd_delta": 1240000,
+  "signal": "LONG",
+  "position": null,
+  "paper_equity": 1023.40,
+  "cycles": 142
+}`;
+    default: return JSON.stringify(n.schema || {}, null, 2);
+  }
+}
+
+function renderPanel(id) {
+  const n = NODES.find(n => n.id === id);
+  if (!n) { renderOverview(); return; }
+  document.getElementById('p-eyebrow').textContent = `LAYER · ${n.layer.toUpperCase()}`;
+  document.getElementById('p-title').textContent = n.title;
+  document.getElementById('p-sub').textContent = `${n.id} · ${n.tag||''}`.toLowerCase();
+  const body = document.getElementById('p-body');
+  const ups   = EDGES.filter(([a,b])=>b===id).map(([a])=>NODES.find(x=>x.id===a)).filter(Boolean);
+  const downs = EDGES.filter(([a,b])=>a===id).map(([,b])=>NODES.find(x=>x.id===b)).filter(Boolean);
+  const schema  = Object.entries(n.schema||{}).map(([k,v])=>`<span>${k}</span><b>${v}</b>`).join('');
+  const metrics = Object.entries(n.metrics||{}).map(([k,v])=>`<span>${k}</span><b>${v}</b>`).join('');
+  body.innerHTML = `
+    <h5>Description</h5>
+    <p style="margin:0;font-size:13px;color:var(--text);line-height:1.55">${(n.desc||'').replace(/\n/g,' ')}</p>
+    <h5>Schema / params</h5>
+    <div class="kv">${schema||'<span>—</span><b>—</b>'}</div>
+    <h5>Live metrics</h5>
+    <div class="kv">${metrics||'<span>—</span><b>—</b>'}</div>
+    <h5>Sample payload</h5>
+    <div class="codeblock">${samplePayload(n)}</div>
+    <h5>Upstream (${ups.length})</h5>
+    <div class="neighbors">${ups.length
+      ? ups.map(u=>`<button class="up" onclick="selectNode('${u.id}')"><span>${u.id} · ${u.title}</span><span class="arrow">↑</span></button>`).join('')
+      : '<div class="kv"><span>none</span><b>root</b></div>'}</div>
+    <h5>Downstream (${downs.length})</h5>
+    <div class="neighbors">${downs.length
+      ? downs.map(d=>`<button class="down" onclick="selectNode('${d.id}')"><span>${d.id} · ${d.title}</span><span class="arrow">↓</span></button>`).join('')
+      : '<div class="kv"><span>none</span><b>leaf</b></div>'}</div>
+  `;
+}
+
+function selectNode(id) {
+  activeId = id;
+  document.querySelectorAll('.node').forEach(n => n.classList.toggle('active', n.dataset.id===id));
+  renderPanel(id);
+  highlightNeighbors(id, true);
+}
+
+function renderOverview() {
+  document.getElementById('p-eyebrow').textContent = 'SYSTEM OVERVIEW';
+  document.getElementById('p-title').textContent = 'Meme Coin v1.0';
+  document.getElementById('p-sub').textContent = '9 agenti · Solana · DexScreener · 10K campioni · paper trading';
+  document.getElementById('p-body').innerHTML = `
+    <h5>Hot path (DexScreener → paper trade)</h5>
+    <div class="codeblock">DexScreener Profiles + Boosts
+→ Scout Agent (30s full · 1s focused top 3)
+→ Filter Agent ($12K-$180K liq · age · cooldown)
+→ Momentum Agent (score 0-100)
+   ├─ Buy ratio ≥ 1.6 (strong 2.4)
+   ├─ Vol/Liq 0.25–4.5
+   ├─ Impulse 5m: 10–180%
+   └─ Moonshot bypass: score ≥ 82
+→ Entry Agent (EV gate ≥ 4 · 5%/10% size)
+→ Risk Manager (max 3 pos · 10% cap)
+→ Exit Agent (stop / partial / trail)
+→ Journal Agent → Dashboard (Vercel)</div>
+    <h5>Parallel tracks</h5>
+    <div class="kv">
+      <span>Research Agent</span><b style="color:var(--violet)">30m batch · 10K target</b>
+      <span>BTCUSDT Agent</span><b style="color:var(--violet)">24/7 paper · Binance</b>
+      <span>Edge Lab</span><b style="color:var(--violet)">700x / 100x cohort</b>
+    </div>
+    <h5>Metriche sistema</h5>
+    <div class="kv">
+      <span>Capital paper</span><b>$1,000</b>
+      <span>Max positions</span><b>3</b>
+      <span>Max size</span><b>10% capital</b>
+      <span>Normal size</span><b>5% capital</b>
+      <span>EV gate</span><b>≥ 4</b>
+      <span>Pair cooldown</span><b style="color:var(--amber)">45m</b>
+      <span>Symbol cooldown</span><b style="color:var(--amber)">2h</b>
+      <span>Moonshot bypass</span><b style="color:var(--magenta)">score ≥ 82</b>
+    </div>
+    <h5>Hint</h5>
+    <p style="margin:0;font-size:12px;color:var(--muted);line-height:1.55">Clicca un nodo per dettagli, schema e payload. Hover per evidenziare connessioni. La linea animata mostra l'hot path principale.</p>
+  `;
+}
+
+function tick() {
+  const d = new Date();
+  document.getElementById('p-time').textContent = 'sync ' + d.toISOString().slice(11,19) + 'Z';
+}
+
+makeLanes();
+makeNodes();
+document.fonts.ready.then(() => { makeEdges(); renderOverview(); });
+window.addEventListener('resize', () => makeEdges());
+tick(); setInterval(tick, 1000);
+
+document.getElementById('legend').addEventListener('click', e => {
+  if (e.target.tagName !== 'BUTTON') return;
+  const layer = e.target.dataset.layer;
+  document.querySelectorAll('#legend button').forEach(b => b.classList.toggle('active', b===e.target));
+  document.querySelectorAll('.node').forEach(n => n.classList.toggle('faded', layer!=='all' && n.dataset.layer!==layer));
+  document.querySelectorAll('.edge').forEach(ed => ed.classList.toggle('dim', layer!=='all'));
+});
+
+window.selectNode = selectNode;
+</script>
+</body>
+</html>

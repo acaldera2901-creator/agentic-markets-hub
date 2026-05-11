@@ -10,7 +10,7 @@
   :root {
     --bg: #07090d; --panel: #0e131c; --line: #1a2233; --line-2: #243049;
     --text: #e6edf7; --muted: #7d8aa3; --dim: #4a5774;
-    --cyan: #00e5ff; --green: #32e0a0; --amber: #ffb547; --violet: #9b8cff;
+    --cyan: #00e5ff; --green: #32e0a0; --amber: #ffb547; --violet: #9b8cff; --magenta: #ff5cf2;
   }
   html, body {
     height: 100%; background: var(--bg); color: var(--text);
@@ -61,7 +61,8 @@
     flex-shrink: 0;
   }
   .tab:nth-child(2) .tab-ico { background: rgba(50,224,160,.08); border-color: rgba(50,224,160,.2); }
-  .tab:nth-child(3) .tab-ico { background: rgba(155,140,255,.08); border-color: rgba(155,140,255,.2); }
+  .tab:nth-child(3) .tab-ico { background: rgba(255,92,242,.08); border-color: rgba(255,92,242,.2); }
+  .tab:nth-child(4) .tab-ico { background: rgba(155,140,255,.08); border-color: rgba(155,140,255,.2); }
   .tab .badge {
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px; padding: 2px 6px; border-radius: 4px;
@@ -69,7 +70,8 @@
     border: 1px solid rgba(0,229,255,.2);
   }
   .tab:nth-child(2) .badge { background: rgba(50,224,160,.08); color: var(--green); border-color: rgba(50,224,160,.2); }
-  .tab:nth-child(3) .badge { background: rgba(155,140,255,.08); color: var(--violet); border-color: rgba(155,140,255,.2); }
+  .tab:nth-child(3) .badge { background: rgba(255,92,242,.08); color: var(--magenta, #ff5cf2); border-color: rgba(255,92,242,.2); }
+  .tab:nth-child(4) .badge { background: rgba(155,140,255,.08); color: var(--violet); border-color: rgba(155,140,255,.2); }
   .status {
     margin-left: auto; display: flex; align-items: center; gap: 6px;
     font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted);
@@ -105,13 +107,23 @@
   <div class="tabs">
     <div class="tab active" onclick="show(0)">
       <span class="tab-ico">⬡</span>
-      System Architecture
+      Football AI
       <span class="badge">v5.0</span>
     </div>
     <div class="tab" onclick="show(1)">
       <span class="tab-ico">🔒</span>
       Confidential
       <span class="badge">private</span>
+    </div>
+    <div class="tab" onclick="show(2)">
+      <span class="tab-ico">🚀</span>
+      Meme Coin
+      <span class="badge">v1.0</span>
+    </div>
+    <div class="tab" onclick="show(3)">
+      <span class="tab-ico">⬢</span>
+      Cross-Desk
+      <span class="badge">connections</span>
     </div>
   </div>
   <div class="status">
@@ -121,8 +133,10 @@
 </div>
 
 <div class="frame-wrap">
-  <iframe id="f0" src="schema.html"                 class="visible"></iframe>
+  <iframe id="f0" src="schema.html"                  class="visible"></iframe>
   <iframe id="f1" src="prediction-confidential.html" class=""></iframe>
+  <iframe id="f2" src="meme-schema.html"             class=""></iframe>
+  <iframe id="f3" src="cross-desk.html"              class=""></iframe>
 </div>
 
 <script>

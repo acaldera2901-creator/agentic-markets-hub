@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agentic Markets — Cross-Desk Connections</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#07090d; --bg-2:#0b0e14; --panel:#0e131c; --panel-2:#121826;
+    --line:#1a2233; --line-2:#243049; --text:#e6edf7; --muted:#7d8aa3; --dim:#4a5774;
+    --cyan:#00e5ff; --cyan-2:#7df9ff; --amber:#ffb547; --green:#32e0a0;
+    --magenta:#ff5cf2; --red:#ff5d6c; --violet:#9b8cff;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin:0; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; }
+  .mono { font-family:'JetBrains Mono',monospace; }
+  body {
+    min-height:100vh;
+    background: radial-gradient(1000px 600px at 20% -10%, rgba(0,229,255,.05), transparent 60%),
+                radial-gradient(1000px 600px at 80% 110%, rgba(255,92,242,.05), transparent 60%),
+                radial-gradient(600px 600px at 50% 50%, rgba(155,140,255,.04), transparent 70%),
+                var(--bg);
+    overflow-x: hidden;
+  }
+  body::before {
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size:56px 56px;
+    mask-image: radial-gradient(ellipse at 50% 30%, black 40%, transparent 80%);
+  }
+  .topbar {
+    position:sticky; top:0; z-index:30; display:flex; flex-wrap:wrap; align-items:center; gap:12px;
+    padding:10px 16px; background:rgba(7,9,13,.85); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand { display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px; }
+  .brand-dot {
+    width:10px; height:10px; border-radius:50%;
+    background: conic-gradient(var(--cyan) 0deg 180deg, var(--magenta) 180deg 360deg);
+    box-shadow:0 0 14px rgba(155,140,255,.7);
+  }
+  .brand small { color:var(--muted); font-weight:500; font-size:11px; margin-left:4px; }
+  .crumb { color:var(--dim); font-size:11px; letter-spacing:.14em; text-transform:uppercase; }
+  .crumb b { color:var(--text); font-weight:600; }
+  .grow { flex:1; }
+  .pill {
+    display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:999px;
+    background:var(--panel-2); border:1px solid var(--line); font-size:10px; color:var(--muted);
+    font-family:'JetBrains Mono',monospace;
+  }
+  .pill .dot { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation:blip 1.4s ease-in-out infinite; }
+  @keyframes blip { 50% { opacity:.35; } }
+  .legend { display:flex; flex-wrap:wrap; gap:6px; }
+  .legend button {
+    background:var(--panel-2); border:1px solid var(--line); color:var(--muted); padding:4px 8px;
+    border-radius:8px; font-size:10px; cursor:pointer; font-family:'JetBrains Mono',monospace;
+    transition:all .15s ease;
+  }
+  .legend button:hover { color:var(--text); border-color:var(--line-2); }
+  .legend button.active { background:rgba(155,140,255,.08); border-color:rgba(155,140,255,.4); color:var(--violet); }
+  .stage {
+    position:relative; z-index:1; display:grid; grid-template-columns:1fr 380px;
+    min-height:calc(100vh - 56px);
+  }
+  .canvas-wrap { position:relative; padding:16px 16px 40px; overflow-x:auto; overflow-y:visible; }
+  .canvas-title {
+    display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:16px;
+    margin-bottom:14px;
+  }
+  .canvas-title h1 { margin:0; font-size:20px; }
+  .canvas-title h1 span { color:var(--violet); }
+  .canvas-title p { margin:4px 0 0; color:var(--muted); font-size:12px; }
+  .meta-row { display:flex; flex-wrap:wrap; gap:8px; }
+  .kpi {
+    display:flex; flex-direction:column; gap:2px; padding:6px 10px; border:1px solid var(--line);
+    border-radius:10px; background:rgba(14,19,28,.6); min-width:80px;
+  }
+  .kpi label { font-size:9px; color:var(--dim); letter-spacing:.18em; text-transform:uppercase; }
+  .kpi b { font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text); }
+  .kpi b.up { color:var(--green); }
+
+  .canvas {
+    position:relative; width:1350px; height:1100px; border:1px solid var(--line); border-radius:14px;
+    background: radial-gradient(600px 400px at 12% 30%, rgba(0,229,255,.04), transparent 50%),
+                radial-gradient(600px 400px at 88% 70%, rgba(255,92,242,.04), transparent 50%),
+                radial-gradient(400px 400px at 50% 50%, rgba(155,140,255,.05), transparent 60%),
+                linear-gradient(180deg, rgba(11,14,20,.9), rgba(8,10,16,.95));
+    overflow:visible;
+  }
+  .canvas .grid-bg {
+    position:absolute; inset:0; pointer-events:none;
+    background-image: linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+                      linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+    background-size:40px 40px;
+  }
+  svg.edges { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:2; }
+
+  /* Edge styles */
+  .edge      { stroke:var(--line-2); stroke-width:1.4; fill:none; opacity:.55; }
+  .edge.hi   { stroke:var(--violet); stroke-width:2;   opacity:1;  filter:drop-shadow(0 0 6px rgba(155,140,255,.6)); }
+  .edge.dim  { opacity:.10; }
+  .edge.live { stroke:var(--green);  stroke-width:1.6; opacity:.8; }
+  .edge.planned { stroke:var(--amber); stroke-width:1.2; opacity:.5; stroke-dasharray:4 6; }
+  .flow-cross {
+    fill:none; stroke-width:2; stroke-dasharray:2 8;
+    animation:dash 1.4s linear infinite; opacity:.9;
+  }
+  .flow-cross.football { stroke:var(--cyan);    filter:drop-shadow(0 0 4px rgba(0,229,255,.7)); }
+  .flow-cross.meme     { stroke:var(--magenta); filter:drop-shadow(0 0 4px rgba(255,92,242,.7)); }
+  @keyframes dash { to { stroke-dashoffset:-40; } }
+
+  /* Zone labels */
+  .zone-label {
+    position:absolute; z-index:5;
+    font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700;
+    letter-spacing:.22em; text-transform:uppercase;
+    padding:3px 10px; border-radius:4px;
+  }
+  .zone-football { color:var(--cyan);    border:1px solid rgba(0,229,255,.3);    background:rgba(0,229,255,.06);    left:22px;  top:18px; }
+  .zone-shared   { color:var(--violet);  border:1px solid rgba(155,140,255,.3);  background:rgba(155,140,255,.06);  left:572px; top:18px; }
+  .zone-meme     { color:var(--magenta); border:1px solid rgba(255,92,242,.3);   background:rgba(255,92,242,.06);   left:1138px;top:18px; }
+
+  /* Lane labels */
+  .lane {
+    position:absolute; left:18px; font-family:'JetBrains Mono',monospace; font-size:10px;
+    letter-spacing:.22em; color:var(--dim); text-transform:uppercase; z-index:3; pointer-events:none;
+  }
+  .lane b { color:var(--violet); margin-right:8px; }
+  .lane-line {
+    position:absolute; left:0; right:0; height:1px;
+    background:linear-gradient(90deg,transparent,var(--line-2) 8%,var(--line-2) 92%,transparent);
+    z-index:1;
+  }
+
+  /* Nodes */
+  .node {
+    position:absolute; z-index:4; width:174px;
+    background:linear-gradient(180deg, rgba(18,24,38,.95), rgba(12,16,26,.95));
+    border:1px solid var(--line-2); border-radius:12px; padding:8px 10px 10px;
+    cursor:pointer; transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease, opacity .2s ease;
+    box-shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 8px 24px rgba(0,0,0,.35);
+  }
+  .node:hover { transform:translateY(-2px); }
+  .node.active { box-shadow:0 0 0 1px rgba(155,140,255,.6), 0 0 32px rgba(155,140,255,.25); border-color:var(--violet); }
+  .node.faded { opacity:.14; filter:saturate(.3); }
+
+  /* Football node hover */
+  .desk-football .node:hover { border-color:rgba(0,229,255,.5); box-shadow:0 0 0 1px rgba(0,229,255,.25),0 12px 28px rgba(0,229,255,.12); }
+  .desk-football .node.active { border-color:var(--cyan); box-shadow:0 0 0 1px rgba(0,229,255,.6), 0 0 32px rgba(0,229,255,.25); }
+
+  /* Meme node hover */
+  .desk-meme .node:hover { border-color:rgba(255,92,242,.5); box-shadow:0 0 0 1px rgba(255,92,242,.25),0 12px 28px rgba(255,92,242,.12); }
+  .desk-meme .node.active { border-color:var(--magenta); box-shadow:0 0 0 1px rgba(255,92,242,.6), 0 0 32px rgba(255,92,242,.25); }
+
+  .node .head { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+  .node .ico {
+    width:22px; height:22px; border-radius:6px; display:grid; place-items:center;
+    font-size:12px; border:1px solid var(--line-2);
+  }
+  .node .tag { font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:.18em; color:var(--dim); text-transform:uppercase; }
+  .node h4 { margin:0; font-size:11px; font-weight:600; letter-spacing:-.01em; line-height:1.25; }
+  .node p { margin:4px 0 0; font-size:9px; color:var(--muted); line-height:1.4; font-family:'JetBrains Mono',monospace; }
+  .node .footer {
+    margin-top:6px; display:flex; justify-content:space-between; align-items:center;
+    font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--dim);
+    border-top:1px dashed var(--line); padding-top:5px;
+  }
+  .node .footer .ok      { color:var(--green); }
+  .node .footer .pending { color:var(--amber); }
+  .node .pulse { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation:blip 1.6s ease-in-out infinite; display:inline-block; vertical-align:-1px; margin-right:4px; }
+  .node .pulse.amber { background:var(--amber); box-shadow:0 0 8px var(--amber); }
+
+  /* ── LAYER ICO COLORS ── */
+  /* Football */
+  .ico-source   { color:var(--cyan);    background:rgba(0,229,255,.09);    border-color:rgba(0,229,255,.25); }
+  .ico-collect  { color:var(--cyan-2);  background:rgba(125,249,255,.08);  border-color:rgba(125,249,255,.25); }
+  .ico-model    { color:var(--amber);   background:rgba(255,181,71,.09);   border-color:rgba(255,181,71,.25); }
+  .ico-ensemble { color:var(--magenta); background:rgba(255,92,242,.09);   border-color:rgba(255,92,242,.25); }
+  .ico-value    { color:var(--green);   background:rgba(50,224,160,.09);   border-color:rgba(50,224,160,.3); }
+  .ico-output   { color:var(--cyan);    background:rgba(0,229,255,.09);    border-color:rgba(0,229,255,.25); }
+  /* Shared */
+  .ico-shared   { color:var(--violet);  background:rgba(155,140,255,.10);  border-color:rgba(155,140,255,.28); }
+  /* Meme coin */
+  .ico-filter   { color:var(--amber);   background:rgba(255,181,71,.09);   border-color:rgba(255,181,71,.25); }
+  .ico-scoring  { color:var(--cyan-2);  background:rgba(125,249,255,.08);  border-color:rgba(125,249,255,.25); }
+  .ico-decision { color:var(--magenta); background:rgba(255,92,242,.09);   border-color:rgba(255,92,242,.25); }
+  .ico-execute  { color:var(--green);   background:rgba(50,224,160,.09);   border-color:rgba(50,224,160,.3); }
+  .ico-parallel { color:var(--violet);  background:rgba(155,140,255,.10);  border-color:rgba(155,140,255,.28); }
+
+  /* Side panel */
+  .panel {
+    position:sticky; top:56px; align-self:start; height:calc(100vh - 56px);
+    border-left:1px solid var(--line); background:linear-gradient(180deg, var(--panel) 0%, var(--bg-2) 100%);
+    display:flex; flex-direction:column; overflow-y:auto;
+  }
+  .panel-head { padding:16px 18px 12px; border-bottom:1px solid var(--line); }
+  .panel-head .eyebrow { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.22em; color:var(--violet); text-transform:uppercase; }
+  .panel-head h2 { margin:6px 0 4px; font-size:18px; letter-spacing:-.01em; }
+  .panel-head .sub { color:var(--muted); font-size:11px; font-family:'JetBrains Mono',monospace; }
+  .panel-body { padding:14px 18px; overflow:auto; flex:1; }
+  .panel-body h5 { margin:18px 0 8px; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--dim); font-family:'JetBrains Mono',monospace; }
+  .panel-body h5:first-child { margin-top:0; }
+  .kv { display:grid; grid-template-columns:1fr auto; gap:6px 12px; font-family:'JetBrains Mono',monospace; font-size:11px; }
+  .kv span { color:var(--muted); }
+  .kv b { color:var(--text); font-weight:600; }
+  .codeblock {
+    background:#05080d; border:1px solid var(--line); border-radius:8px; padding:8px 10px;
+    font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--cyan-2);
+    line-height:1.5; white-space:pre-wrap; word-break:break-word;
+  }
+  .neighbors { display:flex; flex-direction:column; gap:6px; }
+  .neighbors button {
+    text-align:left; background:rgba(14,19,28,.7); border:1px solid var(--line); color:var(--text);
+    padding:6px 8px; border-radius:8px; cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:10px;
+    display:flex; justify-content:space-between; align-items:center; transition:all .15s ease;
+  }
+  .neighbors button:hover { border-color:rgba(155,140,255,.4); background:rgba(155,140,255,.05); }
+  .neighbors button .arrow { color:var(--dim); }
+  .footer-bar { padding:8px 16px; border-top:1px solid var(--line); font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--dim); display:flex; justify-content:space-between; }
+  @media (max-width:860px) {
+    .stage { display:block; }
+    .canvas-wrap { overflow-x:auto; padding:12px; }
+    .panel { position:relative; top:0; height:auto; border-left:none; border-top:1px solid var(--line); }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="brand-dot"></span>Agentic&nbsp;Markets <small>/ Cross-Desk</small></div>
+  <div class="crumb">SYSTEM &nbsp;›&nbsp; <b>Agent Connections</b> &nbsp;›&nbsp; 2026-05-11</div>
+  <div class="grow"></div>
+  <span class="pill"><span class="dot"></span> 2 desk · 17 agenti</span>
+  <span class="pill mono">football ⟷ meme coin</span>
+  <div class="legend" id="legend">
+    <button data-layer="all" class="active">ALL</button>
+    <button data-layer="football">FOOTBALL AI</button>
+    <button data-layer="shared">SHARED</button>
+    <button data-layer="meme">MEME COIN</button>
+  </div>
+</div>
+
+<div class="stage">
+  <div class="canvas-wrap">
+    <div class="canvas-title">
+      <div>
+        <h1>Cross-Desk <span>Agent Connections</span></h1>
+        <p>Football AI ↔ Shared Infrastructure ↔ Meme Coin · connessioni live e pianificate</p>
+      </div>
+      <div class="meta-row">
+        <div class="kpi"><label>Football</label><b class="mono">8 ag.</b></div>
+        <div class="kpi"><label>Shared</label><b class="mono">4 svc</b></div>
+        <div class="kpi"><label>Meme</label><b class="mono">9 ag.</b></div>
+        <div class="kpi"><label>Live</label><b class="mono up">9 link</b></div>
+        <div class="kpi"><label>Planned</label><b class="mono">3 link</b></div>
+      </div>
+    </div>
+
+    <div class="canvas" id="canvas">
+      <div class="grid-bg"></div>
+      <svg class="edges" id="edges" preserveAspectRatio="none"></svg>
+    </div>
+  </div>
+
+  <aside class="panel" id="panel">
+    <div class="panel-head">
+      <div class="eyebrow" id="p-eyebrow">SYSTEM OVERVIEW</div>
+      <h2 id="p-title">Cross-Desk</h2>
+      <div class="sub" id="p-sub">Football AI ↔ Infrastruttura condivisa ↔ Meme Coin</div>
+    </div>
+    <div class="panel-body" id="p-body"></div>
+    <div class="footer-bar"><span>build #1.0.0 · 2026-05-11</span><span id="p-time">—</span></div>
+  </aside>
+</div>
+
+<script>
+/* ── NODE DEFINITIONS ──
+   Football column: x=22 (left edge)
+   Shared column:   x=584 (left edge, centered in 1350px with 174px width)
+   Meme column:     x=1154 (left edge: 1350-174-22)
+   Node width: 174px, spacing: 145px between rows
+*/
+
+const FA_X = 22;
+const SH_X = 584;  /* (1350 - 174) / 2 = 588 → using 584 */
+const MC_X = 1154;
+
+const NODES = [
+  // ── FOOTBALL AI DESK ──
+  {id:"FA-S",  desk:"football", x:FA_X, y:80,  ico:"🔷", icoClass:"ico-source",   tag:"SOURCES",   title:"Data Sources",
+   desc:"6 fonti:\nBetfair Exchange · football-data.org\nAPI-Football · Understat\nOdds API · OpenWeatherMap",
+   detail:"6 fonti dati live. Betfair Exchange è la fonte primaria per quote real-time su 53 mercati attivi. football-data.org fornisce fixture storici e programmati per SA, PL, PD, BL1, EL, ECL.",
+   links:["FA-DC"], status:"ok"},
+
+  {id:"FA-DC", desk:"football", x:FA_X, y:230, ico:"🔄", icoClass:"ico-collect",  tag:"AGENT",     title:"DataCollector",
+   desc:"Ciclo 10m (2m pre-KO).\nBetfair PRIMARY → Odds fallback.\nFuzzy match cross-lingua ≥ 0.65.",
+   detail:"Raccoglie dati da tutte e 6 le fonti ogni 10 minuti, ogni 2 minuti vicino al kickoff. Implementa fuzzy matching NFKD + SequenceMatcher per correlare nomi team tra fonti diverse.",
+   links:["FA-MA"], status:"ok"},
+
+  {id:"FA-MA", desk:"football", x:FA_X, y:375, ico:"🧠", icoClass:"ico-model",    tag:"AGENT",     title:"ModelAgent",
+   desc:"Dixon-Coles + Pi Rating + xG.\nConformal Prediction CI α=0.10.\n→ Redis model:probabilities",
+   detail:"Combina 3 modelli: Dixon-Coles (Poisson bivariato con rho=-0.13), Pi Ratings (forma recente, decay 0.995/match), xG Enrichment (Understat, rolling last5/10/20). Output: p_home, p_draw, p_away + CI.",
+   links:["FA-AA"], status:"ok"},
+
+  {id:"FA-AA", desk:"football", x:FA_X, y:520, ico:"📈", icoClass:"ico-value",    tag:"AGENT",     title:"AnalystAgent",
+   desc:"edge = p_modello − 1/odds.\nSoglia: Betfair ≥ 2% · Soft ≥ 5%.\n→ Redis analyst:opportunities",
+   detail:"Calcola edge = probabilità modello - probabilità implicita nelle quote. Applica soglie adattive: ≥2% per Betfair/sharp, ≥5% per bookmaker soft. Filtra ~38 opportunità/giorno.",
+   links:["FA-ST"], status:"ok"},
+
+  {id:"FA-ST", desk:"football", x:FA_X, y:665, ico:"🎯", icoClass:"ico-ensemble", tag:"AGENT",     title:"StrategistAgent",
+   desc:"Conviction score 0–10.\nClaude API + rule-based fallback.\nSkip se conviction < 6.",
+   detail:"Usa Claude Sonnet per calcolare conviction score 0-10 su ogni opportunità. Considera edge, contesto tattico, match type, ContextService v5.0 (tier lega, anomaly detection). Skip se <6.",
+   links:["FA-RM"], status:"ok"},
+
+  {id:"FA-RM", desk:"football", x:FA_X, y:810, ico:"🛡️", icoClass:"ico-value",   tag:"AGENT",     title:"RiskManager",
+   desc:"Kelly frazionato f=0.25.\nstake = min(kelly×0.25×BK, 3%×BK)\nDrawdown block: 15%/mese.",
+   detail:"Applica Kelly sizing con frazione 0.25 per ridurre varianza. Stake massimo 3% del bankroll (€15 su €500). Gate completeness <75% → DLQ. Blocco mensile se drawdown >15%.",
+   links:["FA-TR"], status:"ok"},
+
+  {id:"FA-TR", desk:"football", x:FA_X, y:955, ico:"💸", icoClass:"ico-output",   tag:"AGENT",     title:"TraderAgent",
+   desc:"PAPER → Neon DB.\nLIVE → Betfair REST place_bet().\nTelegram alert edge > 3%.",
+   detail:"In modalità PAPER salva le bet su Neon PostgreSQL. In modalità LIVE esegue place_bet() via Betfair REST API. Invia alert Telegram per ogni bet con edge >3%. Attualmente in paper trading.",
+   links:[], status:"ok"},
+
+  // ── SHARED INFRASTRUCTURE ──
+  {id:"SH-CL", desk:"shared", x:SH_X, y:280,  ico:"🤖", icoClass:"ico-shared", tag:"CLAUDE API",  title:"Claude Sonnet",
+   desc:"Anthropic API shared.\nFootball: Strategist conviction.\nMeme: Research (planned).\nModel: claude-sonnet-4-6",
+   detail:"Claude Sonnet API condivisa tra i due desk. Football: StrategistAgent usa Claude per conviction score 0-10 su ogni value bet. Meme Coin: pianificato per Research Agent (edge cohort analysis). Model ID: claude-sonnet-4-6.",
+   links:[], status:"ok"},
+
+  {id:"SH-DB", desk:"shared", x:SH_X, y:480,  ico:"🗄️", icoClass:"ico-shared", tag:"DATABASES",   title:"Persistence Layer",
+   desc:"Football → Neon PostgreSQL.\nMeme → Upstash Redis + Blob.\nSheet DB (meme research).",
+   detail:"I due desk usano storage separato: Football usa Neon PostgreSQL serverless (7 tabelle: match_predictions, bets, heartbeats, research, dead_letter_preds, monte_carlo). Meme usa Upstash Redis per shared state + Vercel Blob per equity + Google Sheets per edge research.",
+   links:[], status:"ok"},
+
+  {id:"SH-VR", desk:"shared", x:SH_X, y:680,  ico:"▲",  icoClass:"ico-shared", tag:"VERCEL",      title:"Vercel Cloud",
+   desc:"2 dashboard separate.\nFootball: Next.js 14.\nMeme: Vanilla JS.\nAuto-deploy da GitHub.",
+   detail:"Entrambi i desk deployano su Vercel (account agenticmarkets-CB). Football: agentic-markets-roan.vercel.app (Next.js 14). Meme: creiamo-uno-schema.vercel.app (Vanilla JS). Auto-deploy a ogni push su GitHub.",
+   links:[], status:"ok"},
+
+  {id:"SH-TG", desk:"shared", x:SH_X, y:880,  ico:"📱", icoClass:"ico-shared", tag:"TELEGRAM",    title:"Telegram Alerts",
+   desc:"Football: live (edge > 3%).\nMeme: pianificato.\nBot condiviso · markdown format.",
+   detail:"Football ha Telegram attivo e invia alert per ogni bet con edge >3% (match, selezione, stake, odds, edge%). Meme coin ha il bot pianificato per alert su entry/exit. Il bot Telegram è condiviso tra i due desk.",
+   links:[], status:"ok"},
+
+  // ── MEME COIN DESK ──
+  {id:"MC-S",  desk:"meme", x:MC_X, y:80,  ico:"🔷", icoClass:"ico-source",   tag:"SOURCES",   title:"Data Sources",
+   desc:"DexScreener Profiles+Boosts.\nBinance BTCUSDT depth+trades.\nUpstash Redis · Bitquery ext.",
+   detail:"5 fonti dati: DexScreener Profiles (token profiles Solana), DexScreener Boosts (latest+top boosted), Binance BTCUSDT (depth + trades per BTC agent), Upstash Redis (shared state pull 30s), Bitquery (external labels per research).",
+   links:["MC-SC"], status:"ok"},
+
+  {id:"MC-SC", desk:"meme", x:MC_X, y:230, ico:"🔍", icoClass:"ico-collect",  tag:"AGENT",     title:"Scout + Filter",
+   desc:"Scout: DexScreener 30s · 1s top3.\nFilter: $12K-$180K · age · cooldown.\nPass rate: ~30%.",
+   detail:"Scout Agent scansiona DexScreener ogni 30s (full scan) + 1s focused scan sui top 3 token per ordini in tempo reale. Filter Agent filtra per liquidità $12K-$180K, age check, broken price, cooldown 45m pair / 2h symbol.",
+   links:["MC-MO"], status:"ok"},
+
+  {id:"MC-MO", desk:"meme", x:MC_X, y:375, ico:"⚡", icoClass:"ico-scoring",  tag:"AGENT",     title:"Momentum + Research",
+   desc:"Momentum: score 0-100.\nbuy_ratio ≥ 1.6 · vol_liq 0.25-4.5.\nResearch: 30m batch · 10K target.",
+   detail:"Momentum Agent calcola score 0-100 su: buy/sell ratio ≥1.6 (strong 2.4), vol/liq 0.25-4.5, impulse 5m 10-180%, moonshot bypass score≥82. Research Agent in parallelo accumula campioni (10K target) con label 15m outcome → edge lab 700x/100x.",
+   links:["MC-EA"], status:"ok"},
+
+  {id:"MC-EA", desk:"meme", x:MC_X, y:520, ico:"🎯", icoClass:"ico-decision", tag:"AGENT",     title:"Entry Agent",
+   desc:"EV gate ≥ 4.\nSize: 5% normale · 10% moonshot.\n→ Risk Manager confirmation.",
+   detail:"Entry Agent verifica EV gate ≥4 prima di ogni entry. Size: 5% del capital in modalità normale ($50 su $1000), 10% per moonshot (score≥82, $100). Richiede conferma dal Risk Manager prima di eseguire.",
+   links:["MC-RM"], status:"ok"},
+
+  {id:"MC-RM", desk:"meme", x:MC_X, y:665, ico:"🛡️", icoClass:"ico-decision", tag:"AGENT",     title:"Risk Manager",
+   desc:"Max 3 posizioni aperte.\n10% max per trade.\nSystem grade A–F watchdog.",
+   detail:"Risk Manager controlla: max 3 posizioni aperte contemporaneamente, max 10% capital per trade, gross exposure cap 30%. Calcola system grade A-F in tempo reale. Blocca entry se grade scende sotto soglia.",
+   links:["MC-EX"], status:"ok"},
+
+  {id:"MC-EX", desk:"meme", x:MC_X, y:810, ico:"📤", icoClass:"ico-execute",  tag:"AGENT",     title:"Exit + BTCUSDT",
+   desc:"Exit: stop / partial / trail.\nBTCUSDT: paper 24/7 · imbalance.\n→ Journal Agent.",
+   detail:"Exit Agent gestisce: hard stop loss, partial profit a target, trailing exit basato su momentum, cooldown enforcement 45m. In parallelo BTCUSDT Agent fa paper trading 24/7 su Binance usando book imbalance + CVD signal.",
+   links:["MC-JA"], status:"ok"},
+
+  {id:"MC-JA", desk:"meme", x:MC_X, y:955, ico:"📓", icoClass:"ico-output",   tag:"AGENT",     title:"Journal + Output",
+   desc:"Journal → Redis + Blob.\nDashboard → Vercel.\nSheets → research export.",
+   detail:"Journal Agent persiste ogni decisione (entry, exit, PnL) su Upstash Redis + Vercel Blob. Output: Dashboard Vercel (equity curve, Signal Radar, open positions), Google Sheets (research cycles, edge summary), Telegram (pianificato).",
+   links:[], status:"ok"},
+];
+
+/* ── EDGE DEFINITIONS ──
+   type: "internal" (vertical, within column) | "cross" (horizontal, between columns)
+   style: "live" | "planned" | "default"
+   hot: true → animated flow
+*/
+const EDGES = [
+  // Football internal
+  {from:"FA-S",  to:"FA-DC", type:"internal", style:"live"},
+  {from:"FA-DC", to:"FA-MA", type:"internal", style:"live"},
+  {from:"FA-MA", to:"FA-AA", type:"internal", style:"live"},
+  {from:"FA-AA", to:"FA-ST", type:"internal", style:"live"},
+  {from:"FA-ST", to:"FA-RM", type:"internal", style:"live"},
+  {from:"FA-RM", to:"FA-TR", type:"internal", style:"live"},
+
+  // Meme internal
+  {from:"MC-S",  to:"MC-SC", type:"internal", style:"live"},
+  {from:"MC-SC", to:"MC-MO", type:"internal", style:"live"},
+  {from:"MC-MO", to:"MC-EA", type:"internal", style:"live"},
+  {from:"MC-EA", to:"MC-RM", type:"internal", style:"live"},
+  {from:"MC-RM", to:"MC-EX", type:"internal", style:"live"},
+  {from:"MC-EX", to:"MC-JA", type:"internal", style:"live"},
+
+  // Cross: Football → Shared
+  {from:"FA-ST", to:"SH-CL", type:"cross", style:"live", hot:true,    label:"Claude conviction"},
+  {from:"FA-TR", to:"SH-TG", type:"cross", style:"live",              label:"Telegram alert"},
+  {from:"FA-TR", to:"SH-DB", type:"cross", style:"live",              label:"Neon DB write"},
+  {from:"FA-DC", to:"SH-VR", type:"cross", style:"live",              label:"Dashboard"},
+
+  // Cross: Shared → Meme
+  {from:"SH-DB", to:"MC-SC", type:"cross", style:"live",              label:"Redis shared state"},
+  {from:"SH-VR", to:"MC-JA", type:"cross", style:"live",              label:"Vercel deploy"},
+  {from:"SH-TG", to:"MC-JA", type:"cross", style:"planned",           label:"Telegram (planned)"},
+  {from:"SH-CL", to:"MC-MO", type:"cross", style:"planned", hot:true, label:"Claude research (planned)"},
+];
+
+const HOT_EDGES = EDGES.filter(e => e.hot);
+
+const LANES = [
+  {y:48,  label:"01 — Data Ingestion"},
+  {y:198, label:"02 — Collection & Scout"},
+  {y:343, label:"03 — Intelligence & Modeling"},
+  {y:488, label:"04 — Analysis & Signal"},
+  {y:633, label:"05 — Strategy & Entry"},
+  {y:778, label:"06 — Risk & Execution"},
+  {y:923, label:"07 — Output & Delivery"},
+];
+
+const canvasDiv = document.getElementById('canvas');
+const svg = document.getElementById('edges');
+let activeId = null;
+
+function makeLanes() {
+  LANES.forEach(l => {
+    const lab = document.createElement('div');
+    lab.className='lane'; lab.style.top=(l.y-2)+'px';
+    lab.innerHTML=`<b>›</b>${l.label}`;
+    canvasDiv.appendChild(lab);
+    const line = document.createElement('div');
+    line.className='lane-line'; line.style.top=(l.y+12)+'px';
+    canvasDiv.appendChild(line);
+  });
+}
+
+function makeZoneLabels() {
+  [
+    {cls:'zone-label zone-football', txt:'⬡ Football AI Desk', style:'left:22px;top:18px;'},
+    {cls:'zone-label zone-shared',   txt:'⬢ Shared Infrastructure', style:'left:572px;top:18px;'},
+    {cls:'zone-label zone-meme',     txt:'◈ Meme Coin Desk', style:'left:1138px;top:18px;'},
+  ].forEach(({cls,txt,style}) => {
+    const el = document.createElement('div');
+    el.className = cls; el.textContent = txt;
+    el.setAttribute('style', style + 'position:absolute;z-index:5;');
+    canvasDiv.appendChild(el);
+  });
+}
+
+function nodeEl(n) {
+  const el = document.createElement('div');
+  el.className = `node desk-${n.desk}`;
+  el.dataset.id = n.id; el.dataset.desk = n.desk;
+  el.style.left = n.x + 'px'; el.style.top = n.y + 'px';
+  const statusClass = n.status === 'ok' ? 'ok' : 'pending';
+  const pulseClass  = n.status === 'ok' ? '' : ' amber';
+  const statusText  = n.status === 'ok' ? 'live' : 'planned';
+  el.innerHTML = `
+    <div class="head">
+      <div class="ico ${n.icoClass}">${n.ico||'•'}</div>
+      <div class="tag mono">${n.tag||''}</div>
+    </div>
+    <h4>${n.title}</h4>
+    <p>${(n.desc||'').replace(/\n/g,'<br>')}</p>
+    <div class="footer">
+      <span>${n.id}</span>
+      <span class="${statusClass}"><span class="pulse${pulseClass}"></span>${statusText}</span>
+    </div>`;
+  el.addEventListener('click', () => selectNode(n.id));
+  el.addEventListener('mouseenter', () => highlightNode(n.id, true));
+  el.addEventListener('mouseleave', () => { if (!activeId) highlightNode(null, false); });
+  return el;
+}
+
+function makeNodes() {
+  NODES.forEach(n => canvasDiv.appendChild(nodeEl(n)));
+}
+
+function getNodeCenter(id) {
+  const el = canvasDiv.querySelector(`[data-id="${id}"]`);
+  if (!el) return null;
+  const r = el.getBoundingClientRect(), c = canvasDiv.getBoundingClientRect();
+  return {
+    x:      r.left - c.left + r.width / 2,
+    y:      r.top  - c.top  + r.height / 2,
+    top:    r.top  - c.top,
+    bottom: r.top  - c.top  + r.height,
+    left:   r.left - c.left,
+    right:  r.left - c.left + r.width,
+    h: r.height, w: r.width
+  };
+}
+
+function verticalPath(a, b) {
+  const x1=a.x, y1=a.bottom, x2=b.x, y2=b.top;
+  const dy = Math.abs(y2-y1)*0.5;
+  return `M ${x1} ${y1} C ${x1} ${y1+dy}, ${x2} ${y2-dy}, ${x2} ${y2}`;
+}
+
+function horizontalPath(a, b) {
+  // football→shared: right-edge of A → left-edge of B
+  // shared→meme: right-edge of A → left-edge of B
+  const x1 = a.right, y1 = a.y;
+  const x2 = b.left,  y2 = b.y;
+  const mx = (x1 + x2) / 2;
+  return `M ${x1} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}`;
+}
+
+function makeEdges() {
+  svg.innerHTML = '';
+
+  // Zone background rectangles
+  const zones = [
+    {x:14,   y:8, w:196, h:1080, stroke:'rgba(0,229,255,.08)',    fill:'rgba(0,229,255,.015)'},
+    {x:570,  y:8, w:210, h:1080, stroke:'rgba(155,140,255,.1)',   fill:'rgba(155,140,255,.02)'},
+    {x:1140, y:8, w:196, h:1080, stroke:'rgba(255,92,242,.08)',   fill:'rgba(255,92,242,.015)'},
+  ];
+  zones.forEach(z => {
+    const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('x', z.x); rect.setAttribute('y', z.y);
+    rect.setAttribute('width', z.w); rect.setAttribute('height', z.h);
+    rect.setAttribute('rx', '12');
+    rect.setAttribute('fill', z.fill);
+    rect.setAttribute('stroke', z.stroke);
+    rect.setAttribute('stroke-width','1');
+    svg.appendChild(rect);
+  });
+
+  EDGES.forEach(e => {
+    const A = getNodeCenter(e.from), B = getNodeCenter(e.to);
+    if (!A || !B) return;
+    const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+    const d = e.type === 'cross' ? horizontalPath(A, B) : verticalPath(A, B);
+    p.setAttribute('d', d);
+    const cls = e.style === 'live' ? 'edge live'
+              : e.style === 'planned' ? 'edge planned'
+              : 'edge';
+    p.setAttribute('class', cls);
+    p.dataset.from = e.from; p.dataset.to = e.to;
+    svg.appendChild(p);
+  });
+
+  // Animated hot flows
+  HOT_EDGES.forEach(e => {
+    const A = getNodeCenter(e.from), B = getNodeCenter(e.to);
+    if (!A || !B) return;
+    const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d', horizontalPath(A, B));
+    const deskFrom = NODES.find(n => n.id === e.from)?.desk || 'football';
+    p.setAttribute('class', `flow-cross ${deskFrom}`);
+    svg.appendChild(p);
+  });
+}
+
+function highlightNode(id, on) {
+  if (!id && !activeId) {
+    document.querySelectorAll('.edge').forEach(e => e.classList.remove('hi','dim'));
+    document.querySelectorAll('.node').forEach(n => n.classList.remove('faded'));
+    return;
+  }
+  if (!id) return;
+  const connected = new Set([id]);
+  EDGES.forEach(e => {
+    if (e.from === id) connected.add(e.to);
+    if (e.to   === id) connected.add(e.from);
+  });
+  document.querySelectorAll('.edge').forEach(e => {
+    const mine = (e.dataset.from===id || e.dataset.to===id);
+    e.classList.toggle('hi',  mine);
+    e.classList.toggle('dim', !mine);
+  });
+  document.querySelectorAll('.node').forEach(n => {
+    n.classList.toggle('faded', !connected.has(n.dataset.id));
+  });
+}
+
+function renderPanel(id) {
+  const n = NODES.find(n => n.id === id);
+  if (!n) { renderOverview(); return; }
+  const deskLabel = n.desk === 'football' ? 'FOOTBALL AI' : n.desk === 'meme' ? 'MEME COIN' : 'SHARED';
+  document.getElementById('p-eyebrow').textContent = `${deskLabel} · ${n.tag}`;
+  document.getElementById('p-title').textContent = n.title;
+  document.getElementById('p-sub').textContent = `${n.id} · ${n.desk}`.toLowerCase();
+  const body = document.getElementById('p-body');
+  const connected = EDGES.filter(e => e.from===id || e.to===id);
+  const ups   = connected.filter(e=>e.to===id).map(e=>NODES.find(x=>x.id===e.from)).filter(Boolean);
+  const downs = connected.filter(e=>e.from===id).map(e=>NODES.find(x=>x.id===e.to)).filter(Boolean);
+  body.innerHTML = `
+    <h5>Description</h5>
+    <p style="margin:0;font-size:13px;color:var(--text);line-height:1.55">${n.detail||n.desc.replace(/\n/g,' ')}</p>
+    <h5>Status</h5>
+    <div class="kv">
+      <span>desk</span><b>${n.desk}</b>
+      <span>status</span><b style="color:var(--green)">${n.status}</b>
+      <span>tag</span><b>${n.tag}</b>
+    </div>
+    <h5>Connections upstream (${ups.length})</h5>
+    <div class="neighbors">${ups.length
+      ? ups.map(u=>`<button onclick="selectNode('${u.id}')"><span>${u.id} · ${u.title}</span><span class="arrow">↑</span></button>`).join('')
+      : '<div class="kv"><span>none</span><b>root</b></div>'}</div>
+    <h5>Connections downstream (${downs.length})</h5>
+    <div class="neighbors">${downs.length
+      ? downs.map(d=>{
+          const e = EDGES.find(x=>x.from===id && x.to===d.id);
+          const badge = e?.style==='planned' ? ' <span style="color:var(--amber);font-size:9px">[planned]</span>' : '';
+          return `<button onclick="selectNode('${d.id}')"><span>${d.id} · ${d.title}${badge}</span><span class="arrow">↓</span></button>`;
+        }).join('')
+      : '<div class="kv"><span>none</span><b>leaf</b></div>'}</div>
+  `;
+}
+
+function selectNode(id) {
+  activeId = id;
+  document.querySelectorAll('.node').forEach(n => n.classList.toggle('active', n.dataset.id===id));
+  renderPanel(id);
+  highlightNode(id, true);
+}
+
+function renderOverview() {
+  document.getElementById('p-eyebrow').textContent = 'CROSS-DESK OVERVIEW';
+  document.getElementById('p-title').textContent = 'Agent Connections';
+  document.getElementById('p-sub').textContent = 'Football AI ↔ Shared Infra ↔ Meme Coin';
+  document.getElementById('p-body').innerHTML = `
+    <h5>Connessioni live</h5>
+    <div class="codeblock">FOOTBALL
+StrategistAgent → Claude API (conviction)
+TraderAgent     → Telegram (alert bet)
+TraderAgent     → Neon DB (trade log)
+DataCollector   → Vercel (dashboard)
+
+MEME COIN
+Redis shared state ← Scout Agent
+Vercel Blob        ← Journal Agent
+
+SHARED INFRA
+Claude Sonnet 4.6 · Vercel Cloud
+Neon PostgreSQL · Upstash Redis
+Telegram Bot</div>
+    <h5>Connessioni pianificate</h5>
+    <div class="codeblock">SH-CL → MC-MO  (Claude per Research Agent)
+SH-TG → MC-JA  (Telegram meme alerts)</div>
+    <h5>Differenze tra desk</h5>
+    <div class="kv">
+      <span>Orizzonte</span><b>Match 90m</b>
+      <span></span><b>Token 5–30m</b>
+      <span>Mercato</span><b>Betfair Exchange</b>
+      <span></span><b>Solana DEX</b>
+      <span>Storage</span><b>Neon PostgreSQL</b>
+      <span></span><b>Upstash + Blob</b>
+      <span>Edge logic</span><b>Kelly f=0.25</b>
+      <span></span><b>EV gate ≥ 4</b>
+      <span>AI model</span><b>Claude live</b>
+      <span></span><b>Claude planned</b>
+    </div>
+    <h5>Legenda colori edge</h5>
+    <div class="kv">
+      <span style="color:var(--green)">─────</span><b>Connessione live</b>
+      <span style="color:var(--amber)">- - -</span><b>Connessione pianificata</b>
+      <span style="color:var(--cyan)">›››</span><b>Hot path Football</b>
+      <span style="color:var(--magenta)">›››</span><b>Hot path Meme (planned)</b>
+    </div>
+    <h5>Hint</h5>
+    <p style="margin:0;font-size:12px;color:var(--muted);line-height:1.55">Clicca un nodo per dettagli e connessioni. Hover per evidenziare il grafo locale. I rettangoli colorati delimitano i tre zone: Football AI (blu), Shared Infra (viola), Meme Coin (magenta).</p>
+  `;
+}
+
+function tick() {
+  const d = new Date();
+  document.getElementById('p-time').textContent = 'sync ' + d.toISOString().slice(11,19) + 'Z';
+}
+
+makeLanes();
+makeZoneLabels();
+makeNodes();
+document.fonts.ready.then(() => { makeEdges(); renderOverview(); });
+window.addEventListener('resize', () => makeEdges());
+tick(); setInterval(tick, 1000);
+
+document.getElementById('legend').addEventListener('click', e => {
+  if (e.target.tagName !== 'BUTTON') return;
+  const layer = e.target.dataset.layer;
+  document.querySelectorAll('#legend button').forEach(b => b.classList.toggle('active', b===e.target));
+  document.querySelectorAll('.node').forEach(n => {
+    if (layer === 'all') n.classList.remove('faded');
+    else n.classList.toggle('faded', n.dataset.desk !== layer);
+  });
+  document.querySelectorAll('.edge').forEach(ed => ed.classList.toggle('dim', layer!=='all'));
+});
+
+window.selectNode = selectNode;
+</script>
+</body>
+</html>
