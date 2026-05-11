@@ -59,12 +59,14 @@
   .tab:nth-child(1) .tab-ico { background:rgba(0,229,255,.08);   border:1px solid rgba(0,229,255,.2); }
   .tab:nth-child(2) .tab-ico { background:rgba(155,140,255,.08); border:1px solid rgba(155,140,255,.2); }
   .tab:nth-child(3) .tab-ico { background:rgba(50,224,160,.08);  border:1px solid rgba(50,224,160,.2); }
+  .tab:nth-child(4) .tab-ico { background:rgba(255,181,71,.08);  border:1px solid rgba(255,181,71,.2); }
   .tab .badge {
     font-family:'JetBrains Mono',monospace; font-size:9px; padding:2px 6px; border-radius:4px;
     background:rgba(0,229,255,.08); color:var(--cyan); border:1px solid rgba(0,229,255,.2);
   }
   .tab:nth-child(2) .badge { background:rgba(155,140,255,.08); color:var(--violet); border-color:rgba(155,140,255,.2); }
   .tab:nth-child(3) .badge { background:rgba(50,224,160,.08);  color:var(--green);  border-color:rgba(50,224,160,.2); }
+  .tab:nth-child(4) .badge { background:rgba(255,181,71,.08);  color:var(--amber);  border-color:rgba(255,181,71,.2); }
   .status {
     margin-left: auto; display:flex; align-items:center; gap:6px;
     font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); flex-shrink:0;
@@ -106,6 +108,11 @@
       Confidential
       <span class="badge">private</span>
     </div>
+    <div class="tab" onclick="show(3)">
+      <span class="tab-ico">🌐</span>
+      Unified Schema
+      <span class="badge">all desks</span>
+    </div>
   </div>
   <div class="status">
     <span class="dot"></span>
@@ -117,6 +124,7 @@
   <iframe id="f0" src="schema.html"                  class="visible"></iframe>
   <iframe id="f1" src="cross-desk.html"              class=""></iframe>
   <iframe id="f2" src="prediction-confidential.html" class=""></iframe>
+  <iframe id="f3" src="unified-schema.html"          class=""></iframe>
 </div>
 
 <script>
