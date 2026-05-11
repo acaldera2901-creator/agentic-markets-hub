@@ -17,7 +17,7 @@
 *{box-sizing:border-box;}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
 .mono{font-family:'JetBrains Mono',monospace;}
-body{background:var(--bg);overflow-x:hidden;}
+body{background:var(--bg);overflow-x:auto;}
 body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
   background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
                    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
@@ -128,8 +128,13 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
 .desk-header .status-soon{font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 8px;border-radius:6px;
   background:rgba(255,181,71,.08);color:var(--amber);border:1px solid rgba(255,181,71,.25);}
 
-/* ── STAGE (canvas + panel) ── */
-.stage{position:relative;z-index:1;display:grid;grid-template-columns:1fr 380px;}
+/* ── DESKS ROW ── */
+.desks-row{display:flex;align-items:flex-start;}
+.desk-section{flex-shrink:0;border-right:1px solid var(--line);}
+.desk-section:last-child{border-right:none;}
+
+/* ── STAGE (canvas only, no panel) ── */
+.stage{position:relative;z-index:1;}
 .canvas-wrap{position:relative;padding:16px 16px 40px;overflow-x:auto;overflow-y:visible;}
 .canvas-title{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:14px;}
 .canvas-title h1{margin:0;font-size:20px;}
@@ -203,18 +208,24 @@ svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z
 .legend-row button:hover{color:var(--text);border-color:var(--line-2);}
 .legend-row button.active{background:rgba(var(--acc-rgb),.08);border-color:rgba(var(--acc-rgb),.4);color:var(--acc);}
 
-/* ── PANEL ── */
-.panel{
-  border-left:1px solid var(--line);background:var(--panel);
-  position:sticky;top:88px;height:calc(100vh - 100px);overflow-y:auto;
+/* ── SHARED PANEL (fixed right) ── */
+#shared-panel{
+  position:fixed;right:0;top:0;bottom:0;width:340px;z-index:100;
+  background:var(--panel);border-left:1px solid var(--line);
   display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .22s ease;
+  box-shadow:-8px 0 32px rgba(0,0,0,.4);
 }
-.panel-head{padding:16px 16px 12px;border-bottom:1px solid var(--line);}
-.eyebrow{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--acc);letter-spacing:.18em;text-transform:uppercase;margin-bottom:6px;}
-.panel-head h2{margin:0 0 3px;font-size:15px;font-weight:700;}
+#shared-panel.open{transform:translateX(0);}
+.panel-head{padding:14px 16px 12px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:4px;}
+.panel-head-top{display:flex;align-items:center;justify-content:space-between;}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--acc,var(--cyan));letter-spacing:.18em;text-transform:uppercase;}
+.panel-head h2{margin:0;font-size:14px;font-weight:700;}
 .sub{font-size:11px;color:var(--muted);}
-.panel-body{flex:1;padding:16px;overflow-y:auto;font-size:13px;}
-.panel-body h5{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;margin:16px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--line);}
+.panel-close{background:none;border:1px solid var(--line);color:var(--muted);width:22px;height:22px;border-radius:5px;cursor:pointer;font-size:12px;display:grid;place-items:center;flex-shrink:0;transition:all .1s;}
+.panel-close:hover{color:var(--text);border-color:var(--line-2);}
+.panel-body{flex:1;padding:14px 16px;overflow-y:auto;font-size:13px;}
+.panel-body h5{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;margin:14px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--line);}
 .panel-body h5:first-child{margin-top:0;}
 .codeblock{font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--bg-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;line-height:1.7;color:var(--muted);white-space:pre;}
 .kv{display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;}
@@ -222,8 +233,8 @@ svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z
 .kv b{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text);text-align:right;}
 .neighbors{display:flex;flex-direction:column;gap:3px;}
 .neighbors button{display:flex;justify-content:space-between;align-items:center;background:var(--panel-2);border:1px solid var(--line);border-radius:7px;padding:6px 10px;font-size:10px;cursor:pointer;color:var(--text);font-family:'JetBrains Mono',monospace;transition:all .1s;}
-.neighbors button:hover{border-color:var(--acc);}
-.neighbors button .arrow{color:var(--acc);}
+.neighbors button:hover{border-color:var(--cyan);}
+.neighbors button .arrow{color:var(--cyan);}
 .footer-bar{padding:8px 16px;border-top:1px solid var(--line);font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);display:flex;justify-content:space-between;flex-shrink:0;}
 
 /* ── COMING SOON OVERLAY ── */
@@ -238,13 +249,6 @@ svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z
   background:rgba(255,181,71,.08);box-shadow:0 0 24px rgba(255,181,71,.1);}
 .cs-sub{font-size:12px;color:var(--muted);}
 
-/* ── DESK DIVIDER ── */
-.desk-divider{height:48px;position:relative;display:flex;align-items:center;justify-content:center;}
-.desk-divider::before{content:"";position:absolute;top:50%;left:0;right:0;height:1px;background:var(--line);}
-.desk-divider .divider-dot{
-  position:relative;width:8px;height:8px;border-radius:50%;
-  background:var(--line-2);border:2px solid var(--line);
-}
 </style>
 </head>
 <body>
@@ -304,13 +308,14 @@ svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z
   </div>
 </div>
 
+<div class="desks-row">
+
 <!-- ════════ FOOTBALL DESK ════════ -->
 <div class="desk-section football" id="desk-football">
   <div class="desk-header">
     <div class="desk-header-ico">⬡</div>
     <div class="desk-header-name">Football AI</div>
-    <div class="desk-header-meta">Pipeline Market Data → Value Bet · Dixon-Coles + Pi Rating + xG</div>
-    <div class="alloc-chip">60% capital</div>
+    <div class="alloc-chip">60%</div>
     <div class="status-live"><span></span>live</div>
   </div>
   <div class="stage">
@@ -318,7 +323,7 @@ svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z
       <div class="canvas-title">
         <div>
           <h1>Pipeline <span>Market Data → Value Bet</span></h1>
-          <p>Flusso dati end-to-end · Betfair Exchange primary · Dixon-Coles + Pi Rating + xG · Kelly sizing</p>
+          <p>Dixon-Coles + Pi Rating + xG · Kelly sizing</p>
         </div>
         <div class="meta-row" id="kpis-f"></div>
       </div>
@@ -328,35 +333,23 @@ svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z
         <svg class="edges" id="edges-f" preserveAspectRatio="none"></svg>
       </div>
     </div>
-    <aside class="panel" id="panel-f">
-      <div class="panel-head">
-        <div class="eyebrow" id="pe-f">SYSTEM OVERVIEW</div>
-        <h2 id="pt-f">Agentic Markets v5.0</h2>
-        <div class="sub" id="ps-f">8 agenti · 6 leghe · 53 mercati Betfair · paper trading</div>
-      </div>
-      <div class="panel-body" id="pb-f"></div>
-      <div class="footer-bar"><span id="pbuild-f">build #5.0.0 · 2026-05-06</span><span id="ptime-f">—</span></div>
-    </aside>
   </div>
 </div>
-
-<div class="desk-divider"><div class="divider-dot"></div></div>
 
 <!-- ════════ MEME DESK ════════ -->
 <div class="desk-section meme" id="desk-meme">
   <div class="desk-header">
     <div class="desk-header-ico">🚀</div>
     <div class="desk-header-name">Meme Coin</div>
-    <div class="desk-header-meta">Pipeline DexScreener → Signal → Paper Trade · Solana chain</div>
-    <div class="alloc-chip">40% capital</div>
+    <div class="alloc-chip">40%</div>
     <div class="status-live"><span></span>live</div>
   </div>
   <div class="stage">
     <div class="canvas-wrap">
       <div class="canvas-title">
         <div>
-          <h1>Pipeline <span>DexScreener → Signal → Paper Trade</span></h1>
-          <p>Flusso dati end-to-end · Solana chain · Momentum scoring · EV gate · Kelly sizing</p>
+          <h1>Pipeline <span>DexScreener → Signal → Trade</span></h1>
+          <p>Solana chain · Momentum scoring · EV gate · Kelly sizing</p>
         </div>
         <div class="meta-row" id="kpis-m"></div>
       </div>
@@ -366,26 +359,14 @@ svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z
         <svg class="edges" id="edges-m" preserveAspectRatio="none"></svg>
       </div>
     </div>
-    <aside class="panel" id="panel-m">
-      <div class="panel-head">
-        <div class="eyebrow" id="pe-m">SYSTEM OVERVIEW</div>
-        <h2 id="pt-m">Meme Coin v1.0</h2>
-        <div class="sub" id="ps-m">9 agenti · Solana · DexScreener · paper</div>
-      </div>
-      <div class="panel-body" id="pb-m"></div>
-      <div class="footer-bar"><span id="pbuild-m">build #1.0.0 · 2026-05-11</span><span id="ptime-m">—</span></div>
-    </aside>
   </div>
 </div>
-
-<div class="desk-divider"><div class="divider-dot"></div></div>
 
 <!-- ════════ TENNIS DESK ════════ -->
 <div class="desk-section tennis" id="desk-tennis">
   <div class="desk-header">
     <div class="desk-header-ico">🎾</div>
     <div class="desk-header-name">Tennis AI</div>
-    <div class="desk-header-meta">Pipeline ATP/WTA → Quote → Value Bet · Elo surface-adj.</div>
     <div class="alloc-chip">—</div>
     <div class="status-soon">COMING SOON</div>
   </div>
@@ -394,7 +375,7 @@ svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z
       <div class="canvas-title">
         <div>
           <h1>Pipeline <span>ATP/WTA → Quote → Value Bet</span></h1>
-          <p>Flusso dati end-to-end · Betfair Exchange primary · Elo surface-adj. + Serve Model · Kelly sizing</p>
+          <p>Elo surface-adj. + Serve & Return Model · Kelly sizing</p>
         </div>
         <div class="meta-row" id="kpis-t"></div>
       </div>
@@ -410,16 +391,23 @@ svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z
         </div>
       </div>
     </div>
-    <aside class="panel" id="panel-t">
-      <div class="panel-head">
-        <div class="eyebrow" id="pe-t">SYSTEM OVERVIEW</div>
-        <h2 id="pt-t">Tennis AI v1.0</h2>
-        <div class="sub" id="ps-t">8 agenti · ATP + WTA · 12 tornei · in sviluppo</div>
-      </div>
-      <div class="panel-body" id="pb-t"></div>
-      <div class="footer-bar"><span id="pbuild-t">build #1.0.0 · 2026-05-11</span><span id="ptime-t">—</span></div>
-    </aside>
   </div>
+</div>
+
+</div><!-- end .desks-row -->
+
+<!-- SHARED PANEL -->
+<div id="shared-panel">
+  <div class="panel-head">
+    <div class="panel-head-top">
+      <div class="eyebrow" id="sp-eyebrow">SYSTEM OVERVIEW</div>
+      <button class="panel-close" onclick="closePanel()">✕</button>
+    </div>
+    <h2 id="sp-title">—</h2>
+    <div class="sub" id="sp-sub">—</div>
+  </div>
+  <div class="panel-body" id="sp-body"></div>
+  <div class="footer-bar"><span id="sp-build">—</span><span id="sp-time">—</span></div>
 </div>
 
 <script>
@@ -573,13 +561,18 @@ const DATA_TENNIS = {
 ════════════════════════════════════════════ */
 const DESKS = {};
 
+const spPanel  = document.getElementById('shared-panel');
+const spEyebrow = document.getElementById('sp-eyebrow');
+const spTitle   = document.getElementById('sp-title');
+const spSub     = document.getElementById('sp-sub');
+const spBody    = document.getElementById('sp-body');
+const spBuild   = document.getElementById('sp-build');
+
+function closePanel() { spPanel.classList.remove('open'); }
+
 function createDesk(key, D, suffix) {
   const canvasEl = document.getElementById('canvas-'+suffix);
   const svgEl    = document.getElementById('edges-'+suffix);
-  const pbEl     = document.getElementById('pb-'+suffix);
-  const peEl     = document.getElementById('pe-'+suffix);
-  const ptEl     = document.getElementById('pt-'+suffix);
-  const psEl     = document.getElementById('ps-'+suffix);
   let activeId   = null;
 
   // KPIs
@@ -701,11 +694,15 @@ function createDesk(key, D, suffix) {
     });
   }
 
+  function openPanel() { spPanel.classList.add('open'); }
+
   function renderOverview() {
-    peEl.textContent = D.overviewEyebrow;
-    ptEl.textContent = D.overviewTitle;
-    psEl.textContent = D.overviewSub;
-    pbEl.innerHTML   = D.overviewHTML;
+    spEyebrow.textContent = D.overviewEyebrow;
+    spTitle.textContent   = D.overviewTitle;
+    spSub.textContent     = D.overviewSub;
+    spBuild.textContent   = D.buildTxt;
+    spBody.innerHTML      = D.overviewHTML;
+    openPanel();
   }
 
   function selectNode(id) {
@@ -714,14 +711,15 @@ function createDesk(key, D, suffix) {
     canvasEl.querySelectorAll('.lchip').forEach(c => c.classList.remove('active'));
     highlightNeighbors(id, true);
     const n = D.nodes.find(x => x.id===id); if (!n) return;
-    peEl.textContent = `LAYER · ${n.layer.toUpperCase()}`;
-    ptEl.textContent = n.title;
-    psEl.textContent = `${n.id} · ${(n.tag||'').toLowerCase()}`;
+    spEyebrow.textContent = `LAYER · ${n.layer.toUpperCase()}`;
+    spTitle.textContent   = n.title;
+    spSub.textContent     = `${n.id} · ${(n.tag||'').toLowerCase()}`;
+    spBuild.textContent   = D.buildTxt;
     const ups   = D.edges.filter(([a,b])=>b===id).map(([a])=>D.nodes.find(x=>x.id===a)).filter(Boolean);
     const downs = D.edges.filter(([a,b])=>a===id).map(([,b])=>D.nodes.find(x=>x.id===b)).filter(Boolean);
     const sch  = Object.entries(n.schema||{}).map(([k,v])=>`<span>${k}</span><b>${v}</b>`).join('');
     const met  = Object.entries(n.metrics||{}).map(([k,v])=>`<span>${k}</span><b>${v}</b>`).join('');
-    pbEl.innerHTML = `
+    spBody.innerHTML = `
       <h5>Description</h5>
       <p style="margin:0;font-size:13px;color:var(--text);line-height:1.55">${(n.desc||'').replace(/\n/g,' ')}</p>
       <h5>Schema / params</h5><div class="kv">${sch||'<span>—</span><b>—</b>'}</div>
@@ -734,22 +732,24 @@ function createDesk(key, D, suffix) {
       <div class="neighbors">${downs.length
         ? downs.map(d=>`<button onclick="DESKS['${key}'].selectNode('${d.id}')"><span>${d.id} · ${d.title}</span><span class="arrow">↓</span></button>`).join('')
         : '<div class="kv"><span>none</span><b>leaf</b></div>'}</div>`;
+    openPanel();
   }
 
   function selectLeague(lid) {
     if (!D.leagues) return;
     const l = D.leagues.find(x=>x.id===lid); if (!l) return;
     canvasEl.querySelectorAll('.lchip').forEach(c=>c.classList.toggle('active',c.dataset.lid===lid));
-    peEl.textContent = 'BETFAIR EXCHANGE';
-    ptEl.textContent = l.title;
-    psEl.textContent = `${l.count} mercati MATCH_ODDS attivi`;
-    pbEl.innerHTML = `<h5>Mercati ${l.title}</h5><div class="kv"><span>mercati live</span><b>${l.count}</b><span>tipo</span><b>MATCH_ODDS</b><span>fonte</span><b>Betfair Exchange</b><span>status</span><b style="color:var(--green)">● live</b></div><h5>Quote live (esempio)</h5><div class="codeblock">${l.today
+    spEyebrow.textContent = 'BETFAIR EXCHANGE';
+    spTitle.textContent   = l.title;
+    spSub.textContent     = `${l.count} mercati MATCH_ODDS attivi`;
+    spBuild.textContent   = D.buildTxt;
+    spBody.innerHTML = `<h5>Mercati ${l.title}</h5><div class="kv"><span>mercati live</span><b>${l.count}</b><span>tipo</span><b>MATCH_ODDS</b><span>fonte</span><b>Betfair Exchange</b><span>status</span><b style="color:var(--green)">● live</b></div><h5>Quote live (esempio)</h5><div class="codeblock">${l.today
       ? 'Bayern Munich  1.65\nThe Draw       5.60\nParis St-G     4.50\n\nmargin: 4.2%  (sharp)'
       : `${l.count} mercati attivi\nfonte: Betfair Exchange`}</div>`;
+    openPanel();
   }
 
-  // Init render
-  renderOverview();
+  // Init render (no auto-open panel)
   document.fonts.ready.then(makeEdges);
 
   return { selectNode, selectLeague };
