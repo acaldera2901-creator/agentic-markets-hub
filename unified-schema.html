@@ -3,400 +3,765 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Agentic Markets — Unified Schema</title>
+<title>Agentic Markets — All Desks</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:#07090d; --bg-2:#0b0e14; --panel:#0e131c; --panel-2:#121826;
-    --line:#1a2233; --line-2:#243049; --text:#e6edf7; --muted:#7d8aa3; --dim:#4a5774;
-    --cyan:#00e5ff; --amber:#ffb547; --green:#32e0a0; --magenta:#ff5cf2; --violet:#9b8cff;
-  }
-  * { box-sizing:border-box; }
-  html,body { margin:0; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; }
-  body {
-    min-height:100vh;
-    background:
-      radial-gradient(1200px 600px at 50% -8%, rgba(0,229,255,.05), transparent 60%),
-      radial-gradient(900px 500px at 0% 110%, rgba(155,140,255,.04), transparent 60%),
-      var(--bg);
-  }
-  body::before {
-    content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
-    background-image:
-      linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
-      linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
-    background-size:56px 56px;
-    mask-image:radial-gradient(ellipse at 50% 30%, black 40%, transparent 80%);
-  }
+:root {
+  --bg:#07090d; --bg-2:#0b0e14; --panel:#0e131c; --panel-2:#121826;
+  --line:#1a2233; --line-2:#243049; --text:#e6edf7; --muted:#7d8aa3; --dim:#4a5774;
+  --cyan:#00e5ff; --amber:#ffb547; --green:#32e0a0; --magenta:#ff5cf2;
+  --violet:#9b8cff; --red:#ff5d6c;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+.mono{font-family:'JetBrains Mono',monospace;}
+body{background:var(--bg);overflow-x:hidden;}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:56px 56px;
+  mask-image:radial-gradient(ellipse at 50% 30%,black 40%,transparent 80%);}
 
-  /* ── TOPBAR ── */
-  .topbar {
-    position:sticky; top:0; z-index:30; display:flex; align-items:center; gap:10px; padding:8px 16px;
-    background:rgba(7,9,13,.88); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
-  }
-  .brand { display:flex; align-items:center; gap:8px; font-weight:700; font-size:13px; flex-shrink:0; }
-  .brand-dot { width:9px; height:9px; border-radius:50%; background:var(--cyan); box-shadow:0 0 12px var(--cyan); }
-  .brand small { color:var(--muted); font-weight:500; font-size:11px; margin-left:4px; }
-  .pill {
-    display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px;
-    background:var(--panel-2); border:1px solid var(--line);
-    font-size:10px; color:var(--muted); font-family:'JetBrains Mono',monospace; flex-shrink:0;
-  }
-  .pill .dot { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation:blip 1.4s ease-in-out infinite; }
-  @keyframes blip { 50%{opacity:.35;} }
+/* ── TOPBAR ── */
+.topbar{
+  position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;align-items:center;gap:10px;
+  padding:8px 16px;background:rgba(7,9,13,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px;flex-shrink:0;}
+.brand-dot{width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan);}
+.brand small{color:var(--muted);font-weight:500;font-size:11px;margin-left:4px;}
+.desk-nav{display:flex;gap:4px;}
+.desk-nav a{
+  display:flex;align-items:center;gap:6px;padding:4px 12px;border-radius:7px;
+  font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--line-2);
+  background:rgba(14,19,28,.8);color:var(--muted);text-decoration:none;
+  transition:all .15s ease;white-space:nowrap;
+}
+.desk-nav a:hover{color:var(--text);background:rgba(255,255,255,.05);}
+.desk-nav a.f{color:var(--cyan);background:rgba(0,229,255,.07);border-color:rgba(0,229,255,.25);}
+.desk-nav a.m{color:var(--magenta);background:rgba(255,92,242,.07);border-color:rgba(255,92,242,.25);}
+.desk-nav a.t{color:var(--amber);background:rgba(255,181,71,.07);border-color:rgba(255,181,71,.25);}
+.grow{flex:1;min-width:0;}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;
+  background:var(--panel-2);border:1px solid var(--line);font-size:10px;color:var(--muted);
+  font-family:'JetBrains Mono',monospace;flex-shrink:0;}
+.pill .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blip 1.4s ease-in-out infinite;}
+@keyframes blip{50%{opacity:.35;}}
 
-  /* ── CANVAS ── */
-  .canvas-wrap { position:relative; z-index:1; padding:16px 16px 40px; overflow:auto; }
-  .canvas {
-    position:relative; border:1px solid var(--line); border-radius:14px;
-    background:linear-gradient(180deg, rgba(11,14,20,.9), rgba(8,10,16,.95));
-  }
-  .grid-bg {
-    position:absolute; inset:0; pointer-events:none; border-radius:14px;
-    background-image:
-      linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
-      linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
-    background-size:40px 40px;
-  }
-  svg.edges { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:2; overflow:visible; }
+/* ── CAPITAL ALLOCATOR SECTION ── */
+.ca-section{
+  position:relative;z-index:1;padding:32px 24px 0;
+  display:flex;flex-direction:column;align-items:center;
+}
+.ca-card{
+  width:100%;max-width:780px;
+  background:linear-gradient(135deg,rgba(14,19,28,.95),rgba(18,24,38,.9));
+  border:1px solid rgba(0,229,255,.2);border-radius:16px;
+  padding:20px 24px;box-shadow:0 0 40px rgba(0,229,255,.06),0 4px 24px rgba(0,0,0,.4);
+  position:relative;overflow:hidden;
+}
+.ca-card::before{
+  content:"";position:absolute;inset:0;pointer-events:none;border-radius:16px;
+  background:radial-gradient(600px 200px at 50% -20%,rgba(0,229,255,.05),transparent 60%);
+}
+.ca-card-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.ca-card-ico{
+  width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:18px;
+  background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.25);flex-shrink:0;
+}
+.ca-card-title{font-size:14px;font-weight:700;color:var(--text);}
+.ca-card-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.ca-badge{
+  margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 8px;
+  border-radius:6px;background:rgba(0,229,255,.08);color:var(--cyan);border:1px solid rgba(0,229,255,.2);
+}
+.ca-allocs{display:flex;gap:10px;flex-wrap:wrap;}
+.ca-alloc{
+  flex:1;min-width:180px;display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:rgba(14,19,28,.6);
+}
+.ca-alloc-ico{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;font-size:14px;flex-shrink:0;}
+.ca-alloc.f .ca-alloc-ico{background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.25);}
+.ca-alloc.m .ca-alloc-ico{background:rgba(255,92,242,.1);border:1px solid rgba(255,92,242,.25);}
+.ca-alloc.t .ca-alloc-ico{background:rgba(255,181,71,.1);border:1px solid rgba(255,181,71,.25);}
+.ca-alloc-info{flex:1;min-width:0;}
+.ca-alloc-name{font-size:11px;font-weight:600;color:var(--text);}
+.ca-alloc.f .ca-alloc-name{color:var(--cyan);}
+.ca-alloc.m .ca-alloc-name{color:var(--magenta);}
+.ca-alloc.t .ca-alloc-name{color:var(--amber);}
+.ca-alloc-pct{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;line-height:1;}
+.ca-alloc.f .ca-alloc-pct{color:var(--cyan);}
+.ca-alloc.m .ca-alloc-pct{color:var(--magenta);}
+.ca-alloc.t .ca-alloc-pct{color:var(--amber);font-size:11px;opacity:.7;}
+.ca-alloc-status{font-size:9px;color:var(--muted);margin-top:1px;}
+.ca-live-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);margin-right:4px;animation:blip 1.4s ease-in-out infinite;}
 
-  /* ── DESK ZONE ── */
-  .desk-zone { position:absolute; border-radius:10px; border:1px solid; pointer-events:none; z-index:1; }
-  .desk-label {
-    position:absolute; z-index:5; display:flex; align-items:center; gap:8px;
-    font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:.2em; text-transform:uppercase;
-  }
-  .dl-ico { width:24px; height:24px; border-radius:6px; display:grid; place-items:center; font-size:13px; border:1px solid; }
-  .desk-alloc {
-    position:absolute; z-index:5; font-family:'JetBrains Mono',monospace; font-size:8px; font-weight:700;
-    padding:2px 8px; border-radius:6px; border:1px solid;
-  }
+/* connector lines from CA down to desk headers */
+.ca-connectors{width:100%;max-width:780px;height:36px;position:relative;overflow:visible;}
+.ca-connectors svg{position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;}
 
-  /* ── CAPITAL ALLOCATOR ── */
-  .capital-allocator {
-    position:absolute; z-index:7;
-    background:linear-gradient(135deg, rgba(14,22,40,.98), rgba(9,14,26,.98));
-    border:1px solid rgba(0,229,255,.35); border-radius:16px; padding:14px 20px 16px;
-    box-shadow:0 0 0 1px rgba(0,229,255,.12), 0 0 50px rgba(0,229,255,.14), 0 20px 50px rgba(0,0,0,.6);
-  }
-  .ca-head { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
-  .ca-ico {
-    width:36px; height:36px; border-radius:10px; display:grid; place-items:center;
-    font-size:20px; background:rgba(0,229,255,.1); border:1px solid rgba(0,229,255,.3); flex-shrink:0;
-  }
-  .ca-tag  { font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:.2em; color:rgba(0,229,255,.65); text-transform:uppercase; }
-  .ca-title { font-size:15px; font-weight:700; letter-spacing:-.01em; }
-  .ca-desc  { font-size:9px; color:var(--muted); font-family:'JetBrains Mono',monospace; line-height:1.5; margin-bottom:12px; }
-  .ca-allocs { display:flex; gap:8px; flex-wrap:wrap; }
-  .ca-alloc {
-    display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:8px; border:1px solid;
-    font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700;
-  }
-  .ca-alloc.f { background:rgba(0,229,255,.08);  border-color:rgba(0,229,255,.28);  color:var(--cyan); }
-  .ca-alloc.m { background:rgba(255,92,242,.08); border-color:rgba(255,92,242,.28); color:var(--magenta); }
-  .ca-alloc.t { background:rgba(255,181,71,.08); border-color:rgba(255,181,71,.28); color:var(--amber); }
-  .cad { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
-  .cad.live { background:var(--green);  box-shadow:0 0 6px var(--green);  animation:blip 1.4s ease-in-out infinite; }
-  .cad.pend { background:var(--amber);  box-shadow:0 0 6px var(--amber);  animation:blip 2s ease-in-out infinite; }
+/* ── DESK SECTION ── */
+.desk-section{position:relative;z-index:1;--acc:var(--cyan);--acc-rgb:0,229,255;}
+.desk-section.meme{--acc:var(--magenta);--acc-rgb:255,92,242;}
+.desk-section.tennis{--acc:var(--amber);--acc-rgb:255,181,71;}
 
-  /* ── NODES ── */
-  .node {
-    position:absolute; z-index:4; width:182px;
-    background:linear-gradient(180deg, rgba(18,24,38,.95), rgba(12,16,26,.95));
-    border:1px solid var(--line-2); border-radius:12px; padding:8px 10px 10px;
-    cursor:pointer; transition:transform .18s, border-color .18s, box-shadow .18s;
-    box-shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 8px 24px rgba(0,0,0,.35);
-  }
-  .node:hover { transform:translateY(-2px); }
-  .node .head { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
-  .node .ico  { width:22px; height:22px; border-radius:6px; display:grid; place-items:center; font-size:12px; border:1px solid var(--line-2); }
-  .node .ntag { font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:.18em; color:var(--dim); text-transform:uppercase; }
-  .node h4    { margin:0; font-size:11.5px; font-weight:600; letter-spacing:-.01em; line-height:1.25; }
-  .node p     { margin:4px 0 0; font-size:9px; color:var(--muted); line-height:1.4; font-family:'JetBrains Mono',monospace; }
-  .node .nft  {
-    margin-top:6px; display:flex; justify-content:space-between; align-items:center;
-    font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--dim);
-    border-top:1px dashed var(--line); padding-top:5px;
-  }
-  .np { width:5px; height:5px; border-radius:50%; display:inline-block; vertical-align:-1px; margin-right:3px; animation:blip 1.6s ease-in-out infinite; }
-  .np.g { background:var(--green); box-shadow:0 0 6px var(--green); }
+.desk-header{
+  position:sticky;top:44px;z-index:20;
+  display:flex;align-items:center;gap:12px;padding:10px 24px;
+  background:rgba(7,9,13,.92);backdrop-filter:blur(10px);
+  border-top:1px solid rgba(var(--acc-rgb),.2);
+  border-bottom:1px solid var(--line);
+}
+.desk-header-ico{width:24px;height:24px;border-radius:6px;display:grid;place-items:center;font-size:13px;
+  background:rgba(var(--acc-rgb),.1);border:1px solid rgba(var(--acc-rgb),.3);}
+.desk-header-name{font-size:13px;font-weight:700;color:var(--acc);}
+.desk-header-meta{font-size:11px;color:var(--muted);}
+.desk-header .alloc-chip{
+  font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 10px;border-radius:6px;
+  background:rgba(var(--acc-rgb),.08);color:var(--acc);border:1px solid rgba(var(--acc-rgb),.25);
+}
+.desk-header .status-live{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--green);}
+.desk-header .status-live span{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:blip 1.4s ease-in-out infinite;}
+.desk-header .status-soon{font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 8px;border-radius:6px;
+  background:rgba(255,181,71,.08);color:var(--amber);border:1px solid rgba(255,181,71,.25);}
 
-  /* desk accent tints */
-  .d-f .node .ico  { color:var(--cyan);    background:rgba(0,229,255,.09);   border-color:rgba(0,229,255,.25); }
-  .d-f .node:hover { border-color:rgba(0,229,255,.5);   box-shadow:0 0 0 1px rgba(0,229,255,.2),0 12px 28px rgba(0,229,255,.1); }
-  .d-m .node .ico  { color:var(--magenta); background:rgba(255,92,242,.09);  border-color:rgba(255,92,242,.25); }
-  .d-m .node:hover { border-color:rgba(255,92,242,.5);  box-shadow:0 0 0 1px rgba(255,92,242,.2),0 12px 28px rgba(255,92,242,.1); }
-  .d-t .node .ico  { color:var(--amber);   background:rgba(255,181,71,.09);  border-color:rgba(255,181,71,.25); }
-  .d-t .node:hover { border-color:rgba(255,181,71,.5);  box-shadow:0 0 0 1px rgba(255,181,71,.2),0 12px 28px rgba(255,181,71,.1); }
+/* ── STAGE (canvas + panel) ── */
+.stage{position:relative;z-index:1;display:grid;grid-template-columns:1fr 380px;}
+.canvas-wrap{position:relative;padding:16px 16px 40px;overflow-x:auto;overflow-y:visible;}
+.canvas-title{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:14px;}
+.canvas-title h1{margin:0;font-size:20px;}
+.canvas-title h1 span{color:var(--acc);transition:color .3s;}
+.canvas-title p{margin:4px 0 0;color:var(--muted);font-size:12px;}
+.meta-row{display:flex;flex-wrap:wrap;gap:8px;}
+.kpi{display:flex;flex-direction:column;gap:2px;padding:6px 10px;border:1px solid var(--line);
+  border-radius:10px;background:rgba(14,19,28,.6);min-width:72px;}
+.kpi label{font-size:9px;color:var(--dim);letter-spacing:.18em;text-transform:uppercase;}
+.kpi b{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text);}
+.kpi b.up{color:var(--green);}
 
-  /* ── SVG EDGES ── */
-  .edge  { stroke:var(--line-2);   stroke-width:1.4; fill:none; opacity:.6; }
-  .hi-f  { stroke:var(--cyan);     stroke-width:2;   fill:none; opacity:.9; filter:drop-shadow(0 0 5px rgba(0,229,255,.55)); }
-  .hi-m  { stroke:var(--magenta);  stroke-width:2;   fill:none; opacity:.9; filter:drop-shadow(0 0 5px rgba(255,92,242,.55)); }
-  .hi-t  { stroke:var(--amber);    stroke-width:1.5; fill:none; opacity:.65; }
-  .fl-f  { stroke:var(--cyan);     stroke-width:2;   fill:none; stroke-dasharray:2 8; animation:dash 1.2s linear infinite; filter:drop-shadow(0 0 4px rgba(0,229,255,.7)); }
-  .fl-m  { stroke:var(--magenta);  stroke-width:2;   fill:none; stroke-dasharray:2 8; animation:dash 1.2s linear infinite; filter:drop-shadow(0 0 4px rgba(255,92,242,.7)); }
-  .ca-f  { stroke:var(--cyan);     stroke-width:2;   fill:none; stroke-dasharray:3 6; animation:dash 1.8s linear infinite; opacity:.8; filter:drop-shadow(0 0 6px rgba(0,229,255,.5)); }
-  .ca-m  { stroke:var(--magenta);  stroke-width:2;   fill:none; stroke-dasharray:3 6; animation:dash 1.8s linear infinite; opacity:.8; filter:drop-shadow(0 0 6px rgba(255,92,242,.5)); }
-  .ca-t  { stroke:var(--amber);    stroke-width:1.5; fill:none; stroke-dasharray:8 8; opacity:.35; }
-  @keyframes dash { to { stroke-dashoffset:-40; } }
+/* ── CANVAS ── */
+.canvas{position:relative;width:1200px;height:1640px;border:1px solid var(--line);border-radius:14px;
+  background:linear-gradient(180deg,rgba(11,14,20,.9),rgba(8,10,16,.95));overflow:visible;}
+.canvas.meme{width:1060px;height:1620px;}
+.canvas.tennis{height:1580px;}
+.canvas .grid-bg{position:absolute;inset:0;pointer-events:none;border-radius:14px;
+  background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+  background-size:40px 40px;}
+svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;}
 
-  /* ── LANE LABELS ── */
-  .lane-lbl {
-    position:absolute; z-index:3; right:14px;
-    font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:.16em;
-    color:var(--dim); text-transform:uppercase; text-align:right; pointer-events:none; white-space:nowrap;
-  }
+/* ── NODES ── */
+.node{position:absolute;width:170px;border:1px solid var(--line-2);border-radius:12px;
+  background:var(--panel);padding:10px 12px;cursor:pointer;transition:all .18s ease;z-index:3;}
+.node:hover{border-color:rgba(var(--acc-rgb),.5);box-shadow:0 0 16px rgba(var(--acc-rgb),.12);}
+.node.active{border-color:var(--acc);box-shadow:0 0 20px rgba(var(--acc-rgb),.25);}
+.node.faded{opacity:.2;pointer-events:none;}
+.node .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.node .ico{font-size:16px;line-height:1;}
+.node .tag{font-family:'JetBrains Mono',monospace;font-size:7px;color:var(--dim);letter-spacing:.15em;border:1px solid var(--line);border-radius:4px;padding:1px 5px;}
+.node h4{margin:0 0 4px;font-size:11px;font-weight:700;color:var(--text);line-height:1.3;}
+.node p{margin:0 0 8px;font-size:10px;color:var(--muted);line-height:1.4;}
+.node .footer{display:flex;justify-content:space-between;align-items:center;font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--dim);}
+.ok{color:var(--green);display:flex;align-items:center;gap:3px;}
+.pending{color:var(--amber);display:flex;align-items:center;gap:3px;}
+.pulse{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:blip 1.4s ease-in-out infinite;}
+.pulse.amber{background:var(--amber);box-shadow:0 0 6px var(--amber);}
 
-  /* ── COMING SOON BADGE ── */
-  .cs-badge {
-    position:absolute; z-index:8; display:inline-flex; align-items:center; gap:5px;
-    padding:4px 12px; border-radius:8px; background:rgba(255,181,71,.13);
-    border:1px solid rgba(255,181,71,.45); font-family:'JetBrains Mono',monospace;
-    font-size:9px; font-weight:700; color:var(--amber); letter-spacing:.14em; white-space:nowrap;
-    box-shadow:0 0 14px rgba(255,181,71,.2); animation:csglow 2.5s ease-in-out infinite;
-  }
-  @keyframes csglow { 50%{ box-shadow:0 0 24px rgba(255,181,71,.45); border-color:rgba(255,181,71,.75); } }
+/* ── EDGES ── */
+.edge{stroke:var(--line-2);stroke-width:1.4;fill:none;opacity:.65;}
+.edge.hi{stroke:var(--acc);stroke-width:2;opacity:1;filter:drop-shadow(0 0 6px rgba(var(--acc-rgb),.6));}
+.edge.dim{opacity:.12;}
+.flow{stroke:var(--acc);stroke-width:2;fill:none;opacity:.9;
+  stroke-dasharray:8 5;animation:dash 1.5s linear infinite;
+  filter:drop-shadow(0 0 5px rgba(var(--acc-rgb),.7));}
+@keyframes dash{to{stroke-dashoffset:-26;}}
+
+/* ── LANES ── */
+.lane{position:absolute;left:10px;font-family:'JetBrains Mono',monospace;font-size:9px;
+  color:var(--dim);letter-spacing:.12em;display:flex;align-items:center;gap:4px;z-index:1;}
+.lane b{color:var(--acc);font-weight:400;}
+.lane-line{position:absolute;left:0;right:0;height:1px;background:var(--line);opacity:.6;z-index:1;}
+
+/* ── LEAGUE CLUSTER ── */
+.league-cluster-label{position:absolute;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.1em;}
+.league-cluster{position:absolute;display:flex;flex-wrap:wrap;gap:6px;width:440px;}
+.lchip{background:var(--panel);border:1px solid var(--line-2);border-radius:8px;padding:6px 10px;cursor:pointer;transition:all .15s ease;min-width:120px;}
+.lchip:hover{border-color:var(--acc);background:rgba(var(--acc-rgb),.04);}
+.lchip.active{border-color:var(--acc);background:rgba(var(--acc-rgb),.06);}
+.lchip.today{border-color:var(--green);background:rgba(50,224,160,.04);}
+.ltitle{font-size:10px;font-weight:600;color:var(--text);display:flex;align-items:center;justify-content:space-between;}
+.lcount{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);}
+.lchip p{margin:2px 0 0;font-size:9px;color:var(--muted);}
+
+/* ── LEGEND ── */
+.legend-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;}
+.legend-row button{background:var(--panel-2);border:1px solid var(--line);color:var(--muted);padding:4px 8px;
+  border-radius:8px;font-size:10px;cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .15s ease;}
+.legend-row button:hover{color:var(--text);border-color:var(--line-2);}
+.legend-row button.active{background:rgba(var(--acc-rgb),.08);border-color:rgba(var(--acc-rgb),.4);color:var(--acc);}
+
+/* ── PANEL ── */
+.panel{
+  border-left:1px solid var(--line);background:var(--panel);
+  position:sticky;top:88px;height:calc(100vh - 100px);overflow-y:auto;
+  display:flex;flex-direction:column;
+}
+.panel-head{padding:16px 16px 12px;border-bottom:1px solid var(--line);}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--acc);letter-spacing:.18em;text-transform:uppercase;margin-bottom:6px;}
+.panel-head h2{margin:0 0 3px;font-size:15px;font-weight:700;}
+.sub{font-size:11px;color:var(--muted);}
+.panel-body{flex:1;padding:16px;overflow-y:auto;font-size:13px;}
+.panel-body h5{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;margin:16px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--line);}
+.panel-body h5:first-child{margin-top:0;}
+.codeblock{font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--bg-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;line-height:1.7;color:var(--muted);white-space:pre;}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;}
+.kv span{font-size:10px;color:var(--muted);}
+.kv b{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text);text-align:right;}
+.neighbors{display:flex;flex-direction:column;gap:3px;}
+.neighbors button{display:flex;justify-content:space-between;align-items:center;background:var(--panel-2);border:1px solid var(--line);border-radius:7px;padding:6px 10px;font-size:10px;cursor:pointer;color:var(--text);font-family:'JetBrains Mono',monospace;transition:all .1s;}
+.neighbors button:hover{border-color:var(--acc);}
+.neighbors button .arrow{color:var(--acc);}
+.footer-bar{padding:8px 16px;border-top:1px solid var(--line);font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);display:flex;justify-content:space-between;flex-shrink:0;}
+
+/* ── COMING SOON OVERLAY ── */
+.coming-soon-wrap{position:relative;}
+.coming-soon-overlay{
+  position:absolute;inset:0;z-index:10;
+  background:rgba(7,9,13,.75);backdrop-filter:blur(3px);border-radius:14px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+}
+.cs-badge{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;letter-spacing:.2em;
+  color:var(--amber);border:1px solid rgba(255,181,71,.4);border-radius:10px;padding:10px 24px;
+  background:rgba(255,181,71,.08);box-shadow:0 0 24px rgba(255,181,71,.1);}
+.cs-sub{font-size:12px;color:var(--muted);}
+
+/* ── DESK DIVIDER ── */
+.desk-divider{height:48px;position:relative;display:flex;align-items:center;justify-content:center;}
+.desk-divider::before{content:"";position:absolute;top:50%;left:0;right:0;height:1px;background:var(--line);}
+.desk-divider .divider-dot{
+  position:relative;width:8px;height:8px;border-radius:50%;
+  background:var(--line-2);border:2px solid var(--line);
+}
 </style>
 </head>
 <body>
 
+<!-- TOPBAR -->
 <div class="topbar">
   <div class="brand">
     <span class="brand-dot"></span>
-    Agentic&nbsp;Markets <small>/ Unified Schema</small>
+    Agentic&nbsp;Markets <small>/ All Desks</small>
   </div>
-  <div style="flex:1"></div>
-  <span class="pill"><span class="dot"></span>&nbsp;3 desk · 2 live · 1 coming soon</span>
-  <span class="pill" id="clock" style="font-family:'JetBrains Mono',monospace;">—</span>
+  <div class="desk-nav">
+    <a href="#desk-football" class="f">⬡ Football AI</a>
+    <a href="#desk-meme"     class="m">🚀 Meme Coin</a>
+    <a href="#desk-tennis"   class="t">🎾 Tennis AI</a>
+  </div>
+  <div class="grow"></div>
+  <span class="pill"><span class="dot"></span> <span id="clock">—</span></span>
 </div>
 
-<div class="canvas-wrap">
-  <div class="canvas" id="canvas">
-    <div class="grid-bg"></div>
-    <svg class="edges" id="svg" preserveAspectRatio="none"></svg>
+<!-- CAPITAL ALLOCATOR -->
+<div class="ca-section">
+  <div class="ca-card">
+    <div class="ca-card-head">
+      <div class="ca-card-ico">⚖</div>
+      <div>
+        <div class="ca-card-title">Capital Allocator Agent</div>
+        <div class="ca-card-sub">Distribuzione del capitale tra i desk attivi · gestione risk globale</div>
+      </div>
+      <div class="ca-badge">AGENT</div>
+    </div>
+    <div class="ca-allocs">
+      <div class="ca-alloc f">
+        <div class="ca-alloc-ico">⬡</div>
+        <div class="ca-alloc-info">
+          <div class="ca-alloc-name">Football AI</div>
+          <div class="ca-alloc-pct">60%</div>
+          <div class="ca-alloc-status"><span class="ca-live-dot"></span>live · paper trading</div>
+        </div>
+      </div>
+      <div class="ca-alloc m">
+        <div class="ca-alloc-ico">🚀</div>
+        <div class="ca-alloc-info">
+          <div class="ca-alloc-name">Meme Coin</div>
+          <div class="ca-alloc-pct">40%</div>
+          <div class="ca-alloc-status"><span class="ca-live-dot"></span>live · paper trading</div>
+        </div>
+      </div>
+      <div class="ca-alloc t">
+        <div class="ca-alloc-ico">🎾</div>
+        <div class="ca-alloc-info">
+          <div class="ca-alloc-name">Tennis AI</div>
+          <div class="ca-alloc-pct">in sviluppo</div>
+          <div class="ca-alloc-status">⏳ coming soon</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ FOOTBALL DESK ════════ -->
+<div class="desk-section football" id="desk-football">
+  <div class="desk-header">
+    <div class="desk-header-ico">⬡</div>
+    <div class="desk-header-name">Football AI</div>
+    <div class="desk-header-meta">Pipeline Market Data → Value Bet · Dixon-Coles + Pi Rating + xG</div>
+    <div class="alloc-chip">60% capital</div>
+    <div class="status-live"><span></span>live</div>
+  </div>
+  <div class="stage">
+    <div class="canvas-wrap">
+      <div class="canvas-title">
+        <div>
+          <h1>Pipeline <span>Market Data → Value Bet</span></h1>
+          <p>Flusso dati end-to-end · Betfair Exchange primary · Dixon-Coles + Pi Rating + xG · Kelly sizing</p>
+        </div>
+        <div class="meta-row" id="kpis-f"></div>
+      </div>
+      <div class="legend-row" id="legend-f"></div>
+      <div class="canvas" id="canvas-f">
+        <div class="grid-bg"></div>
+        <svg class="edges" id="edges-f" preserveAspectRatio="none"></svg>
+      </div>
+    </div>
+    <aside class="panel" id="panel-f">
+      <div class="panel-head">
+        <div class="eyebrow" id="pe-f">SYSTEM OVERVIEW</div>
+        <h2 id="pt-f">Agentic Markets v5.0</h2>
+        <div class="sub" id="ps-f">8 agenti · 6 leghe · 53 mercati Betfair · paper trading</div>
+      </div>
+      <div class="panel-body" id="pb-f"></div>
+      <div class="footer-bar"><span id="pbuild-f">build #5.0.0 · 2026-05-06</span><span id="ptime-f">—</span></div>
+    </aside>
+  </div>
+</div>
+
+<div class="desk-divider"><div class="divider-dot"></div></div>
+
+<!-- ════════ MEME DESK ════════ -->
+<div class="desk-section meme" id="desk-meme">
+  <div class="desk-header">
+    <div class="desk-header-ico">🚀</div>
+    <div class="desk-header-name">Meme Coin</div>
+    <div class="desk-header-meta">Pipeline DexScreener → Signal → Paper Trade · Solana chain</div>
+    <div class="alloc-chip">40% capital</div>
+    <div class="status-live"><span></span>live</div>
+  </div>
+  <div class="stage">
+    <div class="canvas-wrap">
+      <div class="canvas-title">
+        <div>
+          <h1>Pipeline <span>DexScreener → Signal → Paper Trade</span></h1>
+          <p>Flusso dati end-to-end · Solana chain · Momentum scoring · EV gate · Kelly sizing</p>
+        </div>
+        <div class="meta-row" id="kpis-m"></div>
+      </div>
+      <div class="legend-row" id="legend-m"></div>
+      <div class="canvas meme" id="canvas-m">
+        <div class="grid-bg"></div>
+        <svg class="edges" id="edges-m" preserveAspectRatio="none"></svg>
+      </div>
+    </div>
+    <aside class="panel" id="panel-m">
+      <div class="panel-head">
+        <div class="eyebrow" id="pe-m">SYSTEM OVERVIEW</div>
+        <h2 id="pt-m">Meme Coin v1.0</h2>
+        <div class="sub" id="ps-m">9 agenti · Solana · DexScreener · paper</div>
+      </div>
+      <div class="panel-body" id="pb-m"></div>
+      <div class="footer-bar"><span id="pbuild-m">build #1.0.0 · 2026-05-11</span><span id="ptime-m">—</span></div>
+    </aside>
+  </div>
+</div>
+
+<div class="desk-divider"><div class="divider-dot"></div></div>
+
+<!-- ════════ TENNIS DESK ════════ -->
+<div class="desk-section tennis" id="desk-tennis">
+  <div class="desk-header">
+    <div class="desk-header-ico">🎾</div>
+    <div class="desk-header-name">Tennis AI</div>
+    <div class="desk-header-meta">Pipeline ATP/WTA → Quote → Value Bet · Elo surface-adj.</div>
+    <div class="alloc-chip">—</div>
+    <div class="status-soon">COMING SOON</div>
+  </div>
+  <div class="stage">
+    <div class="canvas-wrap">
+      <div class="canvas-title">
+        <div>
+          <h1>Pipeline <span>ATP/WTA → Quote → Value Bet</span></h1>
+          <p>Flusso dati end-to-end · Betfair Exchange primary · Elo surface-adj. + Serve Model · Kelly sizing</p>
+        </div>
+        <div class="meta-row" id="kpis-t"></div>
+      </div>
+      <div class="legend-row" id="legend-t"></div>
+      <div class="coming-soon-wrap">
+        <div class="canvas tennis" id="canvas-t">
+          <div class="grid-bg"></div>
+          <svg class="edges" id="edges-t" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="coming-soon-overlay">
+          <div class="cs-badge">⏳ &nbsp; COMING SOON</div>
+          <div class="cs-sub">Desk Tennis in sviluppo · schema disponibile in anteprima</div>
+        </div>
+      </div>
+    </div>
+    <aside class="panel" id="panel-t">
+      <div class="panel-head">
+        <div class="eyebrow" id="pe-t">SYSTEM OVERVIEW</div>
+        <h2 id="pt-t">Tennis AI v1.0</h2>
+        <div class="sub" id="ps-t">8 agenti · ATP + WTA · 12 tornei · in sviluppo</div>
+      </div>
+      <div class="panel-body" id="pb-t"></div>
+      <div class="footer-bar"><span id="pbuild-t">build #1.0.0 · 2026-05-11</span><span id="ptime-t">—</span></div>
+    </aside>
   </div>
 </div>
 
 <script>
-/* ═══════════════════════════════════════════════
-   LAYOUT — all positions are STATIC / pre-computed
-   → no getBoundingClientRect needed
-═══════════════════════════════════════════════ */
-const CW = 1440, CH = 1320;
-
-// Column layout: cx = node horizontal center, nx = node left edge
-const COL = {
-  f: { id:'football', cx:240,  nx:149,  zx:20,  zw:440, rgba:'0,229,255',  color:'var(--cyan)',    label:'Football AI', ico:'⬡', alloc:'60% capital', live:true  },
-  m: { id:'meme',     cx:710,  nx:619,  zx:490, zw:440, rgba:'255,92,242', color:'var(--magenta)', label:'Meme Coin',   ico:'🚀', alloc:'40% capital', live:true  },
-  t: { id:'tennis',   cx:1180, nx:1089, zx:960, zw:440, rgba:'255,181,71', color:'var(--amber)',   label:'Tennis AI',   ico:'🎾', alloc:'⏳ soon',     live:false },
+/* ════════════════════════════════════════════
+   DATA — FOOTBALL
+════════════════════════════════════════════ */
+const DATA_FOOTBALL = {
+  canvasW:1200,canvasH:1640,
+  kpis:[{l:'Agenti',v:'8'},{l:'Leghe',v:'6'},{l:'Modelli',v:'3'},{l:'Mercati',v:'53',up:true},{l:'Refresh',v:'10m',up:true}],
+  buildTxt:'build #5.0.0 · 2026-05-06',
+  overviewEyebrow:'SYSTEM OVERVIEW',overviewTitle:'Agentic Markets v5.0',
+  overviewSub:'8 agenti · 6 leghe · 53 mercati Betfair · paper trading',
+  legend:[{l:'all',t:'ALL'},{l:'source',t:'SOURCES'},{l:'collect',t:'COLLECT'},{l:'model',t:'MODELS'},{l:'ensemble',t:'ENSEMBLE'},{l:'value',t:'VALUE'},{l:'parallel',t:'PARALLEL'},{l:'output',t:'OUTPUT'}],
+  nodes:[
+    {id:"S1",layer:"source",x:15,y:70,ico:"🔷",tag:"EXCHANGE",title:"Betfair Exchange",desc:"Quote live best-back (PRIMARY)\nbatch listMarketCatalogue\n+ listMarketBook · 53 mercati",schema:{endpoint:"api.betfair.com/exchange/betting/rest/v1.0",auth:"session-token",refresh:"ogni ciclo",markets:"53 live"},metrics:{leghe:"6",mercati:"53",latency:"~200ms",err:"0.0%"},status:"ok"},
+    {id:"S2",layer:"source",x:215,y:70,ico:"⚽",tag:"REST",title:"football-data.org",desc:"Fixture storici e in programma.\nPiano free: SA · PL · PD · BL1\nFonte primaria per fixture",schema:{endpoint:"api.football-data.org/v4",auth:"X-Auth-Token",cache:"6h",plan:"free tier"},metrics:{fixture:"480K",leghe:"6",lag:"6h",err:"0.0%"},status:"ok"},
+    {id:"S3",layer:"source",x:415,y:70,ico:"📡",tag:"REST",title:"API-Football",desc:"Fixture fallback + infortuni\n+ lineup pre-partita.\n100 req/day (free tier)",schema:{endpoint:"api-football-v1.p.rapidapi.com",rps:"100/d",auth:"x-rapidapi-key",cache:"30m"},metrics:{injuries:"820/d",lineups:"800/d",err:"0.2%"},status:"ok"},
+    {id:"S4",layer:"source",x:615,y:70,ico:"📊",tag:"SCRAPE",title:"Understat",desc:"xG · xGA · npxG · xGChain\nxGBuildup per ogni match\nSA · PL · BL1 · CL",schema:{endpoint:"understat.com",method:"scrape",cache:"24h",auth:"none"},metrics:{records:"1.2M",lag:"4h",err:"0%"},status:"ok"},
+    {id:"S5",layer:"source",x:815,y:70,ico:"📈",tag:"REST",title:"The Odds API",desc:"Quote sharp · FALLBACK.\nUsata solo se Betfair\nha 0 mercati per la lega",schema:{endpoint:"the-odds-api.com/v4",auth:"api-key",quota:"500/mo",trigger:"betfair=empty"},metrics:{matches:"800/d",quota:"esaurita",err:"0.1%"},status:"ok"},
+    {id:"S6",layer:"source",x:1015,y:70,ico:"🌤️",tag:"REST",title:"OpenWeatherMap",desc:"Meteo stadio: pioggia, vento,\ntemp, umidità. Feature\naggiuntiva nel modello.",schema:{endpoint:"api.openweathermap.org/data/2.5",auth:"api-key",cache:"1h"},metrics:{cities:"412",lag:"1h",err:"0%"},status:"ok"},
+    {id:"DC",layer:"collect",x:509,y:240,ico:"🔄",tag:"AGENT",title:"DataCollectorAgent",desc:"Ciclo 10m (2m pre-kickoff).\nBetfair → fallback Odds API.\nFuzzy match cross-lingua:\nNFKD + SequenceMatcher ≥ 0.65\n→ Redis market:data",schema:{schedule:"10min · 2min pre-KO",fuzzy_algo:"NFKD + SequenceMatcher",threshold:"0.65",retries:3,redis_out:"market:data"},metrics:{events:"+120/ciclo",leghe:"6",lag:"<30s",err:"0.1%"},status:"ok"},
+    {id:"M1",layer:"model",x:50,y:430,ico:"📐",tag:"POISSON",title:"Dixon-Coles",desc:"Poisson bivariato con corr. rho.\nFit per lega: SA 381 match\nCL 190 match. Refit settimanale.",schema:{family:"bivariate-poisson",rho:"-0.13",refit:"weekly",train_SA:"381 match"},metrics:{logloss:"1.011",brier:"0.204",leghe:"6"},status:"ok"},
+    {id:"M2",layer:"model",x:509,y:430,ico:"🔢",tag:"RATINGS",title:"Pi Ratings",desc:"Rating casa/trasferta per forma\nrecente. Decadimento 0.995/match.\nPeso per margine di vittoria.",schema:{algo:"Pi+Berrar",K_factor:"32",decay:"0.995/match",split:"home / away"},metrics:{teams:"512",refresh:"post-match",err:"0%"},status:"ok"},
+    {id:"M3",layer:"model",x:940,y:430,ico:"⚡",tag:"XG",title:"xG Enrichment",desc:"Integra xG Understat nel prior\nDixon-Coles. Rolling last5/10/20.\nAjusta p per qualità reale.",schema:{source:"understat",windows:"last5,last10,last20",lag:"4h",impact:"±0.04 p"},metrics:{features:"12 xG vars",impact:"±0.04 p",err:"0%"},status:"ok"},
+    {id:"MA",layer:"ensemble",x:509,y:590,ico:"🧠",tag:"AGENT",title:"ModelAgent",desc:"Combina DC + Pi Rating + xG.\nConformal Prediction CI\n(α=0.10, 90% coverage).\n→ Redis model:probabilities",schema:{CI:"conformal α=0.10",output:"p_home · p_draw · p_away\nci_low · ci_high",refit:"weekly"},metrics:{latency:"~1.2s",matches:"+120/ciclo",err:"0%"},status:"ok"},
+    {id:"P1",layer:"parallel",x:940,y:590,ico:"💓",tag:"MONITOR",title:"MonitorAgent",desc:"Heartbeat ogni 30s.\nDrift PSI ogni 24h.\nMonte Carlo bankroll domenica.",schema:{heartbeat:"30s",psi_check:"daily",monte_carlo:"domenica notte"},metrics:{uptime:"99.8%",checks:"2880/d",err:"0%"},status:"ok"},
+    {id:"AA",layer:"value",x:509,y:750,ico:"📈",tag:"AGENT",title:"AnalystAgent",desc:"edge = p_modello − 1/odds_betfair\nSoglia adattiva:\n• Betfair/sharp: edge ≥ 2%\n• Soft: edge ≥ 5%",schema:{edge_sharp:"≥ 2%",edge_soft:"≥ 5%",redis_in:"model:probabilities",redis_out:"analyst:opportunities"},metrics:{flagged:"~38/d",skip:"~82/d",err:"0%"},status:"ok"},
+    {id:"P2",layer:"parallel",x:940,y:750,ico:"🔬",tag:"RESEARCH",title:"ResearchAgent",desc:"Ollama llama3.2 → AI summaries\npre-match: notizie, infortuni,\ncontesto tattico → Neon DB.",schema:{model:"llama3.2:3b",trigger:"pre-match 24h",output:"match_research → Neon"},metrics:{queries:"~50/d",confidence:"80%",err:"0%"},status:"ok"},
+    {id:"ST",layer:"ensemble",x:509,y:910,ico:"🎯",tag:"AGENT",title:"StrategistAgent",desc:"Conviction score 0–10\n(Claude API + rule-based fallback).\nFiltra qualità edge + contesto.\nSkip se conviction < 6.",schema:{model:"claude-sonnet-4-6",fallback:"rule-based",threshold:"6 / 10"},metrics:{approved:"~70%",skip:"~30%",latency:"~800ms"},status:"ok"},
+    {id:"RM",layer:"value",x:509,y:1070,ico:"🛡️",tag:"AGENT",title:"RiskManagerAgent",desc:"Kelly frazionato (f=0.25):\nstake = min(kelly×0.25×BK, 3%×BK)\nGate: completeness < 75% → DLQ\nBlocco mensile: drawdown > 15%",schema:{kelly_fraction:"0.25",max_single:"3% bankroll",max_exposure:"10% bankroll",drawdown_block:"15%/mese"},metrics:{stake_range:"3–15 €",exposure_max:"€ 50",bets_oggi:"10",block_rate:"~5%"},status:"ok"},
+    {id:"TR",layer:"output",x:509,y:1230,ico:"💸",tag:"AGENT",title:"TraderAgent",desc:"PAPER: salva bet su Neon DB.\nLIVE: place_bet() Betfair REST.\nTelegram alert ogni bet\ncon edge > 3%.",schema:{mode:"PAPER_TRADING=true",live_fn:"place_bet() → Betfair REST",alert:"edge > 3%"},metrics:{bets_oggi:"10",mode:"● paper",p_l:"tracking",err:"0%"},status:"ok"},
+    {id:"O1",layer:"output",x:50,y:1420,ico:"🗄️",tag:"NEON DB",title:"PostgreSQL (Neon)",desc:"match_predictions · bets\nagent_heartbeats · match_research\ndead_letter_preds · monte_carlo",schema:{host:"neon.tech · serverless cloud",tables:"7",size:"12 GB"},metrics:{p_l:"tracked",heartbeats:"ogni 30s",err:"0%"},status:"ok"},
+    {id:"O2",layer:"output",x:509,y:1420,ico:"🖥️",tag:"VERCEL",title:"Dashboard (Vercel)",desc:"Pipeline live · Previsioni\nP&L paper tracking.",schema:{host:"vercel.com",stack:"Next.js 14"},metrics:{uptime:"99.9%",always_on:"sì",err:"0%"},status:"ok"},
+    {id:"O3",layer:"output",x:940,y:1420,ico:"📱",tag:"TELEGRAM",title:"Telegram Alert",desc:"Alert per ogni bet: match,\nselezione, edge %, stake €,\nodds Betfair live.",schema:{trigger:"edge > 3%",format:"markdown"},metrics:{bets_oggi:"10",trigger:"> 3% edge",err:"0%"},status:"ok"},
+  ],
+  edges:[["S1","DC"],["S2","DC"],["S3","DC"],["S4","DC"],["S5","DC"],["S6","DC"],["DC","M1"],["DC","M2"],["DC","M3"],["M1","MA"],["M2","MA"],["M3","MA"],["MA","AA"],["AA","ST"],["ST","RM"],["RM","TR"],["TR","O1"],["TR","O2"],["TR","O3"],["P1","O2"],["P2","O1"]],
+  hot:[["S1","DC"],["DC","M2"],["M2","MA"],["MA","AA"],["AA","ST"],["ST","RM"],["RM","TR"],["TR","O2"]],
+  lanes:[{y:38,label:"01 — Data Sources (6 fonti)"},{y:208,label:"02 — Data Collection · fuzzy matching cross-lingua"},{y:398,label:"03 — Modelli (Dixon-Coles · Pi Rating · xG Enrichment)"},{y:558,label:"04 — ModelAgent (ensemble + Conformal CI) ·· Monitor / Research"},{y:718,label:"05 — Analyst (edge detection)"},{y:878,label:"06 — Strategist (conviction AI · Claude)"},{y:1038,label:"07 — Risk Management (Kelly sizing · exposure cap)"},{y:1198,label:"08 — Execution (paper / live · Betfair REST)"},{y:1388,label:"09 — Output & Delivery"}],
+  leagues:[{id:"LSA",title:"Serie A",count:10,desc:"SA · Torino v Sassuolo 08/05",today:false},{id:"LCL",title:"Champions",count:1,desc:"Bayern v PSG · OGGI 21:00",today:true},{id:"LPD",title:"La Liga",count:13,desc:"PD · 13 mercati live",today:false},{id:"LBL",title:"Bundesliga",count:9,desc:"BL1 · 9 mercati live",today:false},{id:"LEL",title:"Europa L.",count:10,desc:"EL · 10 mercati live",today:false},{id:"LECL",title:"Conference",count:10,desc:"ECL · 10 mercati live",today:false}],
+  overviewHTML:`<h5>Hot path (Betfair → value bet)</h5><div class="codeblock">Betfair Exchange (PRIMARY)
+→ DataCollectorAgent (fuzzy match cross-lingua)
+→ Redis market:data
+→ ModelAgent (Dixon-Coles + Pi Rating + xG)
+   └─ ContextService v5.0
+      ├─ LeagueStrengthAnalyzer (tier 1-5)
+      ├─ LeagueOddsProfiler (anomaly detect)
+      └─ MatchTypeClassifier (10 tipi)
+→ AnalystAgent (edge = p - 1/odds)
+→ StrategistAgent (conviction ≥ 6)
+→ RiskManagerAgent (Kelly f=0.25)
+→ TraderAgent (paper → Neon DB)</div><h5>Metriche sistema</h5><div class="kv"><span>Bankroll</span><b>€ 500</b><span>Stake max</span><b>€ 15 (3%)</b><span>Edge min (sharp)</span><b>2%</b><span>Edge min (soft)</span><b>5%</b><span>Drawdown block</span><b style="color:var(--red)">15%/mese</b><span>Kelly fraction</span><b>0.25</b></div><h5>Hint</h5><p style="margin:0;font-size:12px;color:var(--muted);line-height:1.55">Clicca un nodo per dettagli e payload. Hover per evidenziare connessioni. Clicca una lega per dettagli mercato.</p>`,
 };
 
-// Node vertical positions — top edge of each node
-const NY = [240, 365, 490, 615, 740, 865, 990, 1115];
-const NH  = 88;  // node height (px) — approx based on content
-
-// Capital Allocator box
-const CA_X=560, CA_Y=40, CA_W=320, CA_H=132;
-const CA_CX = CA_X + CA_W/2; // = 720
-const CA_BY = CA_Y + CA_H;   // = 172  (bottom y)
-
-// Pipeline node data per desk
-const DESKS = {
-  f:[
-    {ico:'🔷',tag:'SOURCES', h:'Betfair + API Sources',    d:'6 fonti · quote live + xG + fixture'},
-    {ico:'🔄',tag:'AGENT',   h:'DataCollectorAgent',        d:'Ciclo 10m · fuzzy match · Redis'},
-    {ico:'📐',tag:'MODELS',  h:'Dixon-Coles · Pi · xG',     d:'3 modelli + Conformal CI α=0.10'},
-    {ico:'🧠',tag:'AGENT',   h:'ModelAgent',                 d:'Ensemble + probabilità CI'},
-    {ico:'📈',tag:'AGENT',   h:'AnalystAgent',               d:'edge = p − 1/odds · soglia ≥ 2%'},
-    {ico:'🎯',tag:'AGENT',   h:'StrategistAgent',            d:'Conviction 0–10 · Claude Sonnet'},
-    {ico:'🛡️',tag:'AGENT',  h:'RiskManagerAgent',           d:'Kelly f=0.25 · max 3% bankroll'},
-    {ico:'💸',tag:'AGENT',   h:'TraderAgent',                d:'Paper → LIVE · Betfair REST'},
+/* ════════════════════════════════════════════
+   DATA — MEME COIN
+════════════════════════════════════════════ */
+const DATA_MEME = {
+  canvasW:1060,canvasH:1620,
+  kpis:[{l:'Agenti',v:'9'},{l:'Chain',v:'SOL'},{l:'Campioni',v:'10K',up:true},{l:'Capital',v:'$1K'},{l:'Scan',v:'30s',up:true}],
+  buildTxt:'build #1.0.0 · 2026-05-11',
+  overviewEyebrow:'SYSTEM OVERVIEW',overviewTitle:'Meme Coin v1.0',
+  overviewSub:'9 agenti · Solana · DexScreener · 10K campioni · paper',
+  legend:[{l:'all',t:'ALL'},{l:'source',t:'SOURCES'},{l:'collect',t:'SCOUT'},{l:'filter',t:'FILTER'},{l:'scoring',t:'MOMENTUM'},{l:'parallel',t:'RESEARCH'},{l:'decision',t:'ENTRY/RISK'},{l:'execute',t:'EXECUTE'},{l:'output',t:'OUTPUT'}],
+  nodes:[
+    {id:"S1",layer:"source",x:15,y:70,ico:"🔷",tag:"REST",title:"DexScreener Profiles",desc:"Latest token profiles Solana.\nURL, icon, social links.\nBatch ogni 30s.",schema:{endpoint:"api.dexscreener.com/token-profiles/latest/v1",auth:"none",chain:"solana",refresh:"30s"},metrics:{tokens:"200+/scan",chain:"Solana",latency:"~300ms",err:"0.1%"},status:"ok"},
+    {id:"S2",layer:"source",x:215,y:70,ico:"🚀",tag:"REST",title:"DexScreener Boosts",desc:"Latest + Top boosted token.\nBoost score = signal weight.\nFocused 1s order scan top 3.",schema:{endpoint:"token-boosts/latest+top/v1",focused_scan:"1s pair loop",max_focused:"3"},metrics:{boosts:"50+/scan",focused:"top 3",err:"0%"},status:"ok"},
+    {id:"S3",layer:"source",x:415,y:70,ico:"📈",tag:"WS",title:"Binance BTCUSDT",desc:"Depth snapshot + trades stream.\nBook imbalance + CVD signal.\nPaper 24/7 indipendente.",schema:{endpoint:"api.binance.com/api/v3",method:"depth+trades",interval:"60s"},metrics:{scan:"ogni 60s",signal:"imbalance+CVD",err:"0%"},status:"ok"},
+    {id:"S4",layer:"source",x:615,y:70,ico:"🗄️",tag:"REDIS",title:"Upstash Redis",desc:"Shared paper state.\nResearch dataset + stop cooldowns.\nSync pull ogni 30s.",schema:{host:"Upstash.com serverless",sync:"30s pull",keys:"paper-state · research · stops"},metrics:{latency:"<10ms",sync:"30s",err:"0%"},status:"ok"},
+    {id:"S5",layer:"source",x:815,y:70,ico:"🔬",tag:"API",title:"Bitquery External",desc:"Solana Trading API esterna.\nLabeling esterno campioni.\nBatch target 10K samples.",schema:{endpoint:"graphql.bitquery.io",auth:"api-key",target:"10000 labeled samples"},metrics:{samples:"10K target",type:"external labels",err:"0%"},status:"ok"},
+    {id:"SC",layer:"collect",x:414,y:240,ico:"🔍",tag:"AGENT",title:"Scout Agent",desc:"Scansiona DexScreener ogni 30s.\nFocused order scan 1s top 3.\nCross-ref profiles + boosts.",schema:{interval:"30s full · 1s focused",max_focused:"3",chain:"Solana",redis_out:"scout:candidates"},metrics:{pairs:"+200/scan",focused:"top 3",latency:"<500ms",err:"0.1%"},status:"ok"},
+    {id:"FL",layer:"filter",x:414,y:400,ico:"🚦",tag:"AGENT",title:"Filter Agent",desc:"Liquidità: $12K–$180K.\nAge + broken price check.\nPair stop cooldown 45m.\nSymbol cooldown 2h.",schema:{minLiq:"$12K",maxLiq:"$180K",pair_cooldown:"45m",symbol_cooldown:"2h"},metrics:{pass_rate:"~30%",reject:"~70%",err:"0%"},status:"ok"},
+    {id:"MO",layer:"scoring",x:50,y:570,ico:"⚡",tag:"AGENT",title:"Momentum Agent",desc:"Score 0–100:\n• buy/sell ratio ≥ 1.6 (strong 2.4)\n• vol/liq 0.25–4.5\n• impulse 5m: 10–180%\n• moonshot bypass ≥ 82",schema:{minBuyRatio:"1.6",strongBuyRatio:"2.4",volLiq:"0.25–4.5",impulse:"10–180%",bypass:"score≥82"},metrics:{candidates:"~50/scan",avg_score:"38",high_conv:"~5%",err:"0%"},status:"ok"},
+    {id:"RA",layer:"parallel",x:760,y:570,ico:"📡",tag:"RESEARCH",title:"Research Agent",desc:"Batch 30m rotanti.\nLabel: outcome 15m per token.\nEdge lab: 700x / 100x cohort.\nTarget 10K campioni.",schema:{cycle:"30m rotating",target:"10000 samples",label:"15m outcome"},metrics:{samples:"progressive",cohorts:"edge lab",err:"0%"},status:"ok"},
+    {id:"EA",layer:"decision",x:414,y:730,ico:"🎯",tag:"AGENT",title:"Entry Agent",desc:"EV gate ≥ 4 per entry.\nSize: 5% normale · 10% moonshot.\nConfirm: score + momentum + EV.",schema:{ev_gate:"4",normal_size:"5% capital",moonshot_size:"10% capital"},metrics:{entries:"~5/d",stake:"$50–100",mode:"● paper",err:"0%"},status:"ok"},
+    {id:"RM",layer:"decision",x:414,y:890,ico:"🛡️",tag:"AGENT",title:"Risk Manager",desc:"Max 3 posizioni aperte.\n10% max exposure per trade.\nSystem grade A–F watchdog.",schema:{max_positions:"3",max_size:"10% capital",grade:"A–F real-time"},metrics:{exposure_max:"30%",block_rate:"~8%",err:"0%"},status:"ok"},
+    {id:"EX",layer:"execute",x:50,y:1060,ico:"📤",tag:"AGENT",title:"Exit Agent",desc:"Stop loss hard.\nPartial profit at target.\nTrailing exit + momentum exit.\nCooldown enforcement.",schema:{stop:"hard stop",partial:"take profit at target",trail:"momentum-based"},metrics:{exits:"~5/d",win_rate:"tracking",mode:"paper",err:"0%"},status:"ok"},
+    {id:"BT",layer:"parallel",x:760,y:1060,ico:"₿",tag:"BTCUSDT",title:"BTCUSDT Agent",desc:"Paper 24/7 · Binance depth.\nBook imbalance + CVD signal.\nEquity curve separata $1K.",schema:{mode:"PAPER_24/7",signal:"book imbalance · CVD",capital:"$1000 paper"},metrics:{trades:"live",equity:"$1000 start",mode:"● paper",err:"0%"},status:"ok"},
+    {id:"JA",layer:"output",x:414,y:1220,ico:"📓",tag:"AGENT",title:"Journal Agent",desc:"Persiste ogni decisione.\nShared state → Vercel Blob.\nEquity curve + trade log completo.",schema:{storage:"Upstash Redis · Vercel Blob",format:"JSON",sync:"ogni ciclo"},metrics:{entries:"ogni trade",equity:"tracked",err:"0%"},status:"ok"},
+    {id:"O1",layer:"output",x:15,y:1420,ico:"🗄️",tag:"REDIS",title:"Upstash / Blob",desc:"Shared paper state.\nResearch dataset (10K).\nEquity curve storage.",schema:{host:"Upstash.com + Vercel Blob",format:"JSON"},metrics:{state:"persisted",research:"10K target",err:"0%"},status:"ok"},
+    {id:"O2",layer:"output",x:285,y:1420,ico:"🖥️",tag:"VERCEL",title:"Dashboard (Vercel)",desc:"Control Center live.\nSignal Radar + equity curve.",schema:{host:"vercel.com",stack:"Vanilla JS"},metrics:{uptime:"always-on",refresh:"30s",err:"0%"},status:"ok"},
+    {id:"O3",layer:"output",x:555,y:1420,ico:"📊",tag:"SHEETS",title:"Google Sheets CSV",desc:"Research cycles · Observations.\nEdge summary export.",schema:{sheets:"cycles · observations · edges",endpoint:"/api/sheets"},metrics:{rows:"growing",export:"on demand",err:"0%"},status:"ok"},
+    {id:"O4",layer:"output",x:825,y:1420,ico:"📱",tag:"PLANNED",title:"Telegram Alerts",desc:"Alert su entry/exit. (pianificato)\nTrigger: EV gate superato.",schema:{status:"planned",trigger:"entry/exit signal"},metrics:{status:"pending",trigger:"—"},status:"pending"},
   ],
-  m:[
-    {ico:'🔷',tag:'SOURCES', h:'DexScreener + Binance',     d:'Solana · 30s scan · order flow'},
-    {ico:'🔍',tag:'AGENT',   h:'Scout Agent',                d:'30s full scan · 1s focused top 3'},
-    {ico:'🚦',tag:'AGENT',   h:'Filter Agent',               d:'$12K–$180K liq · age · cooldown'},
-    {ico:'⚡',tag:'AGENT',   h:'Momentum Agent',             d:'Score 0–100 · buy ratio · moonshot'},
-    {ico:'🎯',tag:'AGENT',   h:'Entry Agent',                d:'EV gate ≥ 4 · 5%/10% size'},
-    {ico:'🛡️',tag:'AGENT',  h:'Risk Manager',               d:'Max 3 posizioni · 10% cap'},
-    {ico:'📤',tag:'AGENT',   h:'Exit Agent',                 d:'Stop loss · partial profit · trail'},
-    {ico:'📓',tag:'AGENT',   h:'Journal Agent',              d:'Equity curve · Vercel Blob'},
-  ],
-  t:[
-    {ico:'🎾',tag:'SOURCES', h:'Betfair + Tennis APIs',      d:'6 fonti · Elo + serve stats'},
-    {ico:'🔄',tag:'AGENT',   h:'DataCollectorAgent',          d:'Ciclo 5m · fuzzy match · Redis'},
-    {ico:'📐',tag:'MODELS',  h:'Elo · Serve · Fatigue',       d:'3 modelli + Conformal CI α=0.10'},
-    {ico:'🧠',tag:'AGENT',   h:'ModelAgent',                   d:'Ensemble + probabilità CI'},
-    {ico:'📈',tag:'AGENT',   h:'AnalystAgent',                 d:'edge = p − 1/odds · soglia ≥ 2.5%'},
-    {ico:'🎯',tag:'AGENT',   h:'StrategistAgent',              d:'Conviction 0–10 · Claude Sonnet'},
-    {ico:'🛡️',tag:'AGENT',  h:'RiskManagerAgent',             d:'Kelly f=0.25 · max 3% bankroll'},
-    {ico:'💸',tag:'AGENT',   h:'TraderAgent',                  d:'Paper → LIVE · Betfair REST'},
-  ],
+  edges:[["S1","SC"],["S2","SC"],["S4","SC"],["S3","BT"],["S5","RA"],["SC","FL"],["FL","MO"],["FL","RA"],["MO","EA"],["RA","EA"],["EA","RM"],["RM","EX"],["EX","JA"],["BT","JA"],["JA","O1"],["JA","O2"],["JA","O3"],["RA","O3"]],
+  hot:[["S1","SC"],["SC","FL"],["FL","MO"],["MO","EA"],["EA","RM"],["RM","EX"],["EX","JA"],["JA","O2"]],
+  lanes:[{y:38,label:"01 — Data Sources (DexScreener · Binance · Upstash · Bitquery)"},{y:208,label:"02 — Scout & Collection · 30s full scan · 1s focused order flow"},{y:368,label:"03 — Filter · $12K-$180K liquidità · age check · pair cooldown 45m"},{y:538,label:"04 — Momentum Scoring (0–100) ·· Parallel: Research Agent (10K samples)"},{y:698,label:"05 — Entry Agent · EV gate ≥ 4 · 5% normal · 10% moonshot bypass"},{y:858,label:"06 — Risk Manager · max 3 posizioni · 10% cap · system grade A–F"},{y:1028,label:"07 — Exit · stop / partial / trail ·· Parallel: BTCUSDT 24/7"},{y:1188,label:"08 — Journal Agent · persist decisions · equity curve"},{y:1388,label:"09 — Output · Redis/Blob · Dashboard · Sheets · Telegram (planned)"}],
+  overviewHTML:`<h5>Hot path (DexScreener → paper trade)</h5><div class="codeblock">DexScreener Profiles + Boosts
+→ Scout Agent (30s full · 1s focused top 3)
+→ Filter Agent ($12K-$180K · age · cooldown)
+→ Momentum Agent (score 0-100)
+   ├─ Buy ratio ≥ 1.6 (strong 2.4)
+   ├─ Vol/Liq 0.25–4.5
+   └─ Moonshot bypass: score ≥ 82
+→ Entry Agent (EV gate ≥ 4 · 5%/10% size)
+→ Risk Manager (max 3 pos · 10% cap)
+→ Exit Agent (stop / partial / trail)
+→ Journal Agent → Dashboard</div><h5>Metriche sistema</h5><div class="kv"><span>Capital paper</span><b>$1,000</b><span>Max positions</span><b>3</b><span>Max size</span><b>10% capital</b><span>EV gate</span><b>≥ 4</b><span>Pair cooldown</span><b style="color:var(--amber)">45m</b><span>Moonshot bypass</span><b style="color:var(--magenta)">score ≥ 82</b></div><h5>Parallel tracks</h5><div class="kv"><span>Research Agent</span><b style="color:var(--violet)">30m batch · 10K target</b><span>BTCUSDT Agent</span><b style="color:var(--violet)">24/7 paper · Binance</b></div>`,
 };
 
-const LANE_LABELS = [
-  '01 · Data Sources',
-  '02 · Collection',
-  '03 · Models',
-  '04 · Ensemble',
-  '05 · Analysis',
-  '06 · Strategy',
-  '07 · Risk Mgmt',
-  '08 · Execution',
-];
+/* ════════════════════════════════════════════
+   DATA — TENNIS
+════════════════════════════════════════════ */
+const DATA_TENNIS = {
+  canvasW:1200,canvasH:1580,
+  kpis:[{l:'Agenti',v:'8'},{l:'Tornei',v:'12'},{l:'Modelli',v:'3'},{l:'Mercati',v:'30+',up:true},{l:'Refresh',v:'5m',up:true}],
+  buildTxt:'build #1.0.0 · 2026-05-11',
+  overviewEyebrow:'SYSTEM OVERVIEW',overviewTitle:'Tennis AI v1.0',
+  overviewSub:'8 agenti · ATP + WTA · 12 tornei · in sviluppo',
+  legend:[{l:'all',t:'ALL'},{l:'source',t:'SOURCES'},{l:'collect',t:'COLLECT'},{l:'model',t:'MODELS'},{l:'ensemble',t:'ENSEMBLE'},{l:'value',t:'VALUE'},{l:'parallel',t:'PARALLEL'},{l:'output',t:'OUTPUT'}],
+  nodes:[
+    {id:"S1",layer:"source",x:15,y:70,ico:"🎾",tag:"REST",title:"Tennis-Data API",desc:"Fixture storici ATP + WTA.\nElo pre-calcolati per player.\nH2H, surface stats, ranking.",schema:{endpoint:"tennis-data.co.uk/api",auth:"api-key",cache:"6h",covers:"ATP+WTA"},metrics:{matches:"200K+",surfaces:"3",lag:"6h",err:"0.0%"},status:"ok"},
+    {id:"S2",layer:"source",x:215,y:70,ico:"🔷",tag:"REST",title:"Betfair Exchange",desc:"Quote live best-back (PRIMARY)\nMatch Winner + Set Betting.\nIn-play markets disponibili.",schema:{endpoint:"api.betfair.com/exchange/betting/rest/v1.0",auth:"session-token",refresh:"ogni ciclo",markets:"30+ live"},metrics:{tornei:"12",mercati:"30+",latency:"~200ms",err:"0.0%"},status:"ok"},
+    {id:"S3",layer:"source",x:415,y:70,ico:"📊",tag:"REST",title:"Serve & Return Stats",desc:"1st serve % · aces/game.\nBP conversion rate.\nReturn pts won per surface.",schema:{endpoint:"open-tennis.com/api",auth:"api-key",cache:"1h",data:"serve+return+BP"},metrics:{players:"4500+",stats:"25 vars",lag:"1h",err:"0%"},status:"ok"},
+    {id:"S4",layer:"source",x:615,y:70,ico:"🏟️",tag:"REST",title:"Tournament Context",desc:"Torneo: superficie · round.\nDraw bracket · seeding.\nInfortuni ufficiali ATP/WTA.",schema:{endpoint:"atp-tennis.api+wtatennis",auth:"api-key",cache:"30m"},metrics:{tornei:"12",draw:"live",injuries:"daily",err:"0%"},status:"ok"},
+    {id:"S5",layer:"source",x:815,y:70,ico:"⚡",tag:"POLL",title:"Live Score Feed",desc:"Score live per in-play.\nSet score, game corrente,\ntiebreak status · momentum.",schema:{endpoint:"sofascore.com/api",method:"poll-5m",auth:"none"},metrics:{latency:"<10s",matches:"live",err:"0.1%"},status:"ok"},
+    {id:"S6",layer:"source",x:1015,y:70,ico:"📈",tag:"REST",title:"Sharp Closing Lines",desc:"Quote storiche · closing line.\nValue calibration long-term.\nSharp action detection.",schema:{endpoint:"odds-api · fallback",auth:"api-key",trigger:"calibration run"},metrics:{history:"3yr",markets:"match winner",err:"0.1%"},status:"ok"},
+    {id:"DC",layer:"collect",x:509,y:240,ico:"🔄",tag:"AGENT",title:"DataCollectorAgent",desc:"Ciclo 5m (2m pre-match).\nBetfair → fallback Odds API.\nFuzzy match player cross-source:\nNFKD + SequenceMatcher ≥ 0.70\n→ Redis market:tennis",schema:{schedule:"5min · 2min pre-match",fuzzy_algo:"NFKD + SequenceMatcher",threshold:"0.70",retries:3,redis_out:"market:tennis"},metrics:{events:"+40/ciclo",tornei:"12",lag:"<30s",err:"0.1%"},status:"ok"},
+    {id:"M1",layer:"model",x:50,y:430,ico:"📐",tag:"ELO",title:"Elo Surface Model",desc:"Elo generale + surface-specific\n(clay / grass / hard separati).\nDecay 0.99/match · K=32.\nRefit post ogni torneo.",schema:{family:"Elo surface-adj.",K_factor:"32",decay:"0.99/match",surfaces:"clay · grass · hard"},metrics:{players:"4500+",surfaces:"3",refresh:"post-match",err:"0%"},status:"ok"},
+    {id:"M2",layer:"model",x:509,y:430,ico:"🎾",tag:"SERVE",title:"Serve & Return Model",desc:"Feature: 1st serve %, aces/game,\nBP conversion, return pts won.\nGradient Boost · last 100 match.",schema:{algo:"GradientBoosting",features:"25 serve+return vars",train:"last 100 matches/player"},metrics:{accuracy:"68%",features:"25",refresh:"weekly",err:"0%"},status:"ok"},
+    {id:"M3",layer:"model",x:940,y:430,ico:"⚡",tag:"FATIGUE",title:"Fatigue Adjustment",desc:"Days rest · sets last 7 gg\ntravel distance · altitude.\nAdjust p ± 0.03 per fattore.",schema:{factors:"rest·sets·travel·altitude",impact:"±0.03 p",update:"pre-match daily"},metrics:{features:"8 vars",impact:"±0.03 p",err:"0%"},status:"ok"},
+    {id:"MA",layer:"ensemble",x:509,y:590,ico:"🧠",tag:"AGENT",title:"ModelAgent",desc:"Combina Elo + Serve + Fatigue.\nConformal Prediction CI (α=0.10).\n90% coverage.\n→ Redis model:tennis_probs",schema:{CI:"conformal α=0.10",output:"p_p1 · p_p2\nci_low · ci_high",refit:"weekly"},metrics:{latency:"~1.0s",matches:"+40/ciclo",err:"0%"},status:"ok"},
+    {id:"P1",layer:"parallel",x:940,y:590,ico:"💓",tag:"MONITOR",title:"MonitorAgent",desc:"Heartbeat ogni 30s.\nDrift PSI ogni 24h.\nIn-play suspension watcher.",schema:{heartbeat:"30s",psi_check:"daily",inplay_watch:"ogni set"},metrics:{uptime:"99.8%",checks:"2880/d",err:"0%"},status:"ok"},
+    {id:"AA",layer:"value",x:509,y:750,ico:"📈",tag:"AGENT",title:"AnalystAgent",desc:"edge = p_modello − 1/odds_betfair\nSoglia adattiva:\n• Betfair/sharp: edge ≥ 2.5%\n• Soft: edge ≥ 5%",schema:{edge_sharp:"≥ 2.5%",edge_soft:"≥ 5%",redis_in:"model:tennis_probs",redis_out:"analyst:tennis_opps"},metrics:{flagged:"~15/d",skip:"~25/d",err:"0%"},status:"ok"},
+    {id:"P2",layer:"parallel",x:940,y:750,ico:"🔬",tag:"RESEARCH",title:"ResearchAgent",desc:"Ollama llama3.2 · summaries\npre-match: notizie, condizioni,\nstato fisico, motivazione.",schema:{model:"llama3.2:3b",trigger:"pre-match 24h",output:"match_research → Neon"},metrics:{queries:"~20/d",confidence:"75%",err:"0%"},status:"ok"},
+    {id:"ST",layer:"ensemble",x:509,y:910,ico:"🎯",tag:"AGENT",title:"StrategistAgent",desc:"Conviction score 0–10\n(Claude API + rule-based fallback).\nFiltra edge + surface fit + fatica.\nSkip se conviction < 6.",schema:{model:"claude-sonnet-4-6",fallback:"rule-based",threshold:"6 / 10"},metrics:{approved:"~65%",skip:"~35%",latency:"~800ms"},status:"ok"},
+    {id:"RM",layer:"value",x:509,y:1070,ico:"🛡️",tag:"AGENT",title:"RiskManagerAgent",desc:"Kelly frazionato (f=0.25):\nstake = min(kelly×0.25×BK, 3%×BK)\nGate: completeness < 75% → DLQ\nBlocco mensile: drawdown > 12%",schema:{kelly_fraction:"0.25",max_single:"3% bankroll",max_exposure:"8% bankroll",drawdown_block:"12%/mese"},metrics:{stake_range:"3–12 €",exposure_max:"€ 40",bets_oggi:"5",block_rate:"~5%"},status:"ok"},
+    {id:"TR",layer:"output",x:509,y:1230,ico:"💸",tag:"AGENT",title:"TraderAgent",desc:"PAPER: salva bet su Neon DB.\nLIVE: place_bet() Betfair REST.\nTelegram alert ogni bet\ncon edge > 3%.",schema:{mode:"PAPER_TRADING=true",live_fn:"place_bet() → Betfair REST",alert:"edge > 3%"},metrics:{bets_oggi:"5",mode:"● paper",p_l:"tracking",err:"0%"},status:"ok"},
+    {id:"O1",layer:"output",x:50,y:1400,ico:"🗄️",tag:"NEON DB",title:"PostgreSQL (Neon)",desc:"match_predictions · bets\nagent_heartbeats · match_research",schema:{host:"neon.tech · serverless cloud",tables:"7",size:"4 GB"},metrics:{p_l:"tracked",heartbeats:"ogni 30s",err:"0%"},status:"ok"},
+    {id:"O2",layer:"output",x:509,y:1400,ico:"🖥️",tag:"VERCEL",title:"Dashboard (Vercel)",desc:"Pipeline live · Previsioni\nP&L paper tracking.",schema:{host:"vercel.com",stack:"Next.js 14"},metrics:{uptime:"99.9%",always_on:"sì",err:"0%"},status:"ok"},
+    {id:"O3",layer:"output",x:940,y:1400,ico:"📱",tag:"TELEGRAM",title:"Telegram Alert",desc:"Alert per ogni bet: match,\nselezione, edge %, stake €,\nodds Betfair live.",schema:{trigger:"edge > 3%",format:"markdown"},metrics:{bets_oggi:"5",trigger:"> 3% edge",err:"0%"},status:"ok"},
+  ],
+  edges:[["S1","DC"],["S2","DC"],["S3","DC"],["S4","DC"],["S5","DC"],["S6","DC"],["DC","M1"],["DC","M2"],["DC","M3"],["M1","MA"],["M2","MA"],["M3","MA"],["MA","AA"],["AA","ST"],["ST","RM"],["RM","TR"],["TR","O1"],["TR","O2"],["TR","O3"],["P1","O2"],["P2","O1"]],
+  hot:[["S2","DC"],["DC","M2"],["M2","MA"],["MA","AA"],["AA","ST"],["ST","RM"],["RM","TR"],["TR","O2"]],
+  lanes:[{y:38,label:"01 — Data Sources (6 fonti · ATP/WTA · Betfair · Serve Stats · Contesto)"},{y:208,label:"02 — Data Collection · fuzzy matching player cross-source"},{y:398,label:"03 — Modelli (Elo Surface-Adj. · Serve & Return · Fatigue)"},{y:558,label:"04 — ModelAgent (ensemble + Conformal CI) ·· MonitorAgent"},{y:718,label:"05 — Analyst (edge detection) ·· Research (AI summaries pre-match)"},{y:878,label:"06 — Strategist (conviction AI · Claude · surface fit)"},{y:1038,label:"07 — Risk Management (Kelly f=0.25 · 3% cap · drawdown 12%)"},{y:1198,label:"08 — Execution (paper / live · Betfair REST)"},{y:1368,label:"09 — Output & Delivery"}],
+  overviewHTML:`<h5>Hot path (Betfair → value bet)</h5><div class="codeblock">Betfair Exchange (PRIMARY)
+→ DataCollectorAgent (fuzzy match cross-source)
+→ Redis market:tennis
+→ ModelAgent
+   ├─ Elo Surface-Adj. (clay/grass/hard)
+   ├─ Serve & Return Model (GradBoost 25 var)
+   └─ Fatigue Adjustment (rest·sets·travel)
+   └─ Conformal CI α=0.10 (90% coverage)
+→ AnalystAgent (edge = p - 1/odds)
+→ StrategistAgent (conviction ≥ 6)
+→ RiskManagerAgent (Kelly f=0.25)
+→ TraderAgent (paper → Neon DB)</div><h5>Metriche sistema</h5><div class="kv"><span>Bankroll</span><b>€ 500</b><span>Stake max</span><b>€ 12 (3%)</b><span>Edge min (sharp)</span><b>2.5%</b><span>Edge min (soft)</span><b>5%</b><span>Drawdown block</span><b style="color:var(--red)">12%/mese</b><span>Kelly fraction</span><b>0.25</b></div><h5>Superfici coperte</h5><div class="kv"><span>Clay</span><b style="color:var(--amber)">Roland Garros · Monte Carlo</b><span>Grass</span><b style="color:var(--green)">Wimbledon · Queens</b><span>Hard</span><b style="color:var(--cyan)">AO · USO · Masters 1000</b></div>`,
+};
 
-/* ════════════════ HELPERS ════════════════ */
-const canvas = document.getElementById('canvas');
-const svg    = document.getElementById('svg');
-canvas.style.width  = CW + 'px';
-canvas.style.height = CH + 'px';
+/* ════════════════════════════════════════════
+   DESK RENDERER (scoped closure per desk)
+════════════════════════════════════════════ */
+const DESKS = {};
 
-function el(tag, cls, style) {
-  const e = document.createElement(tag);
-  if (cls)   e.className = cls;
-  if (style) Object.assign(e.style, style);
-  return e;
-}
-function path(cls, d) {
-  const p = document.createElementNS('http://www.w3.org/2000/svg','path');
-  p.setAttribute('class',cls); p.setAttribute('d',d); svg.appendChild(p);
-}
-function bez(x1,y1,x2,y2) {                       // vertical bezier
-  const dy = Math.abs(y2-y1)*0.52;
-  return `M${x1} ${y1} C${x1} ${y1+dy},${x2} ${y2-dy},${x2} ${y2}`;
-}
-function bezLat(x1,y1,x2,y2) {                    // lateral bezier (CA → desk)
-  const dx = Math.abs(x2-x1)*0.38;
-  const dy = Math.abs(y2-y1)*0.32;
-  const sx = x2>x1?1:-1;
-  return `M${x1} ${y1} C${x1+dx*sx} ${y1+dy},${x2} ${y2-dy},${x2} ${y2}`;
-}
+function createDesk(key, D, suffix) {
+  const canvasEl = document.getElementById('canvas-'+suffix);
+  const svgEl    = document.getElementById('edges-'+suffix);
+  const pbEl     = document.getElementById('pb-'+suffix);
+  const peEl     = document.getElementById('pe-'+suffix);
+  const ptEl     = document.getElementById('pt-'+suffix);
+  const psEl     = document.getElementById('ps-'+suffix);
+  let activeId   = null;
 
-/* ════════════════ RENDER ════════════════ */
+  // KPIs
+  document.getElementById('kpis-'+suffix).innerHTML =
+    D.kpis.map(k=>`<div class="kpi"><label>${k.l}</label><b class="mono${k.up?' up':''}">${k.v}</b></div>`).join('');
 
-// 1. Desk zone backgrounds + labels
-function renderZones() {
-  const zTop=218, zH=972;
-  Object.entries(COL).forEach(([k,c])=>{
-    // zone bg
-    const z = el('div','desk-zone',{
-      left:c.zx+'px', top:zTop+'px', width:c.zw+'px', height:zH+'px',
-      borderColor:`rgba(${c.rgba},${c.live?.14:.08})`,
-      background:`rgba(${c.rgba},${c.live?.028:.015})`,
+  // Canvas size
+  canvasEl.style.width  = D.canvasW+'px';
+  canvasEl.style.height = D.canvasH+'px';
+
+  // Legend
+  const legEl = document.getElementById('legend-'+suffix);
+  legEl.innerHTML = D.legend.map(i=>
+    `<button data-layer="${i.l}"${i.l==='all'?' class="active"':''}>${i.t}</button>`).join('');
+  legEl.addEventListener('click', e => {
+    if (e.target.tagName !== 'BUTTON') return;
+    const layer = e.target.dataset.layer;
+    legEl.querySelectorAll('button').forEach(b => b.classList.toggle('active', b===e.target));
+    canvasEl.querySelectorAll('.node').forEach(n => n.classList.toggle('faded', layer!=='all' && n.dataset.layer!==layer));
+    canvasEl.querySelectorAll('.edge').forEach(ed => ed.classList.toggle('dim', layer!=='all'));
+  });
+
+  // Lanes
+  D.lanes.forEach(l => {
+    const lab = document.createElement('div');
+    lab.className='lane'; lab.style.top=(l.y-2)+'px';
+    lab.innerHTML=`<b>›</b>${l.label}`;
+    canvasEl.appendChild(lab);
+    const line = document.createElement('div');
+    line.className='lane-line'; line.style.top=(l.y+12)+'px';
+    canvasEl.appendChild(line);
+  });
+
+  // Nodes
+  D.nodes.forEach(n => {
+    const el = document.createElement('div');
+    el.className = `node layer-${n.layer}`;
+    el.dataset.id = n.id; el.dataset.layer = n.layer;
+    el.style.left = n.x+'px'; el.style.top = n.y+'px';
+    const ok = n.status==='ok';
+    el.innerHTML = `
+      <div class="head"><div class="ico">${n.ico||'•'}</div><div class="tag mono">${n.tag||''}</div></div>
+      <h4>${n.title}</h4>
+      <p>${(n.desc||'').replace(/\n/g,'<br>')}</p>
+      <div class="footer">
+        <span>${n.id}</span>
+        <span class="${ok?'ok':'pending'}"><span class="pulse${ok?'':' amber'}"></span>${ok?'live':'pending'}</span>
+      </div>`;
+    el.addEventListener('click', () => selectNode(n.id));
+    el.addEventListener('mouseenter', () => highlightNeighbors(n.id, true));
+    el.addEventListener('mouseleave', () => { if (!activeId) clearHighlight(); });
+    canvasEl.appendChild(el);
+  });
+
+  // League cluster (football only)
+  if (key==='football' && D.leagues) {
+    const label = document.createElement('div');
+    label.className='league-cluster-label';
+    label.style.left='42px'; label.style.top='838px';
+    label.textContent='› Mercati Betfair Exchange attivi';
+    canvasEl.appendChild(label);
+    const cluster = document.createElement('div');
+    cluster.className='league-cluster';
+    cluster.style.left='42px'; cluster.style.top='856px';
+    D.leagues.forEach(l => {
+      const c = document.createElement('div');
+      c.className='lchip'+(l.today?' today':'');
+      c.dataset.lid=l.id;
+      c.innerHTML=`<div class="ltitle">${l.title}<span class="lcount">×${l.count}</span></div><p>${l.desc}</p>`;
+      c.addEventListener('click', () => selectLeague(l.id));
+      cluster.appendChild(c);
     });
-    canvas.appendChild(z);
+    canvasEl.appendChild(cluster);
+  }
 
-    // desk label (top-left of zone)
-    const lbl = el('div','desk-label',{left:(c.zx+14)+'px', top:(zTop+8)+'px', color:c.color});
-    lbl.innerHTML=`<span class="dl-ico" style="background:rgba(${c.rgba},.1);border-color:rgba(${c.rgba},.3)">${c.ico}</span>${c.label}`;
-    canvas.appendChild(lbl);
+  // Helpers
+  function getCenter(id) {
+    const el = canvasEl.querySelector(`.node[data-id="${id}"]`);
+    if (!el) return null;
+    const r=el.getBoundingClientRect(), c=canvasEl.getBoundingClientRect();
+    return {x:r.left-c.left+r.width/2, y:r.top-c.top+r.height/2,
+            top:r.top-c.top, bottom:r.top-c.top+r.height};
+  }
+  function curve(a,b) {
+    const x1=a.x,y1=a.bottom,x2=b.x,y2=b.top,dy=Math.abs(y2-y1)*0.5;
+    return `M ${x1} ${y1} C ${x1} ${y1+dy}, ${x2} ${y2-dy}, ${x2} ${y2}`;
+  }
 
-    // alloc badge (top-right of zone)
-    const ab = el('div','desk-alloc',{
-      left:(c.zx+c.zw-10)+'px', top:(zTop+8)+'px', transform:'translateX(-100%)',
-      color:c.color, background:`rgba(${c.rgba},.07)`, borderColor:`rgba(${c.rgba},.22)`,
+  function makeEdges() {
+    svgEl.innerHTML='';
+    D.edges.forEach(([a,b]) => {
+      const A=getCenter(a), B=getCenter(b); if(!A||!B) return;
+      const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+      p.setAttribute('d',curve(A,B)); p.setAttribute('class','edge');
+      p.dataset.from=a; p.dataset.to=b; svgEl.appendChild(p);
     });
-    ab.textContent = c.alloc;
-    canvas.appendChild(ab);
-  });
-}
-
-// 2. Capital Allocator node
-function renderCA() {
-  const d = el('div','capital-allocator',{ left:CA_X+'px', top:CA_Y+'px', width:CA_W+'px' });
-  d.innerHTML=`
-    <div class="ca-head">
-      <div class="ca-ico">💰</div>
-      <div><div class="ca-tag">AI Desk Manager</div><div class="ca-title">Capital Allocator</div></div>
-    </div>
-    <div class="ca-desc">Gestisce l'allocazione dinamica del capitale tra i desk operativi · in sviluppo</div>
-    <div class="ca-allocs">
-      <div class="ca-alloc f"><span class="cad live"></span>⬡ Football &middot; 60%</div>
-      <div class="ca-alloc m"><span class="cad live"></span>🚀 Meme Coin &middot; 40%</div>
-      <div class="ca-alloc t"><span class="cad pend"></span>🎾 Tennis &middot; presto</div>
-    </div>`;
-  canvas.appendChild(d);
-}
-
-// 3. Pipeline nodes
-function renderNodes() {
-  Object.entries(COL).forEach(([k,c])=>{
-    const wrap = el('div',`d-${k}`,{position:'absolute',inset:'0',pointerEvents:'none'});
-    DESKS[k].forEach((n,i)=>{
-      const nd = el('div','node',{left:c.nx+'px', top:NY[i]+'px', pointerEvents:'all'});
-      nd.innerHTML=`
-        <div class="head">
-          <div class="ico">${n.ico}</div>
-          <div class="ntag">${n.tag}</div>
-        </div>
-        <h4>${n.h}</h4>
-        <p>${n.d}</p>
-        <div class="nft">
-          <span>layer ${String(i+1).padStart(2,'0')}</span>
-          <span style="color:var(--green)"><span class="np g"></span>live</span>
-        </div>`;
-      wrap.appendChild(nd);
+    D.hot.forEach(([a,b]) => {
+      const A=getCenter(a), B=getCenter(b); if(!A||!B) return;
+      const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+      p.setAttribute('d',curve(A,B)); p.setAttribute('class','flow'); svgEl.appendChild(p);
     });
-    canvas.appendChild(wrap);
-  });
+  }
+
+  function clearHighlight() {
+    canvasEl.querySelectorAll('.edge').forEach(e => e.classList.remove('hi','dim'));
+    canvasEl.querySelectorAll('.node').forEach(n => n.classList.remove('faded'));
+  }
+  function highlightNeighbors(id, on) {
+    if (!id) { clearHighlight(); return; }
+    const ups=new Set(), downs=new Set();
+    D.edges.forEach(([a,b]) => { if(b===id) ups.add(a); if(a===id) downs.add(b); });
+    canvasEl.querySelectorAll('.edge').forEach(e => {
+      const mine=(e.dataset.from===id||e.dataset.to===id);
+      e.classList.toggle('hi',mine); e.classList.toggle('dim',!mine);
+    });
+    canvasEl.querySelectorAll('.node').forEach(n => {
+      const keep=(n.dataset.id===id||ups.has(n.dataset.id)||downs.has(n.dataset.id));
+      n.classList.toggle('faded',!keep);
+    });
+  }
+
+  function renderOverview() {
+    peEl.textContent = D.overviewEyebrow;
+    ptEl.textContent = D.overviewTitle;
+    psEl.textContent = D.overviewSub;
+    pbEl.innerHTML   = D.overviewHTML;
+  }
+
+  function selectNode(id) {
+    activeId = id;
+    canvasEl.querySelectorAll('.node').forEach(n => n.classList.toggle('active', n.dataset.id===id));
+    canvasEl.querySelectorAll('.lchip').forEach(c => c.classList.remove('active'));
+    highlightNeighbors(id, true);
+    const n = D.nodes.find(x => x.id===id); if (!n) return;
+    peEl.textContent = `LAYER · ${n.layer.toUpperCase()}`;
+    ptEl.textContent = n.title;
+    psEl.textContent = `${n.id} · ${(n.tag||'').toLowerCase()}`;
+    const ups   = D.edges.filter(([a,b])=>b===id).map(([a])=>D.nodes.find(x=>x.id===a)).filter(Boolean);
+    const downs = D.edges.filter(([a,b])=>a===id).map(([,b])=>D.nodes.find(x=>x.id===b)).filter(Boolean);
+    const sch  = Object.entries(n.schema||{}).map(([k,v])=>`<span>${k}</span><b>${v}</b>`).join('');
+    const met  = Object.entries(n.metrics||{}).map(([k,v])=>`<span>${k}</span><b>${v}</b>`).join('');
+    pbEl.innerHTML = `
+      <h5>Description</h5>
+      <p style="margin:0;font-size:13px;color:var(--text);line-height:1.55">${(n.desc||'').replace(/\n/g,' ')}</p>
+      <h5>Schema / params</h5><div class="kv">${sch||'<span>—</span><b>—</b>'}</div>
+      <h5>Live metrics</h5><div class="kv">${met||'<span>—</span><b>—</b>'}</div>
+      <h5>Upstream (${ups.length})</h5>
+      <div class="neighbors">${ups.length
+        ? ups.map(u=>`<button onclick="DESKS['${key}'].selectNode('${u.id}')"><span>${u.id} · ${u.title}</span><span class="arrow">↑</span></button>`).join('')
+        : '<div class="kv"><span>none</span><b>root</b></div>'}</div>
+      <h5>Downstream (${downs.length})</h5>
+      <div class="neighbors">${downs.length
+        ? downs.map(d=>`<button onclick="DESKS['${key}'].selectNode('${d.id}')"><span>${d.id} · ${d.title}</span><span class="arrow">↓</span></button>`).join('')
+        : '<div class="kv"><span>none</span><b>leaf</b></div>'}</div>`;
+  }
+
+  function selectLeague(lid) {
+    if (!D.leagues) return;
+    const l = D.leagues.find(x=>x.id===lid); if (!l) return;
+    canvasEl.querySelectorAll('.lchip').forEach(c=>c.classList.toggle('active',c.dataset.lid===lid));
+    peEl.textContent = 'BETFAIR EXCHANGE';
+    ptEl.textContent = l.title;
+    psEl.textContent = `${l.count} mercati MATCH_ODDS attivi`;
+    pbEl.innerHTML = `<h5>Mercati ${l.title}</h5><div class="kv"><span>mercati live</span><b>${l.count}</b><span>tipo</span><b>MATCH_ODDS</b><span>fonte</span><b>Betfair Exchange</b><span>status</span><b style="color:var(--green)">● live</b></div><h5>Quote live (esempio)</h5><div class="codeblock">${l.today
+      ? 'Bayern Munich  1.65\nThe Draw       5.60\nParis St-G     4.50\n\nmargin: 4.2%  (sharp)'
+      : `${l.count} mercati attivi\nfonte: Betfair Exchange`}</div>`;
+  }
+
+  // Init render
+  renderOverview();
+  document.fonts.ready.then(makeEdges);
+
+  return { selectNode, selectLeague };
 }
 
-// 4. SVG edges (all static coordinates — no getBoundingClientRect)
-function renderEdges() {
-  Object.entries(COL).forEach(([k,c])=>{
-    const cx = c.cx;
+/* Init all desks */
+DESKS['football'] = createDesk('football', DATA_FOOTBALL, 'f');
+DESKS['meme']     = createDesk('meme',     DATA_MEME,     'm');
+DESKS['tennis']   = createDesk('tennis',   DATA_TENNIS,   't');
 
-    // Internal vertical edges (node bottom → next node top)
-    for(let i=0;i<DESKS[k].length-1;i++){
-      const ay = NY[i]+NH, by = NY[i+1];
-      path('edge', bez(cx,ay,cx,by));
-      if(c.live) path(`fl-${k}`, bez(cx,ay,cx,by));
-    }
-
-    // Capital Allocator → first node of this desk
-    const fy = NY[0];
-    if(k==='t'){
-      path('ca-t', bezLat(CA_CX, CA_BY, cx, fy));
-    } else {
-      path(`ca-${k}`, bezLat(CA_CX, CA_BY, cx, fy));
-    }
-  });
-}
-
-// 5. "Coming Soon" badge on the Tennis line (at bezier midpoint)
-function renderComingSoon() {
-  // Midpoint of bezLat from (CA_CX, CA_BY) to (COL.t.cx, NY[0])
-  const x1=CA_CX, y1=CA_BY, x2=COL.t.cx, y2=NY[0];
-  const mx = (x1+x2)/2 + 24;
-  const my = (y1+y2)/2 - 6;
-
-  const b = el('div','cs-badge',{ left:(mx-72)+'px', top:(my-12)+'px' });
-  b.innerHTML='⏳ &nbsp;COMING SOON';
-  canvas.appendChild(b);
-}
-
-// 6. Lane labels (right edge)
-function renderLaneLabels() {
-  LANE_LABELS.forEach((lbl,i)=>{
-    const e = el('div','lane-lbl',{ top:(NY[i]+NH/2-5)+'px', right:'14px' });
-    e.textContent = lbl;
-    canvas.appendChild(e);
-  });
-}
-
-// 7. Clock
+/* Clock */
 function tick(){ document.getElementById('clock').textContent = new Date().toISOString().slice(11,19)+' UTC'; }
-
-/* ════════════════ INIT ════════════════ */
-renderZones();
-renderCA();
-renderNodes();
-renderEdges();      // static coords → runs synchronously, no timing issues
-renderComingSoon();
-renderLaneLabels();
 tick(); setInterval(tick,1000);
 </script>
 </body>
