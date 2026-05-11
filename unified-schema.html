@@ -40,7 +40,8 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-famil
 /* CANVAS WRAP */
 .canvas-wrap{flex:1;overflow:auto;position:relative;cursor:grab;}
 .canvas-wrap:active{cursor:grabbing;}
-.canvas{position:relative;width:3760px;height:2320px;}
+.canvas-container{position:relative;width:3760px;height:2320px;}
+.canvas{position:absolute;top:0;left:0;width:3760px;height:2320px;transform-origin:0 0;}
 .canvas::before{content:"";position:absolute;inset:0;pointer-events:none;
   background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
                    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
@@ -197,6 +198,14 @@ svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z
 .pfooter{padding:7px 14px;border-top:1px solid var(--line);
   font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--dim);
   display:flex;justify-content:space-between;flex-shrink:0;}
+.zoom-ctrl{display:flex;align-items:center;gap:3px;margin-left:6px;}
+.zoom-ctrl button{width:24px;height:24px;border-radius:5px;border:1px solid var(--line2);
+  background:rgba(14,19,28,.8);color:var(--muted);font-size:14px;cursor:pointer;
+  display:grid;place-items:center;transition:all .15s;font-family:'Inter',sans-serif;line-height:1;}
+.zoom-ctrl button:hover{color:var(--text);border-color:var(--cyan);}
+.zoom-ctrl .fit-btn{width:auto;padding:0 7px;font-size:10px;font-weight:600;}
+.zoom-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);
+  min-width:36px;text-align:center;}
 </style>
 </head>
 <body>
@@ -212,12 +221,20 @@ svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z
     <button class="jm" onclick="jumpTo('meme')">🚀 Meme Coin</button>
     <button class="jt" onclick="jumpTo('tennis')">🎾 Tennis</button>
   </div>
+  <div class="zoom-ctrl">
+    <button onclick="adjustZoom(-0.12)" title="Zoom out">−</button>
+    <span class="zoom-lbl" id="zoom-label">100%</span>
+    <button onclick="adjustZoom(+0.12)" title="Zoom in">+</button>
+    <button class="fit-btn" onclick="fitAll()" title="Fit tutto">⊞ Fit</button>
+  </div>
   <div class="pill"><span class="dot"></span><span id="clock">—</span></div>
 </div>
 
 <div class="canvas-wrap" id="wrap">
-  <div class="canvas" id="canvas">
-    <svg class="edges" id="svg"></svg>
+  <div class="canvas-container" id="canvas-container">
+    <div class="canvas" id="canvas">
+      <svg class="edges" id="svg"></svg>
+    </div>
   </div>
 </div>
 
@@ -669,13 +686,57 @@ function selectLeague(D, lid) {
     D.buildTxt, D.accent);
 }
 
+/* ─── ZOOM ─── */
+const CANVAS_W = 3760, CANVAS_H = 2320;
+let _zoom = 1;
+
+function _applyZoom(newZoom, pivotScreenX, pivotScreenY) {
+  const wrap = document.getElementById('wrap');
+  const cont = document.getElementById('canvas-container');
+  const cv   = document.getElementById('canvas');
+  newZoom = Math.max(0.15, Math.min(2.5, newZoom));
+  const pX = pivotScreenX !== undefined ? pivotScreenX : wrap.clientWidth  / 2;
+  const pY = pivotScreenY !== undefined ? pivotScreenY : wrap.clientHeight / 2;
+  const cxBefore = (wrap.scrollLeft + pX) / _zoom;
+  const cyBefore = (wrap.scrollTop  + pY) / _zoom;
+  _zoom = newZoom;
+  cv.style.transform = `scale(${_zoom})`;
+  cont.style.width   = CANVAS_W * _zoom + 'px';
+  cont.style.height  = CANVAS_H * _zoom + 'px';
+  wrap.scrollLeft = cxBefore * _zoom - pX;
+  wrap.scrollTop  = cyBefore * _zoom - pY;
+  document.getElementById('zoom-label').textContent = Math.round(_zoom * 100) + '%';
+}
+
+function adjustZoom(delta) {
+  const wrap = document.getElementById('wrap');
+  _applyZoom(_zoom * (1 + delta), wrap.clientWidth / 2, wrap.clientHeight / 2);
+}
+window.adjustZoom = adjustZoom;
+
+function fitAll() {
+  const wrap = document.getElementById('wrap');
+  const cont = document.getElementById('canvas-container');
+  const cv   = document.getElementById('canvas');
+  const scaleW = wrap.clientWidth  / CANVAS_W;
+  const scaleH = wrap.clientHeight / CANVAS_H;
+  const fitZ = Math.min(scaleW, scaleH) * 0.93;
+  _zoom = fitZ;
+  cv.style.transform = `scale(${_zoom})`;
+  cont.style.width   = CANVAS_W * _zoom + 'px';
+  cont.style.height  = CANVAS_H * _zoom + 'px';
+  wrap.scrollTo({ left: 0, top: 0 });
+  document.getElementById('zoom-label').textContent = Math.round(_zoom * 100) + '%';
+}
+window.fitAll = fitAll;
+
 /* Jump to desk */
 function jumpTo(key) {
   const D = DESKS[key];
   if (!D) return;
   const wrap = document.getElementById('wrap');
-  const targetX = D.colX - 40;
-  const targetY = PIPE_Y - 60;
+  const targetX = (D.colX - 40) * _zoom;
+  const targetY = (PIPE_Y - 60) * _zoom;
   wrap.scrollTo({ left: targetX, top: targetY, behavior: 'smooth' });
 }
 window.jumpTo = jumpTo;
@@ -684,9 +745,8 @@ window.jumpTo = jumpTo;
 function centerCA() {
   const wrap = document.getElementById('wrap');
   const vpW = wrap.clientWidth, vpH = wrap.clientHeight;
-  const scrollX = Math.max(0, CA_LEFT - vpW/2 + CA_W/2);
-  const scrollY = 0;
-  wrap.scrollTo({ left: scrollX, top: scrollY });
+  const scrollX = Math.max(0, (CA_LEFT + CA_W / 2) * _zoom - vpW / 2);
+  wrap.scrollTo({ left: scrollX, top: 0 });
 }
 
 /* Clock */
@@ -710,7 +770,7 @@ document.fonts.ready.then(() => {
 
 tick(); setInterval(tick, 1000);
 
-/* Pan support */
+/* Pan + Wheel-zoom support */
 (function() {
   const wrap = document.getElementById('wrap');
   let dragging=false, sx=0, sy=0, sl=0, st=0;
@@ -725,6 +785,25 @@ tick(); setInterval(tick, 1000);
     wrap.scrollTop  = st - (e.clientY - sy);
   });
   window.addEventListener('mouseup', () => { dragging=false; wrap.style.cursor='grab'; });
+
+  /* Pinch / Ctrl+wheel zoom */
+  wrap.addEventListener('wheel', e => {
+    if (!e.ctrlKey && !e.metaKey) return;
+    e.preventDefault();
+    const rect = wrap.getBoundingClientRect();
+    const pivotX = e.clientX - rect.left;
+    const pivotY = e.clientY - rect.top;
+    const delta = e.deltaY > 0 ? -0.08 : 0.08;
+    _applyZoom(_zoom * (1 + delta), pivotX, pivotY);
+  }, { passive: false });
+
+  /* Keyboard shortcuts */
+  window.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if ((e.key === '+' || e.key === '=') && (e.ctrlKey || e.metaKey)) { e.preventDefault(); adjustZoom(+0.12); }
+    if (e.key === '-' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); adjustZoom(-0.12); }
+    if (e.key === '0' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); fitAll(); }
+  });
 })();
 </script>
 </body>
