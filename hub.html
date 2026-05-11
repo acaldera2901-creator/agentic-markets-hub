@@ -8,15 +8,15 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #07090d; --panel: #0e131c; --line: #1a2233; --line-2: #243049;
+    --bg: #07090d; --line: #1a2233; --line-2: #243049;
     --text: #e6edf7; --muted: #7d8aa3; --dim: #4a5774;
-    --cyan: #00e5ff; --green: #32e0a0; --amber: #ffb547; --violet: #9b8cff; --magenta: #ff5cf2;
+    --cyan: #00e5ff; --green: #32e0a0; --amber: #ffb547;
+    --violet: #9b8cff; --magenta: #ff5cf2;
   }
   html, body {
     height: 100%; background: var(--bg); color: var(--text);
     font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased;
-    overflow: hidden;
-    display: flex; flex-direction: column;
+    overflow: hidden; display: flex; flex-direction: column;
   }
   body::before {
     content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
@@ -25,26 +25,21 @@
     background-size: 56px 56px;
     mask-image: radial-gradient(ellipse at 50% 0%, black 30%, transparent 70%);
   }
-
-  /* ── TOP BAR ── */
   .topbar {
     position: relative; z-index: 10; flex-shrink: 0;
-    display: flex; align-items: center; gap: 0;
+    display: flex; align-items: center;
     height: 52px;
     background: rgba(7,9,13,.92); backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--line);
-    padding: 0 20px;
+    padding: 0 20px; gap: 0;
   }
   .brand {
     display: flex; align-items: center; gap: 8px;
     font-weight: 700; font-size: 13px; color: var(--text);
-    margin-right: 32px; flex-shrink: 0;
+    margin-right: 28px; flex-shrink: 0;
   }
-  .brand-dot {
-    width: 9px; height: 9px; border-radius: 50%;
-    background: var(--cyan); box-shadow: 0 0 12px var(--cyan);
-  }
-  .brand small { color: var(--muted); font-weight: 400; font-size: 11px; }
+  .brand-dot { width:9px; height:9px; border-radius:50%; background:var(--cyan); box-shadow:0 0 12px var(--cyan); }
+  .brand small { color:var(--muted); font-weight:400; font-size:11px; }
   .tabs { display: flex; gap: 2px; flex: 1; }
   .tab {
     display: flex; align-items: center; gap: 8px;
@@ -52,122 +47,61 @@
     font-size: 12px; font-weight: 500; color: var(--muted);
     cursor: pointer; border-bottom: 2px solid transparent;
     transition: color .15s, border-color .15s, background .15s;
-    white-space: nowrap; user-select: none;
-    margin-bottom: -1px;
+    white-space: nowrap; user-select: none; margin-bottom: -1px;
   }
   .tab:hover { color: var(--text); background: rgba(255,255,255,.03); }
   .tab.active { color: var(--text); border-bottom-color: var(--cyan); }
   .tab .tab-ico {
-    width: 20px; height: 20px; border-radius: 5px;
-    display: grid; place-items: center; font-size: 11px;
-    background: rgba(0,229,255,.08); border: 1px solid rgba(0,229,255,.2);
-    flex-shrink: 0;
+    width:20px; height:20px; border-radius:5px;
+    display:grid; place-items:center; font-size:11px; flex-shrink:0;
   }
-  .tab:nth-child(2) .tab-ico { background: rgba(50,224,160,.08); border-color: rgba(50,224,160,.2); }
+  /* Tab icon tints */
+  .tab:nth-child(1) .tab-ico { background:rgba(0,229,255,.08);   border:1px solid rgba(0,229,255,.2); }
+  .tab:nth-child(2) .tab-ico { background:rgba(155,140,255,.08); border:1px solid rgba(155,140,255,.2); }
+  .tab:nth-child(3) .tab-ico { background:rgba(50,224,160,.08);  border:1px solid rgba(50,224,160,.2); }
   .tab .badge {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px; padding: 2px 6px; border-radius: 4px;
-    background: rgba(0,229,255,.08); color: var(--cyan);
-    border: 1px solid rgba(0,229,255,.2);
+    font-family:'JetBrains Mono',monospace; font-size:9px; padding:2px 6px; border-radius:4px;
+    background:rgba(0,229,255,.08); color:var(--cyan); border:1px solid rgba(0,229,255,.2);
   }
-  .tab:nth-child(2) .badge { background: rgba(50,224,160,.08); color: var(--green); border-color: rgba(50,224,160,.2); }
+  .tab:nth-child(2) .badge { background:rgba(155,140,255,.08); color:var(--violet); border-color:rgba(155,140,255,.2); }
+  .tab:nth-child(3) .badge { background:rgba(50,224,160,.08);  color:var(--green);  border-color:rgba(50,224,160,.2); }
   .status {
-    margin-left: auto; display: flex; align-items: center; gap: 6px;
-    font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted);
-    flex-shrink: 0;
+    margin-left: auto; display:flex; align-items:center; gap:6px;
+    font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); flex-shrink:0;
   }
   .status .dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--green); box-shadow: 0 0 6px var(--green);
-    animation: blip 1.4s ease-in-out infinite;
+    width:6px; height:6px; border-radius:50%;
+    background:var(--green); box-shadow:0 0 6px var(--green);
+    animation:blip 1.4s ease-in-out infinite;
   }
-  @keyframes blip { 50% { opacity: .3; } }
-
-  /* ── SUB NAV (Agent Schemas only) ── */
-  .subnav {
-    position: relative; z-index: 9; flex-shrink: 0;
-    display: flex; align-items: center; gap: 6px;
-    padding: 0 20px;
-    height: 44px;
-    background: rgba(11,14,20,.90); backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--line);
-  }
-  .subnav.hidden { display: none; }
-  .subnav-label {
-    font-family: 'JetBrains Mono', monospace; font-size: 9px;
-    letter-spacing: .2em; color: var(--dim); text-transform: uppercase;
-    margin-right: 8px; flex-shrink: 0;
-  }
-  .subbtn {
-    display: flex; align-items: center; gap: 7px;
-    padding: 0 12px; height: 30px;
-    font-size: 11px; font-weight: 500; color: var(--muted);
-    cursor: pointer; border-radius: 8px;
-    border: 1px solid transparent;
-    background: transparent;
-    white-space: nowrap; user-select: none;
-    transition: all .15s ease;
-  }
-  .subbtn:hover { color: var(--text); background: rgba(255,255,255,.04); border-color: var(--line-2); }
-  .subbtn .sico {
-    width: 16px; height: 16px; border-radius: 4px;
-    display: grid; place-items: center; font-size: 9px;
-    flex-shrink: 0;
-  }
-  .subbtn .sbadge {
-    font-family: 'JetBrains Mono', monospace; font-size: 8px;
-    padding: 1px 5px; border-radius: 4px;
-  }
-
-  /* Football sub-tab */
-  .subbtn.football .sico     { background: rgba(0,229,255,.08);   border: 1px solid rgba(0,229,255,.2); }
-  .subbtn.football .sbadge   { background: rgba(0,229,255,.08);   color: var(--cyan);    border: 1px solid rgba(0,229,255,.2); }
-  .subbtn.football.active    { color: var(--cyan);    background: rgba(0,229,255,.06);   border-color: rgba(0,229,255,.3); }
-
-  /* Meme sub-tab */
-  .subbtn.meme .sico         { background: rgba(255,92,242,.08);  border: 1px solid rgba(255,92,242,.2); }
-  .subbtn.meme .sbadge       { background: rgba(255,92,242,.08);  color: var(--magenta); border: 1px solid rgba(255,92,242,.2); }
-  .subbtn.meme.active        { color: var(--magenta); background: rgba(255,92,242,.06);  border-color: rgba(255,92,242,.3); }
-
-  /* Cross-desk sub-tab */
-  .subbtn.crossdesk .sico    { background: rgba(155,140,255,.08); border: 1px solid rgba(155,140,255,.2); }
-  .subbtn.crossdesk .sbadge  { background: rgba(155,140,255,.08); color: var(--violet);  border: 1px solid rgba(155,140,255,.2); }
-  .subbtn.crossdesk.active   { color: var(--violet);  background: rgba(155,140,255,.06); border-color: rgba(155,140,255,.3); }
-
-  .subnav-sep {
-    width: 1px; height: 18px; background: var(--line-2); margin: 0 4px; flex-shrink: 0;
-  }
-
-  /* ── FRAMES ── */
-  .frame-wrap {
-    position: relative; z-index: 1;
-    flex: 1; overflow: hidden;
-  }
+  @keyframes blip { 50%{opacity:.3;} }
+  .frame-wrap { flex:1; position:relative; z-index:1; overflow:hidden; }
   iframe {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    border: none; opacity: 0;
-    transition: opacity .2s ease;
-    pointer-events: none;
+    position:absolute; inset:0; width:100%; height:100%;
+    border:none; opacity:0; transition:opacity .2s ease; pointer-events:none;
   }
-  iframe.visible { opacity: 1; pointer-events: all; }
+  iframe.visible { opacity:1; pointer-events:all; }
 </style>
 </head>
 <body>
 
-<!-- ── TOP BAR ── -->
 <div class="topbar">
   <div class="brand">
     <span class="brand-dot"></span>
     Agentic&nbsp;Markets <small>&nbsp;/&nbsp;Hub</small>
   </div>
   <div class="tabs">
-    <div class="tab active" onclick="showMain(0)">
+    <div class="tab active" onclick="show(0)">
       <span class="tab-ico">⬡</span>
       Agent Schemas
-      <span class="badge">3 sistemi</span>
+      <span class="badge">Football + Meme</span>
     </div>
-    <div class="tab" onclick="showMain(1)">
+    <div class="tab" onclick="show(1)">
+      <span class="tab-ico">⬢</span>
+      Cross-Desk
+      <span class="badge">connections</span>
+    </div>
+    <div class="tab" onclick="show(2)">
       <span class="tab-ico">🔒</span>
       Confidential
       <span class="badge">private</span>
@@ -179,94 +113,28 @@
   </div>
 </div>
 
-<!-- ── SUB NAV (solo Agent Schemas) ── -->
-<div class="subnav" id="subnav">
-  <span class="subnav-label">schema</span>
-  <button class="subbtn football active" onclick="showSchema(0)" id="sb0">
-    <span class="sico">⬡</span>
-    Football AI
-    <span class="sbadge">v5.0</span>
-  </button>
-  <button class="subbtn meme" onclick="showSchema(1)" id="sb1">
-    <span class="sico">🚀</span>
-    Meme Coin
-    <span class="sbadge">v1.0</span>
-  </button>
-  <div class="subnav-sep"></div>
-  <button class="subbtn crossdesk" onclick="showSchema(2)" id="sb2">
-    <span class="sico">⬢</span>
-    Cross-Desk
-    <span class="sbadge">connections</span>
-  </button>
-</div>
-
-<!-- ── FRAMES ── -->
 <div class="frame-wrap">
-  <!-- Agent schemas (sub-tabs 0,1,2) -->
-  <iframe id="fs0" src="schema.html"                  class="visible"></iframe>
-  <iframe id="fs1" src="meme-schema.html"             class=""></iframe>
-  <iframe id="fs2" src="cross-desk.html"              class=""></iframe>
-  <!-- Main tab 1 -->
-  <iframe id="fm1" src="prediction-confidential.html" class=""></iframe>
+  <iframe id="f0" src="schema.html"                  class="visible"></iframe>
+  <iframe id="f1" src="cross-desk.html"              class=""></iframe>
+  <iframe id="f2" src="prediction-confidential.html" class=""></iframe>
 </div>
 
 <script>
-  let mainCurrent = 0;
-  let schemaCurrent = 0;
+  let cur = 0;
+  const tabs   = document.querySelectorAll('.tab');
+  const frames = document.querySelectorAll('iframe');
 
-  const mainTabs   = document.querySelectorAll('.tab');
-  const subBtns    = [
-    document.getElementById('sb0'),
-    document.getElementById('sb1'),
-    document.getElementById('sb2'),
-  ];
-  const schemaFrames = [
-    document.getElementById('fs0'),
-    document.getElementById('fs1'),
-    document.getElementById('fs2'),
-  ];
-  const mainFrames = {
-    1: document.getElementById('fm1'),
-  };
-  const subnav = document.getElementById('subnav');
-
-  function showMain(i) {
-    if (i === mainCurrent) return;
-
-    // Deactivate current
-    mainTabs[mainCurrent].classList.remove('active');
-    if (mainCurrent === 0) {
-      schemaFrames[schemaCurrent].classList.remove('visible');
-    } else {
-      mainFrames[mainCurrent].classList.remove('visible');
-    }
-
-    mainCurrent = i;
-    mainTabs[mainCurrent].classList.add('active');
-
-    if (i === 0) {
-      // Show schemas + subnav
-      subnav.classList.remove('hidden');
-      schemaFrames[schemaCurrent].classList.add('visible');
-    } else {
-      // Hide subnav, show other frame
-      subnav.classList.add('hidden');
-      mainFrames[i].classList.add('visible');
-    }
-  }
-
-  function showSchema(i) {
-    if (i === schemaCurrent) return;
-    subBtns[schemaCurrent].classList.remove('active');
-    schemaFrames[schemaCurrent].classList.remove('visible');
-    schemaCurrent = i;
-    subBtns[schemaCurrent].classList.add('active');
-    schemaFrames[schemaCurrent].classList.add('visible');
+  function show(i) {
+    if (i === cur) return;
+    tabs[cur].classList.remove('active');
+    frames[cur].classList.remove('visible');
+    cur = i;
+    tabs[cur].classList.add('active');
+    frames[cur].classList.add('visible');
   }
 
   function tick() {
-    const d = new Date();
-    document.getElementById('clock').textContent = d.toISOString().slice(11,19) + ' UTC';
+    document.getElementById('clock').textContent = new Date().toISOString().slice(11,19)+' UTC';
   }
   tick(); setInterval(tick, 1000);
 </script>
