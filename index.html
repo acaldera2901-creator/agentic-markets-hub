@@ -152,8 +152,9 @@
   function submitPw() {
     const val = document.getElementById('pw-input').value;
     if (val === PW) {
+      const cb = _pwCb; _pwCb = null;
       closePwModal();
-      if (_pwCb) { _pwCb(); _pwCb = null; }
+      if (cb) cb();
     } else {
       const err = document.getElementById('pw-err');
       err.textContent = '✗ Password errata';

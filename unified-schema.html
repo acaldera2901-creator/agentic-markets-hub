@@ -339,38 +339,41 @@ const DATA_FOOTBALL = {
 ───────────────────────────────────────────────────── */
 const DATA_MEME = {
   key:'meme', colX:M_X, cx:M_CX, accent:'var(--magenta)', accentRgb:'255,92,242', cls:'m',
-  buildTxt:'build #1.0.0 · 2026-05-11',
-  overviewTitle:'Meme Coin v1.0',
-  overviewSub:'9 agenti · Solana · DexScreener · paper',
+  buildTxt:'build #2.0.0 · 2026-05-12',
+  overviewTitle:'Meme Coin v2.0',
+  overviewSub:'9 agenti · Solana · Quality Engine · 6 fonti · paper demo',
   nodes:[
-    {id:"S1",layer:"source",x:15,y:70,ico:"🔷",tag:"REST",title:"DexScreener Profiles",desc:"Latest token profiles Solana.\nBatch ogni 30s.",schema:{endpoint:"api.dexscreener.com/…",chain:"solana",refresh:"30s"},metrics:{tokens:"200+/scan",err:"0.1%"},status:"ok"},
-    {id:"S2",layer:"source",x:215,y:70,ico:"🚀",tag:"REST",title:"DexScreener Boosts",desc:"Latest + Top boosted token.\nFocused 1s order scan top 3.",schema:{endpoint:"token-boosts/latest+top/v1",focused_scan:"1s"},metrics:{boosts:"50+/scan",err:"0%"},status:"ok"},
-    {id:"S3",layer:"source",x:415,y:70,ico:"📈",tag:"WS",title:"Binance BTCUSDT",desc:"Depth snapshot + trades stream.\nBook imbalance + CVD signal.",schema:{endpoint:"api.binance.com",method:"depth+trades"},metrics:{scan:"ogni 60s",err:"0%"},status:"ok"},
-    {id:"S4",layer:"source",x:615,y:70,ico:"🗄️",tag:"REDIS",title:"Upstash Redis",desc:"Shared paper state.\nResearch + stop cooldowns.",schema:{host:"Upstash.com",sync:"30s pull"},metrics:{latency:"<10ms",err:"0%"},status:"ok"},
-    {id:"S5",layer:"source",x:815,y:70,ico:"🔬",tag:"API",title:"Bitquery External",desc:"Solana Trading API.\nLabeling campioni. Target 10K.",schema:{endpoint:"graphql.bitquery.io",target:"10000 samples"},metrics:{samples:"10K target",err:"0%"},status:"ok"},
-    {id:"SC",layer:"collect",x:414,y:248,ico:"🔍",tag:"AGENT",title:"Scout Agent",desc:"Scansiona DexScreener 30s.\nFocused order scan 1s top 3.",schema:{interval:"30s · 1s focused",redis_out:"scout:candidates"},metrics:{pairs:"+200/scan",err:"0.1%"},status:"ok"},
-    {id:"FL",layer:"filter",x:414,y:408,ico:"🚦",tag:"AGENT",title:"Filter Agent",desc:"Liquidità: $12K–$180K.\nPair cooldown 45m · Symbol 2h.",schema:{minLiq:"$12K",maxLiq:"$180K",pair_cooldown:"45m"},metrics:{pass_rate:"~30%",err:"0%"},status:"ok"},
-    {id:"MO",layer:"scoring",x:50,y:578,ico:"⚡",tag:"AGENT",title:"Momentum Agent",desc:"Score 0–100:\n• buy/sell ratio ≥ 1.6\n• vol/liq 0.25–4.5\n• moonshot bypass ≥ 82",schema:{minBuyRatio:"1.6",bypass:"score≥82"},metrics:{avg_score:"38",high_conv:"~5%"},status:"ok"},
-    {id:"RA",layer:"parallel",x:760,y:578,ico:"📡",tag:"RESEARCH",title:"Research Agent",desc:"Batch 30m · Label outcome 15m.\nTarget 10K campioni.",schema:{cycle:"30m rotating",target:"10000 samples"},metrics:{samples:"progressive",err:"0%"},status:"ok"},
-    {id:"EA",layer:"decision",x:414,y:738,ico:"🎯",tag:"AGENT",title:"Entry Agent",desc:"EV gate ≥ 4 per entry.\nSize: 5% normale · 10% moonshot.",schema:{ev_gate:"4",normal_size:"5%",moonshot_size:"10%"},metrics:{entries:"~5/d",mode:"● paper"},status:"ok"},
-    {id:"RM",layer:"decision",x:414,y:898,ico:"🛡️",tag:"AGENT",title:"Risk Manager",desc:"Max 3 posizioni · 10% cap.\nSystem grade A–F watchdog.",schema:{max_positions:"3",max_size:"10% capital"},metrics:{block_rate:"~8%",err:"0%"},status:"ok"},
-    {id:"EX",layer:"execute",x:50,y:1068,ico:"📤",tag:"AGENT",title:"Exit Agent",desc:"Stop loss · Partial profit.\nTrailing exit + momentum exit.",schema:{stop:"hard stop",trail:"momentum-based"},metrics:{exits:"~5/d",mode:"paper"},status:"ok"},
-    {id:"BT",layer:"parallel",x:760,y:1068,ico:"₿",tag:"BTCUSDT",title:"BTCUSDT Agent",desc:"Paper 24/7 · Binance depth.\nEquity curve separata $1K.",schema:{mode:"PAPER_24/7",signal:"book imbalance · CVD"},metrics:{mode:"● paper",err:"0%"},status:"ok"},
-    {id:"JA",layer:"output",x:414,y:1228,ico:"📓",tag:"AGENT",title:"Journal Agent",desc:"Persiste ogni decisione.\nShared state → Vercel Blob.",schema:{storage:"Upstash + Vercel Blob"},metrics:{equity:"tracked",err:"0%"},status:"ok"},
-    {id:"O1",layer:"output",x:15,y:1428,ico:"🗄️",tag:"REDIS",title:"Upstash / Blob",desc:"Shared paper state.\nResearch dataset (10K).",schema:{host:"Upstash.com + Vercel Blob"},metrics:{state:"persisted",err:"0%"},status:"ok"},
-    {id:"O2",layer:"output",x:285,y:1428,ico:"🖥️",tag:"VERCEL",title:"Dashboard",desc:"Control Center live.\nSignal Radar + equity curve.",schema:{host:"vercel.com",stack:"Vanilla JS"},metrics:{uptime:"always-on",err:"0%"},status:"ok"},
-    {id:"O3",layer:"output",x:555,y:1428,ico:"📊",tag:"SHEETS",title:"Google Sheets",desc:"Research cycles · Observations.\nEdge summary export.",schema:{sheets:"cycles · observations"},metrics:{rows:"growing",err:"0%"},status:"ok"},
-    {id:"O4",layer:"output",x:825,y:1428,ico:"📱",tag:"PLANNED",title:"Telegram Alerts",desc:"Alert su entry/exit (pianificato).\nTrigger: EV gate superato.",schema:{status:"planned"},metrics:{status:"pending"},status:"pending"},
+    {id:"S1",layer:"source",x:15,  y:70,ico:"🔷",tag:"REST",   title:"DexScreener",         desc:"Profiles + Boosts + Pairs.\nSolana 30s scan · 1s focused top3.",schema:{endpoint:"api.dexscreener.com",chain:"solana",refresh:"30s · 1s"},metrics:{tokens:"200+/scan",err:"0.1%"},status:"ok"},
+    {id:"S2",layer:"source",x:215, y:70,ico:"🦅",tag:"REST",   title:"Birdeye",             desc:"Token security · holder data.\nMarket data · smart wallet labels.",schema:{endpoint:"public-api.birdeye.so",data:"security+holders+market"},metrics:{coverage:"95%+",err:"0.1%"},status:"ok"},
+    {id:"S3",layer:"source",x:415, y:70,ico:"🚀",tag:"REST",   title:"Pump.fun / PumpSwap", desc:"Token creation · bonding curve.\nMigration events · launchpad activity.",schema:{endpoint:"pump.fun api",data:"creation+curve+migration"},metrics:{launches:"100+/h",err:"0%"},status:"ok"},
+    {id:"S4",layer:"source",x:615, y:70,ico:"⛓️",tag:"RPC",   title:"Solana RPC + Wallets",desc:"Mint events · liquidity events.\nDev wallet · smart money · snipers.",schema:{endpoint:"solana mainnet RPC + indexer",data:"mint+liquidity+wallets"},metrics:{latency:"<2s",err:"0.5%"},status:"ok"},
+    {id:"S5",layer:"source",x:815, y:70,ico:"📣",tag:"SOCIAL", title:"Social + Narrative",  desc:"X/Twitter · Telegram · Discord.\nTrend AI · meme culture · macro.",schema:{endpoint:"social scraper + news API",signals:"velocity+sentiment"},metrics:{sources:"4+",err:"5%"},status:"ok"},
+    {id:"S6",layer:"source",x:1015,y:70,ico:"₿", tag:"WS",    title:"Binance BTCUSDT",     desc:"Depth snapshot + trades stream.\nBook imbalance · CVD · BTCUSDT agent.",schema:{endpoint:"api.binance.com",method:"depth+trades"},metrics:{scan:"ogni 60s",err:"0%"},status:"ok"},
+    {id:"SC",layer:"collect", x:414,y:248, ico:"🔍",tag:"AGENT",      title:"Scout + Intake",        desc:"Aggrega 5 fonti on-chain+social.\nTimestamp · chain · source · confidence.",schema:{interval:"30s · 1s focused",redis_out:"scout:candidates"},metrics:{pairs:"+200/scan",err:"0.1%"},status:"ok"},
+    {id:"HB",layer:"filter",  x:414,y:408, ico:"🚫",tag:"HARD BLOCK", title:"Hard Block Controller", desc:"8+ criteri esclusione dura:\nContract · Liquidità · Holder conc.\nDev wallet · Wash vol · Pump già pompato.",schema:{blocks:"8 criteri hard",zero_tolerance:"true"},metrics:{block_rate:"~70%",err:"0%"},status:"ok"},
+    {id:"TS",layer:"scoring", x:50, y:578, ico:"⭐",tag:"SCORER",     title:"Token Scorer",          desc:"Score 0–100 · 9 fattori:\nSecurity 20% · Liq 15% · Holder 12%\nDev 15% · Momentum 15% · Vol 8%\nSocial 8% · Smart$ 5% · ML 2%",schema:{categories:"Avoid/Watch/Small/Strong/Exceptional",minEntry:"60"},metrics:{avg_score:"38",high_conv:"~5%"},status:"ok"},
+    {id:"MTF",layer:"scoring",x:414,y:578, ico:"⏱️",tag:"MULTI-TF",   title:"Multi-TF Analyst",      desc:"Analisi 6 timeframe:\n1m · 5m · 15m · 1h · 4h · 24h\nAllineamento TF corto+lungo richiesto.",schema:{timeframes:"1m·5m·15m·1h·4h·24h",rule:"no late entry"},metrics:{latency:"~2s",err:"0%"},status:"ok"},
+    {id:"RA",layer:"parallel",x:760,y:578, ico:"📡",tag:"RESEARCH",   title:"Research Agent",        desc:"Batch 30m · Label outcome 15m.\nTarget 10K campioni · error class.",schema:{cycle:"30m rotating",target:"10000 samples"},metrics:{samples:"progressive",err:"0%"},status:"ok"},
+    {id:"EA",layer:"decision",x:414,y:738, ico:"🎯",tag:"AGENT",      title:"Entry Agent",           desc:"Score ≥ 60 per entry.\nSmall: 0.25–1% · Strong: 1–2.5%\nExceptional: 2.5–4% max capitale.",schema:{minScore:"60",maxRisk:"4% capitale"},metrics:{entries:"~3/d",mode:"● paper demo"},status:"ok"},
+    {id:"RM",layer:"decision",x:414,y:898, ico:"🛡️",tag:"AGENT",     title:"Risk Manager",          desc:"Max 4% capitale per trade.\nLoss control: riduce size dopo loss.\nBlocko se qualità segnali cala.",schema:{max_risk:"4%",loss_control:"true",grade:"A–F watchdog"},metrics:{block_rate:"~15%",err:"0%"},status:"ok"},
+    {id:"EX",layer:"execute", x:50, y:1068,ico:"📤",tag:"AGENT",      title:"Exit Agent",            desc:"TP a scaglioni:\nTP1 25% · TP2 25% · TP3 25% · Runner.\nUscita immediata su segnali critici.",schema:{tp1:"25%",tp2:"25%",tp3:"25%",runner:"trailing stop"},metrics:{exits:"~3/d",mode:"paper"},status:"ok"},
+    {id:"BT",layer:"parallel",x:760,y:1068,ico:"₿", tag:"BTCUSDT",   title:"BTCUSDT Agent",         desc:"Paper 24/7 · Binance depth.\nEquity curve separata $1K.",schema:{mode:"PAPER_24/7",signal:"book imbalance · CVD"},metrics:{mode:"● paper",err:"0%"},status:"ok"},
+    {id:"JA",layer:"output",  x:414,y:1228,ico:"📓",tag:"AGENT",      title:"Journal + Self-Learning",desc:"15+ campi per trade · 10 classi errore.\nReport giornaliero qualità + filtri.\nAggiorna score/soglie da dati reali.",schema:{storage:"Upstash + Vercel Blob",error_classes:"10",report:"daily"},metrics:{equity:"tracked",err:"0%"},status:"ok"},
+    {id:"O1",layer:"output",  x:15, y:1428,ico:"🗄️",tag:"REDIS",     title:"Upstash / Blob",        desc:"Shared paper state.\nResearch dataset (10K).",schema:{host:"Upstash.com + Vercel Blob"},metrics:{state:"persisted",err:"0%"},status:"ok"},
+    {id:"O2",layer:"output",  x:285,y:1428,ico:"🖥️",tag:"VERCEL",    title:"Dashboard",             desc:"Control Center live.\nSignal Radar + equity curve.",schema:{host:"vercel.com",stack:"Vanilla JS"},metrics:{uptime:"always-on",err:"0%"},status:"ok"},
+    {id:"O3",layer:"output",  x:555,y:1428,ico:"📊",tag:"SHEETS",     title:"Sheets + Daily Report", desc:"Research cycles · Trade journal.\nReport giornaliero qualità+errori.",schema:{sheets:"cycles · journal · daily-report"},metrics:{rows:"growing",err:"0%"},status:"ok"},
+    {id:"O4",layer:"output",  x:825,y:1428,ico:"📱",tag:"PLANNED",    title:"Telegram Alerts",       desc:"Alert entry/exit (pianificato).\nTrigger: score ≥ Strong.",schema:{status:"planned"},metrics:{status:"pending"},status:"pending"},
   ],
-  edges:[["S1","SC"],["S2","SC"],["S4","SC"],["S3","BT"],["S5","RA"],["SC","FL"],["FL","MO"],["FL","RA"],["MO","EA"],["RA","EA"],["EA","RM"],["RM","EX"],["EX","JA"],["BT","JA"],["JA","O1"],["JA","O2"],["JA","O3"],["RA","O3"]],
-  hot:[["S1","SC"],["SC","FL"],["FL","MO"],["MO","EA"],["EA","RM"],["RM","EX"],["EX","JA"],["JA","O2"]],
-  lanes:[{y:38,label:"01 — DATA SOURCES"},{y:216,label:"02 — SCOUT & COLLECTION"},{y:376,label:"03 — FILTER"},{y:546,label:"04 — MOMENTUM + RESEARCH"},{y:706,label:"05 — ENTRY AGENT"},{y:866,label:"06 — RISK MANAGER"},{y:1036,label:"07 — EXIT + BTCUSDT"},{y:1196,label:"08 — JOURNAL"},{y:1396,label:"09 — OUTPUT"}],
-  overviewHTML:`<h5>Hot path</h5><div class="cb">DexScreener → Scout (30s/1s)
-→ Filter ($12K-$180K · cooldown)
-→ Momentum (score 0-100)
-→ Entry (EV ≥ 4 · 5%/10% size)
-→ Risk Manager (max 3 pos)
-→ Exit → Journal → Dashboard</div><h5>Metriche</h5><div class="kv"><span>Capital paper</span><b>$1,000</b><span>Max positions</span><b>3</b><span>EV gate</span><b>≥ 4</b><span>Pair cooldown</span><b style="color:var(--amber)">45m</b><span>Moonshot bypass</span><b style="color:var(--magenta)">≥ 82</b></div>`,
+  edges:[["S1","SC"],["S2","SC"],["S3","SC"],["S4","SC"],["S5","SC"],["S6","BT"],["SC","HB"],["HB","TS"],["HB","MTF"],["HB","RA"],["TS","EA"],["MTF","EA"],["RA","EA"],["EA","RM"],["RM","EX"],["EX","JA"],["BT","JA"],["JA","O1"],["JA","O2"],["JA","O3"],["RA","O3"]],
+  hot:[["S1","SC"],["SC","HB"],["HB","MTF"],["MTF","EA"],["EA","RM"],["RM","EX"],["EX","JA"],["JA","O2"]],
+  lanes:[{y:38,label:"01 — DATA INGESTION (6 FONTI)"},{y:216,label:"02 — SCOUT & INTAKE"},{y:376,label:"03 — HARD BLOCK CONTROLLER"},{y:546,label:"04 — TOKEN SCORE + MULTI-TF + RESEARCH"},{y:706,label:"05 — ENTRY AGENT"},{y:866,label:"06 — RISK MANAGER"},{y:1036,label:"07 — EXIT + BTCUSDT AGENT"},{y:1196,label:"08 — JOURNAL + SELF-LEARNING"},{y:1396,label:"09 — OUTPUT"}],
+  overviewHTML:`<h5>Pipeline v2.0 — Quality Engine</h5><div class="cb">6 fonti → Scout + Intake
+→ Hard Block Controller (8+ criteri)
+→ Token Scorer (0-100) + Multi-TF (1m-24h)
+→ Entry (score ≥ 60 · max 4% capitale)
+→ Risk Manager (loss control · grade A-F)
+→ Exit (TP1/TP2/TP3 + runner trailing)
+→ Journal + Self-Learning → Dashboard</div><h5>Score categories</h5><div class="kv"><span>0–39</span><b style="color:var(--red)">Avoid</b><span>40–59</span><b style="color:var(--amber)">Watch — no trade</b><span>60–74</span><b style="color:var(--cyan)">Small (0.25–1%)</b><span>75–89</span><b style="color:var(--green)">Strong (1–2.5%)</b><span>90–100</span><b style="color:var(--magenta)">Exceptional (max 4%)</b></div>`,
 };
 
 /* ─────────────────────────────────────────────────────
@@ -813,8 +816,9 @@ window.requirePassword = requirePassword;
 function submitPw() {
   const val = document.getElementById('pw-input').value;
   if (val === PW) {
+    const cb = _pwCb; _pwCb = null;
     closePwModal();
-    if (_pwCb) { _pwCb(); _pwCb = null; }
+    if (cb) cb();
   } else {
     const err = document.getElementById('pw-err');
     err.textContent = '✗ Password errata';
