@@ -84,10 +84,11 @@
   .kpi b.up { color:var(--green); }
 
   .canvas {
-    position:relative; width:1350px; height:1100px; border:1px solid var(--line); border-radius:14px;
-    background: radial-gradient(600px 400px at 12% 30%, rgba(0,229,255,.04), transparent 50%),
-                radial-gradient(600px 400px at 88% 70%, rgba(255,92,242,.04), transparent 50%),
-                radial-gradient(400px 400px at 50% 50%, rgba(155,140,255,.05), transparent 60%),
+    position:relative; width:1440px; height:1100px; border:1px solid var(--line); border-radius:14px;
+    background: radial-gradient(600px 400px at 8% 30%,  rgba(0,229,255,.04),    transparent 50%),
+                radial-gradient(600px 400px at 62% 70%, rgba(255,92,242,.04),   transparent 50%),
+                radial-gradient(600px 400px at 94% 30%, rgba(255,181,71,.03),   transparent 50%),
+                radial-gradient(400px 400px at 40% 50%, rgba(155,140,255,.05),  transparent 60%),
                 linear-gradient(180deg, rgba(11,14,20,.9), rgba(8,10,16,.95));
     overflow:visible;
   }
@@ -111,6 +112,7 @@
   }
   .flow-cross.football { stroke:var(--cyan);    filter:drop-shadow(0 0 4px rgba(0,229,255,.7)); }
   .flow-cross.meme     { stroke:var(--magenta); filter:drop-shadow(0 0 4px rgba(255,92,242,.7)); }
+  .flow-cross.tennis   { stroke:var(--amber);   filter:drop-shadow(0 0 4px rgba(255,181,71,.7)); }
   @keyframes dash { to { stroke-dashoffset:-40; } }
 
   /* Zone labels */
@@ -123,6 +125,7 @@
   .zone-football { color:var(--cyan);    border:1px solid rgba(0,229,255,.3);    background:rgba(0,229,255,.06);    left:22px;  top:18px; }
   .zone-shared   { color:var(--violet);  border:1px solid rgba(155,140,255,.3);  background:rgba(155,140,255,.06);  left:572px; top:18px; }
   .zone-meme     { color:var(--magenta); border:1px solid rgba(255,92,242,.3);   background:rgba(255,92,242,.06);   left:1138px;top:18px; }
+  .zone-tennis   { color:var(--amber);   border:1px solid rgba(255,181,71,.3);   background:rgba(255,181,71,.06);   left:1718px;top:18px; }
 
   /* Lane labels */
   .lane {
@@ -155,6 +158,10 @@
   /* Meme node hover */
   .desk-meme .node:hover { border-color:rgba(255,92,242,.5); box-shadow:0 0 0 1px rgba(255,92,242,.25),0 12px 28px rgba(255,92,242,.12); }
   .desk-meme .node.active { border-color:var(--magenta); box-shadow:0 0 0 1px rgba(255,92,242,.6), 0 0 32px rgba(255,92,242,.25); }
+
+  /* Tennis node hover */
+  .desk-tennis .node:hover { border-color:rgba(255,181,71,.5); box-shadow:0 0 0 1px rgba(255,181,71,.25),0 12px 28px rgba(255,181,71,.12); }
+  .desk-tennis .node.active { border-color:var(--amber); box-shadow:0 0 0 1px rgba(255,181,71,.6), 0 0 32px rgba(255,181,71,.25); }
 
   .node .head { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
   .node .ico {
@@ -232,15 +239,15 @@
 
 <div class="topbar">
   <div class="brand"><span class="brand-dot"></span>Agentic&nbsp;Markets <small>/ Cross-Desk</small></div>
-  <div class="crumb">SYSTEM &nbsp;›&nbsp; <b>Agent Connections</b> &nbsp;›&nbsp; 2026-05-11</div>
+  <div class="crumb">SYSTEM &nbsp;›&nbsp; <b>Agent Connections</b> &nbsp;›&nbsp; 2026-05-14</div>
   <div class="grow"></div>
-  <span class="pill"><span class="dot"></span> 2 desk · 17 agenti</span>
-  <span class="pill mono">football ⟷ meme coin</span>
+  <span class="pill"><span class="dot"></span> 2 desk · 15 agenti</span>
+  <span class="pill mono">football ⟷ tennis</span>
   <div class="legend" id="legend">
     <button data-layer="all" class="active">ALL</button>
     <button data-layer="football">FOOTBALL AI</button>
     <button data-layer="shared">SHARED</button>
-    <button data-layer="meme">MEME COIN</button>
+    <button data-layer="tennis">TENNIS AI</button>
   </div>
 </div>
 
@@ -249,14 +256,14 @@
     <div class="canvas-title">
       <div>
         <h1>Cross-Desk <span>Agent Connections</span></h1>
-        <p>Football AI ↔ Shared Infrastructure ↔ Meme Coin · connessioni live e pianificate</p>
+        <p>Football AI ↔ Shared Infrastructure ↔ Tennis AI · connessioni live</p>
       </div>
       <div class="meta-row">
-        <div class="kpi"><label>Football</label><b class="mono">8 ag.</b></div>
+        <div class="kpi"><label>Football</label><b class="mono">7 ag.</b></div>
         <div class="kpi"><label>Shared</label><b class="mono">4 svc</b></div>
-        <div class="kpi"><label>Meme</label><b class="mono">9 ag.</b></div>
-        <div class="kpi"><label>Live</label><b class="mono up">9 link</b></div>
-        <div class="kpi"><label>Planned</label><b class="mono">3 link</b></div>
+        <div class="kpi"><label>Tennis</label><b class="mono">5 ag.</b></div>
+        <div class="kpi"><label>Live</label><b class="mono up">19 link</b></div>
+        <div class="kpi"><label>Planned</label><b class="mono">1 link</b></div>
       </div>
     </div>
 
@@ -270,10 +277,10 @@
     <div class="panel-head">
       <div class="eyebrow" id="p-eyebrow">SYSTEM OVERVIEW</div>
       <h2 id="p-title">Cross-Desk</h2>
-      <div class="sub" id="p-sub">Football AI ↔ Infrastruttura condivisa ↔ Meme Coin</div>
+      <div class="sub" id="p-sub">Football AI ↔ Infrastruttura condivisa ↔ Tennis AI</div>
     </div>
     <div class="panel-body" id="p-body"></div>
-    <div class="footer-bar"><span>build #1.0.0 · 2026-05-11</span><span id="p-time">—</span></div>
+    <div class="footer-bar"><span>build #2.0.0 · 2026-05-14</span><span id="p-time">—</span></div>
   </aside>
 </div>
 
@@ -286,8 +293,8 @@
 */
 
 const FA_X = 22;
-const SH_X = 584;  /* (1350 - 174) / 2 = 588 → using 584 */
-const MC_X = 1154;
+const SH_X = 584;
+const TN_X = 1154; /* 1440px canvas: 3 zones — Football · Shared · Tennis */
 
 const NODES = [
   // ── FOOTBALL AI DESK ──
@@ -328,59 +335,54 @@ const NODES = [
 
   // ── SHARED INFRASTRUCTURE ──
   {id:"SH-CL", desk:"shared", x:SH_X, y:280,  ico:"🤖", icoClass:"ico-shared", tag:"CLAUDE API",  title:"Claude Sonnet",
-   desc:"Anthropic API shared.\nFootball: Strategist conviction.\nMeme: Research (planned).\nModel: claude-sonnet-4-6",
-   detail:"Claude Sonnet API condivisa tra i due desk. Football: StrategistAgent usa Claude per conviction score 0-10 su ogni value bet. Meme Coin: pianificato per Research Agent (edge cohort analysis). Model ID: claude-sonnet-4-6.",
+   desc:"Anthropic API shared.\nFootball: Strategist conviction.\nTennis: Conviction (planned).\nModel: claude-sonnet-4-6",
+   detail:"Claude Sonnet API condivisa tra i due desk. Football: StrategistAgent usa Claude per conviction score 0-10 su ogni value bet. Tennis: integrazione Claude pianificata per conviction scoring. Model ID: claude-sonnet-4-6.",
    links:[], status:"ok"},
 
   {id:"SH-DB", desk:"shared", x:SH_X, y:480,  ico:"🗄️", icoClass:"ico-shared", tag:"DATABASES",   title:"Persistence Layer",
-   desc:"Football → Neon PostgreSQL.\nMeme → Upstash Redis + Blob.\nSheet DB (meme research).",
-   detail:"I due desk usano storage separato: Football usa Neon PostgreSQL serverless (7 tabelle: match_predictions, bets, heartbeats, research, dead_letter_preds, monte_carlo). Meme usa Upstash Redis per shared state + Vercel Blob per equity + Google Sheets per edge research.",
+   desc:"Football → Neon PostgreSQL.\nTennis → Neon PostgreSQL.\nElo ratings · bets · predictions.",
+   detail:"Entrambi i desk usano Neon PostgreSQL serverless. Football: 7 tabelle (match_predictions, bets, heartbeats, ecc.). Tennis: tennis_predictions, tennis_bets, elo_ratings (1499 giocatori ATP+WTA bootstrappati da Jeff Sackmann).",
    links:[], status:"ok"},
 
   {id:"SH-VR", desk:"shared", x:SH_X, y:680,  ico:"▲",  icoClass:"ico-shared", tag:"VERCEL",      title:"Vercel Cloud",
-   desc:"2 dashboard separate.\nFootball: Next.js 14.\nMeme: Vanilla JS.\nAuto-deploy da GitHub.",
-   detail:"Entrambi i desk deployano su Vercel (account agenticmarkets-CB). Football: agentic-markets-roan.vercel.app (Next.js 14). Meme: meme-coin-control-center.vercel.app (Vanilla JS). Auto-deploy a ogni push su GitHub.",
+   desc:"Football + Tennis dashboard.\nNext.js 14 · tab Tennis.\nAuto-deploy da GitHub.",
+   detail:"Dashboard unificata su Vercel (account agenticmarkets-CB). agentic-markets-roan.vercel.app (Next.js 14) con tabs: predictions, tennis, bets, history, agents. Tennis tab con TennisMatchCard, surface badge, win probabilities, edge %. Auto-deploy a ogni push su GitHub.",
    links:[], status:"ok"},
 
   {id:"SH-TG", desk:"shared", x:SH_X, y:880,  ico:"📱", icoClass:"ico-shared", tag:"TELEGRAM",    title:"Telegram Alerts",
-   desc:"Football: live (edge > 3%).\nMeme: pianificato.\nBot condiviso · markdown format.",
-   detail:"Football ha Telegram attivo e invia alert per ogni bet con edge >3% (match, selezione, stake, odds, edge%). Meme coin ha il bot pianificato per alert su entry/exit. Il bot Telegram è condiviso tra i due desk.",
+   desc:"Football: live (edge > 3%).\nTennis: live (edge ≥ 4%, paper).\nBot condiviso · markdown format.",
+   detail:"Football ha Telegram attivo per alert su ogni bet con edge >3%. Tennis invia alert su ogni paper bet con edge ≥4%: formato 🎾 [PAPER] TENNIS BET / Player1 vs Player2 / stake / odds / edge%. Il bot Telegram è condiviso tra i due desk.",
    links:[], status:"ok"},
 
-  // ── MEME COIN DESK ──
-  {id:"MC-S",  desk:"meme", x:MC_X, y:80,  ico:"🔷", icoClass:"ico-source",   tag:"SOURCES",   title:"Data Sources",
-   desc:"DexScreener Profiles+Boosts.\nBinance BTCUSDT depth+trades.\nUpstash Redis · Bitquery ext.",
-   detail:"5 fonti dati: DexScreener Profiles (token profiles Solana), DexScreener Boosts (latest+top boosted), Binance BTCUSDT (depth + trades per BTC agent), Upstash Redis (shared state pull 30s), Bitquery (external labels per research).",
-   links:["MC-SC"], status:"ok"},
+  // ── TENNIS AI DESK ──
+  {id:"TN-S",  desk:"tennis", x:TN_X, y:80,  ico:"📡", icoClass:"ico-source",   tag:"SOURCES",   title:"Data Sources",
+   desc:"Betfair Exchange · 60+ mercati.\nJeff Sackmann ATP+WTA (2022–2025).\n22.811 match · 1499 giocatori.",
+   detail:"2 fonti dati: Betfair Exchange (eventTypeId=2, Tennis, 60+ mercati live: Match Odds, quote P1/P2) e Jeff Sackmann open data (tennis_atp + tennis_wta CSV, 2022–2025, usati per bootstrap Elo ratings).",
+   links:["TN-DC"], status:"ok"},
 
-  {id:"MC-SC", desk:"meme", x:MC_X, y:230, ico:"🔍", icoClass:"ico-collect",  tag:"AGENT",     title:"Scout + Filter",
-   desc:"Scout: DexScreener 30s · 1s top3.\nFilter: $12K-$180K · age · cooldown.\nPass rate: ~30%.",
-   detail:"Scout Agent scansiona DexScreener ogni 30s (full scan) + 1s focused scan sui top 3 token per ordini in tempo reale. Filter Agent filtra per liquidità $12K-$180K, age check, broken price, cooldown 45m pair / 2h symbol.",
-   links:["MC-MO"], status:"ok"},
+  {id:"TN-DC", desk:"tennis", x:TN_X, y:230, ico:"🎾", icoClass:"ico-collect",  tag:"AGENT",     title:"DataCollector",
+   desc:"Ciclo 5min · Redis market:tennis.\nBetfair primary · ATP+WTA.\n60+ tornei live.",
+   detail:"TennisDataCollectorAgent: ciclo ogni 5 minuti, chiama Betfair get_all_tennis_markets(), scrive Redis key market:tennis (TTL 600s). Restituisce {market_id, event_name, competition, player1, player2, odds_p1, odds_p2, margin}.",
+   links:["TN-MA"], status:"ok"},
 
-  {id:"MC-MO", desk:"meme", x:MC_X, y:375, ico:"⚡", icoClass:"ico-scoring",  tag:"AGENT",     title:"Momentum + Research",
-   desc:"Momentum: score 0-100.\nbuy_ratio ≥ 1.6 · vol_liq 0.25-4.5.\nResearch: 30m batch · 10K target.",
-   detail:"Momentum Agent calcola score 0-100 su: buy/sell ratio ≥1.6 (strong 2.4), vol/liq 0.25-4.5, impulse 5m 10-180%, moonshot bypass score≥82. Research Agent in parallelo accumula campioni (10K target) con label 15m outcome → edge lab 700x/100x.",
-   links:["MC-EA"], status:"ok"},
+  {id:"TN-MA", desk:"tennis", x:TN_X, y:375, ico:"🧠", icoClass:"ico-model",    tag:"AGENT",     title:"ModelAgent",
+   desc:"Elo Surface v2 · clay/grass/hard.\nFatigueAdjustment ±4%.\n1499 giocatori bootstrappati.",
+   detail:"TennisModelAgent: carica 1499 Elo ratings dal DB, applica EloSurfaceModel (blend 70% surface + 30% overall, K=32) + FatigueAdjustment (±4% max, rest days + sets played). Output: {p1, p2, edge_p1, edge_p2, best_selection}. Scrive Redis model:tennis_probs (TTL 3600s).",
+   links:["TN-AA"], status:"ok"},
 
-  {id:"MC-EA", desk:"meme", x:MC_X, y:520, ico:"🎯", icoClass:"ico-decision", tag:"AGENT",     title:"Entry Agent",
-   desc:"EV gate ≥ 4.\nSize: 5% normale · 10% moonshot.\n→ Risk Manager confirmation.",
-   detail:"Entry Agent verifica EV gate ≥4 prima di ogni entry. Size: 5% del capital in modalità normale ($50 su $1000), 10% per moonshot (score≥82, $100). Richiede conferma dal Risk Manager prima di eseguire.",
-   links:["MC-RM"], status:"ok"},
+  {id:"TN-AA", desk:"tennis", x:TN_X, y:520, ico:"📈", icoClass:"ico-value",    tag:"AGENT",     title:"AnalystAgent",
+   desc:"edge = p_modello − 1/odds.\nSoglia: 4% (TENNIS_MIN_EDGE).\n→ Redis tennis:opportunities",
+   detail:"TennisAnalystAgent: legge model:tennis_probs ogni 5min, filtra opportunità con edge ≥ 4%, scrive tennis:opportunities (TTL 600s). Include surface, scheduled_at, best_selection.",
+   links:["TN-RM"], status:"ok"},
 
-  {id:"MC-RM", desk:"meme", x:MC_X, y:665, ico:"🛡️", icoClass:"ico-decision", tag:"AGENT",     title:"Risk Manager",
-   desc:"Max 3 posizioni aperte.\n10% max per trade.\nSystem grade A–F watchdog.",
-   detail:"Risk Manager controlla: max 3 posizioni aperte contemporaneamente, max 10% capital per trade, gross exposure cap 30%. Calcola system grade A-F in tempo reale. Blocca entry se grade scende sotto soglia.",
-   links:["MC-EX"], status:"ok"},
+  {id:"TN-RM", desk:"tennis", x:TN_X, y:665, ico:"🛡️", icoClass:"ico-value",   tag:"AGENT",     title:"RiskManager",
+   desc:"Kelly frazionato f=0.25.\nMax 3% bankroll · €500 bankroll.\nDrawdown 12%/mese.",
+   detail:"TennisRiskManagerAgent: Kelly sizing f=0.25, stake = min(kelly×0.25×BK, 3%×BK), min €1. Drawdown limit 12% mensile. Legge tennis:opportunities, scrive tennis:orders con stake calcolato.",
+   links:["TN-TR"], status:"ok"},
 
-  {id:"MC-EX", desk:"meme", x:MC_X, y:810, ico:"📤", icoClass:"ico-execute",  tag:"AGENT",     title:"Exit + BTCUSDT",
-   desc:"Exit: stop / partial / trail.\nBTCUSDT: paper 24/7 · imbalance.\n→ Journal Agent.",
-   detail:"Exit Agent gestisce: hard stop loss, partial profit a target, trailing exit basato su momentum, cooldown enforcement 45m. In parallelo BTCUSDT Agent fa paper trading 24/7 su Binance usando book imbalance + CVD signal.",
-   links:["MC-JA"], status:"ok"},
-
-  {id:"MC-JA", desk:"meme", x:MC_X, y:955, ico:"📓", icoClass:"ico-output",   tag:"AGENT",     title:"Journal + Output",
-   desc:"Journal → Redis + Blob.\nDashboard → Vercel.\nSheets → research export.",
-   detail:"Journal Agent persiste ogni decisione (entry, exit, PnL) su Upstash Redis + Vercel Blob. Output: Dashboard Vercel (equity curve, Signal Radar, open positions), Google Sheets (research cycles, edge summary), Telegram (pianificato).",
+  {id:"TN-TR", desk:"tennis", x:TN_X, y:810, ico:"💸", icoClass:"ico-output",   tag:"AGENT",     title:"TraderAgent",
+   desc:"PAPER → Neon DB (tennis_bets).\nTelegram alert edge ≥ 4%.\nSet dedup · max 500 IDs.",
+   detail:"TennisTraderAgent in modalità PAPER: salva TennisBet su Neon PostgreSQL (paper=True). Deduplica con _processed_ids (max 500 entries). Telegram alert per ogni bet: 🎾 [PAPER] TENNIS BET. Già operativo con dati live Betfair.",
    links:[], status:"ok"},
 ];
 
@@ -398,25 +400,24 @@ const EDGES = [
   {from:"FA-ST", to:"FA-RM", type:"internal", style:"live"},
   {from:"FA-RM", to:"FA-TR", type:"internal", style:"live"},
 
-  // Meme internal
-  {from:"MC-S",  to:"MC-SC", type:"internal", style:"live"},
-  {from:"MC-SC", to:"MC-MO", type:"internal", style:"live"},
-  {from:"MC-MO", to:"MC-EA", type:"internal", style:"live"},
-  {from:"MC-EA", to:"MC-RM", type:"internal", style:"live"},
-  {from:"MC-RM", to:"MC-EX", type:"internal", style:"live"},
-  {from:"MC-EX", to:"MC-JA", type:"internal", style:"live"},
-
   // Cross: Football → Shared
-  {from:"FA-ST", to:"SH-CL", type:"cross", style:"live", hot:true,    label:"Claude conviction"},
-  {from:"FA-TR", to:"SH-TG", type:"cross", style:"live",              label:"Telegram alert"},
-  {from:"FA-TR", to:"SH-DB", type:"cross", style:"live",              label:"Neon DB write"},
-  {from:"FA-DC", to:"SH-VR", type:"cross", style:"live",              label:"Dashboard"},
+  {from:"FA-ST", to:"SH-CL", type:"cross", style:"live", hot:true, label:"Claude conviction"},
+  {from:"FA-TR", to:"SH-TG", type:"cross", style:"live",           label:"Telegram alert"},
+  {from:"FA-TR", to:"SH-DB", type:"cross", style:"live",           label:"Neon DB write"},
+  {from:"FA-DC", to:"SH-VR", type:"cross", style:"live",           label:"Dashboard"},
 
-  // Cross: Shared → Meme
-  {from:"SH-DB", to:"MC-SC", type:"cross", style:"live",              label:"Redis shared state"},
-  {from:"SH-VR", to:"MC-JA", type:"cross", style:"live",              label:"Vercel deploy"},
-  {from:"SH-TG", to:"MC-JA", type:"cross", style:"planned",           label:"Telegram (planned)"},
-  {from:"SH-CL", to:"MC-MO", type:"cross", style:"planned", hot:true, label:"Claude research (planned)"},
+  // Tennis internal (live)
+  {from:"TN-S",  to:"TN-DC", type:"internal", style:"live"},
+  {from:"TN-DC", to:"TN-MA", type:"internal", style:"live"},
+  {from:"TN-MA", to:"TN-AA", type:"internal", style:"live"},
+  {from:"TN-AA", to:"TN-RM", type:"internal", style:"live"},
+  {from:"TN-RM", to:"TN-TR", type:"internal", style:"live"},
+
+  // Cross: Tennis → Shared
+  {from:"TN-TR", to:"SH-DB", type:"cross", style:"live",             label:"Neon DB write"},
+  {from:"TN-TR", to:"SH-TG", type:"cross", style:"live",             label:"Telegram alert"},
+  {from:"TN-DC", to:"SH-VR", type:"cross", style:"live",             label:"Dashboard"},
+  {from:"TN-AA", to:"SH-CL", type:"cross", style:"planned", hot:true, label:"Claude conviction (planned)"},
 ];
 
 const HOT_EDGES = EDGES.filter(e => e.hot);
@@ -451,7 +452,7 @@ function makeZoneLabels() {
   [
     {cls:'zone-label zone-football', txt:'⬡ Football AI Desk', style:'left:22px;top:18px;'},
     {cls:'zone-label zone-shared',   txt:'⬢ Shared Infrastructure', style:'left:572px;top:18px;'},
-    {cls:'zone-label zone-meme',     txt:'◈ Meme Coin Desk', style:'left:1138px;top:18px;'},
+    {cls:'zone-label zone-tennis',   txt:'🎾 Tennis AI Desk', style:'left:1138px;top:18px;'},
   ].forEach(({cls,txt,style}) => {
     const el = document.createElement('div');
     el.className = cls; el.textContent = txt;
@@ -511,10 +512,11 @@ function verticalPath(a, b) {
 }
 
 function horizontalPath(a, b) {
-  // football→shared: right-edge of A → left-edge of B
-  // shared→meme: right-edge of A → left-edge of B
-  const x1 = a.right, y1 = a.y;
-  const x2 = b.left,  y2 = b.y;
+  // auto-detect direction: left→right uses right/left edges, right→left uses left/right edges
+  const goRight = a.x < b.x;
+  const x1 = goRight ? a.right : a.left;
+  const x2 = goRight ? b.left  : b.right;
+  const y1 = a.y, y2 = b.y;
   const mx = (x1 + x2) / 2;
   return `M ${x1} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}`;
 }
@@ -526,7 +528,7 @@ function makeEdges() {
   const zones = [
     {x:14,   y:8, w:196, h:1080, stroke:'rgba(0,229,255,.08)',    fill:'rgba(0,229,255,.015)'},
     {x:570,  y:8, w:210, h:1080, stroke:'rgba(155,140,255,.1)',   fill:'rgba(155,140,255,.02)'},
-    {x:1140, y:8, w:196, h:1080, stroke:'rgba(255,92,242,.08)',   fill:'rgba(255,92,242,.015)'},
+    {x:1140, y:8, w:196, h:1080, stroke:'rgba(255,181,71,.08)',   fill:'rgba(255,181,71,.015)'},
   ];
   zones.forEach(z => {
     const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
@@ -590,7 +592,7 @@ function highlightNode(id, on) {
 function renderPanel(id) {
   const n = NODES.find(n => n.id === id);
   if (!n) { renderOverview(); return; }
-  const deskLabel = n.desk === 'football' ? 'FOOTBALL AI' : n.desk === 'meme' ? 'MEME COIN' : 'SHARED';
+  const deskLabel = n.desk === 'football' ? 'FOOTBALL AI' : n.desk === 'tennis' ? 'TENNIS AI' : 'SHARED';
   document.getElementById('p-eyebrow').textContent = `${deskLabel} · ${n.tag}`;
   document.getElementById('p-title').textContent = n.title;
   document.getElementById('p-sub').textContent = `${n.id} · ${n.desk}`.toLowerCase();
@@ -632,7 +634,7 @@ function selectNode(id) {
 function renderOverview() {
   document.getElementById('p-eyebrow').textContent = 'CROSS-DESK OVERVIEW';
   document.getElementById('p-title').textContent = 'Agent Connections';
-  document.getElementById('p-sub').textContent = 'Football AI ↔ Shared Infra ↔ Meme Coin';
+  document.getElementById('p-sub').textContent = 'Football AI ↔ Shared Infra ↔ Tennis AI';
   document.getElementById('p-body').innerHTML = `
     <h5>Connessioni live</h5>
     <div class="codeblock">FOOTBALL
@@ -641,27 +643,26 @@ TraderAgent     → Telegram (alert bet)
 TraderAgent     → Neon DB (trade log)
 DataCollector   → Vercel (dashboard)
 
-MEME COIN
-Redis shared state ← Scout Agent
-Vercel Blob        ← Journal Agent
+TENNIS
+TraderAgent     → Neon DB (tennis_bets)
+TraderAgent     → Telegram (paper alert)
+DataCollector   → Vercel (tennis tab)
 
 SHARED INFRA
 Claude Sonnet 4.6 · Vercel Cloud
-Neon PostgreSQL · Upstash Redis
-Telegram Bot</div>
+Neon PostgreSQL · Telegram Bot</div>
     <h5>Connessioni pianificate</h5>
-    <div class="codeblock">SH-CL → MC-MO  (Claude per Research Agent)
-SH-TG → MC-JA  (Telegram meme alerts)</div>
+    <div class="codeblock">TN-AA → SH-CL  (Claude conviction tennis)</div>
     <h5>Differenze tra desk</h5>
     <div class="kv">
       <span>Orizzonte</span><b>Match 90m</b>
-      <span></span><b>Token 5–30m</b>
+      <span></span><b>Match ATP/WTA</b>
       <span>Mercato</span><b>Betfair Exchange</b>
-      <span></span><b>Solana DEX</b>
+      <span></span><b>Betfair Exchange</b>
       <span>Storage</span><b>Neon PostgreSQL</b>
-      <span></span><b>Upstash + Blob</b>
-      <span>Edge logic</span><b>Kelly f=0.25</b>
-      <span></span><b>EV gate ≥ 4</b>
+      <span></span><b>Neon PostgreSQL</b>
+      <span>Modello</span><b>Dixon-Coles + Pi</b>
+      <span></span><b>Elo Surface v2</b>
       <span>AI model</span><b>Claude live</b>
       <span></span><b>Claude planned</b>
     </div>
@@ -670,10 +671,10 @@ SH-TG → MC-JA  (Telegram meme alerts)</div>
       <span style="color:var(--green)">─────</span><b>Connessione live</b>
       <span style="color:var(--amber)">- - -</span><b>Connessione pianificata</b>
       <span style="color:var(--cyan)">›››</span><b>Hot path Football</b>
-      <span style="color:var(--magenta)">›››</span><b>Hot path Meme (planned)</b>
+      <span style="color:var(--amber)">›››</span><b>Hot path Tennis (planned)</b>
     </div>
     <h5>Hint</h5>
-    <p style="margin:0;font-size:12px;color:var(--muted);line-height:1.55">Clicca un nodo per dettagli e connessioni. Hover per evidenziare il grafo locale. I rettangoli colorati delimitano i tre zone: Football AI (blu), Shared Infra (viola), Meme Coin (magenta).</p>
+    <p style="margin:0;font-size:12px;color:var(--muted);line-height:1.55">Clicca un nodo per dettagli e connessioni. Hover per evidenziare il grafo locale. I rettangoli colorati delimitano le tre zone: Football AI (blu), Shared Infra (viola), Tennis AI (ambra).</p>
   `;
 }
 
