@@ -40,8 +40,8 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-famil
 /* CANVAS WRAP */
 .canvas-wrap{flex:1;overflow:auto;position:relative;cursor:grab;}
 .canvas-wrap:active{cursor:grabbing;}
-.canvas-container{position:relative;width:3760px;height:2320px;}
-.canvas{position:absolute;top:0;left:0;width:3760px;height:2320px;transform-origin:0 0;}
+.canvas-container{position:relative;width:2600px;height:2320px;}
+.canvas{position:absolute;top:0;left:0;width:2600px;height:2320px;transform-origin:0 0;}
 .canvas::before{content:"";position:absolute;inset:0;pointer-events:none;
   background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
                    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
@@ -83,7 +83,7 @@ svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z
 }
 .desk-node.f{border-color:rgba(0,229,255,.4);box-shadow:0 0 20px rgba(0,229,255,.08),0 4px 20px rgba(0,0,0,.4);}
 .desk-node.m{border-color:rgba(255,92,242,.4);box-shadow:0 0 20px rgba(255,92,242,.08),0 4px 20px rgba(0,0,0,.4);}
-.desk-node.t{border-color:rgba(255,181,71,.4);box-shadow:0 0 20px rgba(255,181,71,.08),0 4px 20px rgba(0,0,0,.4);opacity:.8;}
+.desk-node.t{border-color:rgba(255,181,71,.4);box-shadow:0 0 20px rgba(255,181,71,.08),0 4px 20px rgba(0,0,0,.4);}
 .desk-ico{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;font-size:14px;flex-shrink:0;}
 .desk-node.f .desk-ico{background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.3);}
 .desk-node.m .desk-ico{background:rgba(255,92,242,.1);border:1px solid rgba(255,92,242,.3);}
@@ -146,7 +146,8 @@ svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z
   animation:dash 1.4s linear infinite;filter:drop-shadow(0 0 4px rgba(0,229,255,.5));}
 .edge-hot-m{stroke:var(--magenta);stroke-width:1.8;fill:none;stroke-dasharray:7 4;
   animation:dash 1.4s linear infinite;filter:drop-shadow(0 0 4px rgba(255,92,242,.5));}
-.edge-hot-t{stroke:var(--amber);stroke-width:1.5;fill:none;stroke-dasharray:7 4;opacity:.5;}
+.edge-hot-t{stroke:var(--amber);stroke-width:1.8;fill:none;stroke-dasharray:7 4;
+  animation:dash 1.4s linear infinite;filter:drop-shadow(0 0 4px rgba(255,181,71,.5));}
 .edge-hi{stroke-width:2;opacity:1!important;}
 .edge-dim{opacity:.1!important;}
 @keyframes dash{to{stroke-dashoffset:-22;}}
@@ -218,7 +219,6 @@ svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z
   <div class="grow"></div>
   <div class="desk-jump">
     <button class="jf" onclick="jumpTo('football')">⬡ Football</button>
-    <button class="jm" onclick="jumpTo('meme')">🚀 Meme Coin</button>
     <button class="jt" onclick="jumpTo('tennis')">🎾 Tennis</button>
   </div>
   <div class="zoom-ctrl">
@@ -277,8 +277,7 @@ const CW = 3760, CH = 2320;
 
 // Column X offsets (where each desk's pipeline nodes start)
 const F_X = 20,    F_CX = 620;   // football column center
-const M_X = 1300,  M_CX = 1840;  // meme column center
-const T_X = 2440,  T_CX = 3040;  // tennis column center
+const T_X = 1340,  T_CX = 1940;  // tennis column center (moved left now that meme is gone)
 
 // Y offsets
 const CA_Y  = 50;   // Capital Allocator top
@@ -287,9 +286,9 @@ const DSK_Y = 240;  // Desk nodes top
 const DSK_H = 52;   // Desk node height
 const PIPE_Y = 390; // Pipeline nodes y offset (added to node.y)
 
-// CA node position (centered over all 3 desks)
+// CA node position (centered over both desks)
 const CA_MID = (F_CX + T_CX) / 2;  // midpoint between football and tennis centers
-const CA_W = 310;
+const CA_W = 280;
 const CA_LEFT = CA_MID - CA_W / 2;
 
 /* ─────────────────────────────────────────────────────
@@ -381,9 +380,9 @@ const DATA_MEME = {
 ───────────────────────────────────────────────────── */
 const DATA_TENNIS = {
   key:'tennis', colX:T_X, cx:T_CX, accent:'var(--amber)', accentRgb:'255,181,71', cls:'t',
-  buildTxt:'build #1.1.0 · 2026-05-12',
-  overviewTitle:'Tennis AI v1.1',
-  overviewSub:'8 agenti · ATP + WTA · 12 tornei · in sviluppo',
+  buildTxt:'build #2.0.0 · 2026-05-14',
+  overviewTitle:'Tennis AI v2.0',
+  overviewSub:'8 agenti · ATP + WTA · 12 tornei · Betfair Exchange · paper trading',
   nodes:[
     {id:"S1",layer:"source",x:15,y:70,ico:"🎾",tag:"REST",title:"Tennis-Data API",desc:"Fixture storici ATP + WTA.\nElo pre-calcolati · H2H · surface.",schema:{endpoint:"tennis-data.co.uk/api",cache:"6h"},metrics:{matches:"200K+",surfaces:"3",err:"0.0%"},status:"ok"},
     {id:"S2",layer:"source",x:215,y:70,ico:"🔷",tag:"REST",title:"Betfair Exchange",desc:"Quote live best-back (PRIMARY)\nMatch Winner + Set Betting.",schema:{endpoint:"api.betfair.com/…",markets:"30+ live"},metrics:{tornei:"12",mercati:"30+",err:"0.0%"},status:"ok"},
@@ -455,8 +454,7 @@ function buildCA() {
     </div>
     <div class="ca-allocs">
       <div class="ca-chip f"><span class="cdot"></span>⬡ Football · 60%</div>
-      <div class="ca-chip m"><span class="cdot"></span>🚀 Meme · 40%</div>
-      <div class="ca-chip t"><span class="cdot"></span>🎾 Tennis · paper</div>
+      <div class="ca-chip t"><span class="cdot"></span>🎾 Tennis · 40%</div>
     </div>`;
   canvas.appendChild(el);
   el.addEventListener('click', () => showOverview(null));
@@ -468,15 +466,12 @@ function buildDeskNode(D) {
   const x = D.cx - w/2;
   const el = mkEl('div','desk-node '+D.cls, {left:x+'px', top:DSK_Y+'px', width:w+'px'});
   el.innerHTML = `
-    <div class="desk-ico">${D.cls==='f'?'⬡':D.cls==='m'?'🚀':'🎾'}</div>
-    <div class="desk-label">${D.cls==='f'?'Football AI':D.cls==='m'?'Meme Coin':'Tennis AI'}</div>
-    <div class="desk-alloc">${D.cls==='f'?'60%':D.cls==='m'?'40%':'soon'}</div>`;
+    <div class="desk-ico">${D.cls==='f'?'⬡':'🎾'}</div>
+    <div class="desk-label">${D.cls==='f'?'Football AI':'Tennis AI'}</div>
+    <div class="desk-alloc">${D.cls==='f'?'60%':'40%'}</div>`;
   canvas.appendChild(el);
   el.dataset.deskKey = D.key;
-  el.addEventListener('click', () => {
-    if (D.key === 'tennis') { requirePassword(() => showOverview(D)); }
-    else { showOverview(D); }
-  });
+  el.addEventListener('click', () => { showOverview(D); });
   // Store geometry for edge drawing
   D._deskEl = el;
   D._deskX = x; D._deskW = w;
@@ -548,7 +543,7 @@ function buildPipeline(D) {
     canvas.appendChild(cl);
   }
 
-  // Simulation-only banner for tennis (non-blocking — nodes remain clickable)
+  // Version banner for tennis
   if (D.key === 'tennis') {
     const banner = mkEl('div','',{
       position:'absolute', zIndex:'6',
@@ -558,8 +553,8 @@ function buildPipeline(D) {
       background:'rgba(255,181,71,.06)', border:'1px solid rgba(255,181,71,.25)',
     });
     banner.innerHTML = `
-      <span style="font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.2em;color:var(--amber)">🎾 predictmarkets-tennis v1.1</span>
-      <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted)">SIMULATION_ONLY · paper</span>`;
+      <span style="font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.2em;color:var(--amber)">🎾 Tennis AI v2.0</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted)">Elo Surface · Betfair Exchange · paper mode</span>`;
     canvas.appendChild(banner);
   }
 }
@@ -588,27 +583,24 @@ function buildEdges() {
   const caBot = caR.bottom - canvR.top;
   const caCX  = caR.left - canvR.left + caR.width/2;
 
-  [DATA_FOOTBALL, DATA_MEME, DATA_TENNIS].forEach(D => {
+  [DATA_FOOTBALL, DATA_TENNIS].forEach(D => {
     const dEl = D._deskEl;
     const dr  = dEl.getBoundingClientRect();
     const dTop = dr.top - canvR.top;
     const dCX  = dr.left - canvR.left + dr.width/2;
-    const isTennis = D.key === 'tennis';
     const p = path(bez(caCX, caBot, dCX, dTop), 'edge-ca');
-    if (isTennis) { p.style.opacity='.35'; p.style.strokeDasharray='5 6'; }
     svgEl.appendChild(p);
     D._ca_path = p;
   });
 
   // Desk → first source layer top-center
-  [DATA_FOOTBALL, DATA_MEME, DATA_TENNIS].forEach(D => {
+  [DATA_FOOTBALL, DATA_TENNIS].forEach(D => {
     const dEl = D._deskEl;
     const dr  = dEl.getBoundingClientRect();
     const dBot = dr.bottom - canvR.top;
     const dCX  = dr.left - canvR.left + dr.width/2;
-    // target: midpoint of source row
-    const srcY = PIPE_Y + 70; // source nodes top y
-    const srcCX = D.colX + (D.key==='meme' ? 530 : 600);
+    const srcY = PIPE_Y + 70;
+    const srcCX = D.colX + 600;
     const p = path(`M${dCX} ${dBot} C${dCX} ${dBot+60},${srcCX} ${srcY-60},${srcCX} ${srcY}`, 'edge-ca');
     p.style.strokeOpacity = '.25';
     p.style.strokeDasharray = '4 5';
@@ -616,7 +608,7 @@ function buildEdges() {
   });
 
   // Pipeline edges per desk
-  [DATA_FOOTBALL, DATA_MEME, DATA_TENNIS].forEach(D => {
+  [DATA_FOOTBALL, DATA_TENNIS].forEach(D => {
     const baseCls = 'edge-pipe-'+D.cls;
     const hotCls  = 'edge-hot-'+D.cls;
     const hotSet  = new Set(D.hot.map(([a,b]) => a+'→'+b));
@@ -672,7 +664,7 @@ function showOverview(D) {
   if (!D) {
     openPanel('CAPITAL ALLOCATOR','Capital Allocator Agent',
       'Distribuzione capitale tra desk attivi',
-      `<h5>Allocazione attuale</h5><div class="kv"><span>Football AI</span><b style="color:var(--cyan)">60%</b><span>Meme Coin</span><b style="color:var(--magenta)">40%</b><span>Tennis AI</span><b style="color:var(--amber)">coming soon</b></div><h5>Logica</h5><p style="font-size:11px;color:var(--muted);line-height:1.5">Gestione del capitale globale tra i desk attivi. Ottimizzazione risk-adjusted.</p>`,
+      `<h5>Allocazione attuale</h5><div class="kv"><span>Football AI</span><b style="color:var(--cyan)">60%</b><span>Tennis AI</span><b style="color:var(--amber)">40%</b></div><h5>Logica</h5><p style="font-size:11px;color:var(--muted);line-height:1.5">Gestione del capitale globale tra i desk attivi. Ottimizzazione risk-adjusted.</p>`,
       '—', 'var(--cyan)');
     return;
   }
@@ -715,7 +707,7 @@ function selectLeague(D, lid) {
 }
 
 /* ─── ZOOM ─── */
-const CANVAS_W = 3760, CANVAS_H = 2320;
+const CANVAS_W = 2600, CANVAS_H = 2320;
 let _zoom = 1;
 
 function _applyZoom(newZoom, pivotScreenX, pivotScreenY) {
@@ -760,7 +752,6 @@ window.fitAll = fitAll;
 
 /* Jump to desk */
 function jumpTo(key) {
-  if (key === 'tennis') { requirePassword(() => _doJumpTo(key)); return; }
   _doJumpTo(key);
 }
 function _doJumpTo(key) {
@@ -786,7 +777,7 @@ function tick(){ document.getElementById('clock').textContent = new Date().toISO
 
 /* ─── INIT ─── */
 buildCA();
-[DATA_FOOTBALL, DATA_MEME, DATA_TENNIS].forEach(D => {
+[DATA_FOOTBALL, DATA_TENNIS].forEach(D => {
   D._activeId = null;
   buildDeskNode(D);
   buildPipeline(D);
